@@ -455,14 +455,15 @@ function ProjectPage() {
               <section>
                 <h2 className="font-display text-4xl font-bold text-[var(--plum)]">Vidéo Publicitaire</h2>
                 <div className="mt-8 overflow-hidden rounded-md shadow-[var(--shadow-quest)]">
-                  <video
-                    className="w-full object-cover"
-                    controls
-                    playsInline
-                    preload="metadata"
-                  >
-                    <source src="/videos/Skollrub_official_pub.mp4" type="video/mp4" />
-                  </video>
+                  <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
+                    <iframe
+                      src="https://www.youtube.com/embed/jYkGO5j1BM4"
+                      className="absolute inset-0 w-full h-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      title="SkøllRub - Vidéo Publicitaire"
+                    />
+                  </div>
                 </div>
               </section>
 
