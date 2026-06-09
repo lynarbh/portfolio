@@ -292,6 +292,297 @@ function ProjectPage() {
           </Reveal>
         )}
 
+        {project.id === "sae-2" && (
+          <Reveal delay={250}>
+            <div className="mt-12 space-y-16">
+              {/* BLOC 1: LA BIÈRE */}
+              <section>
+                <h2 className="font-display text-2xl text-[var(--plum)]">La Bière</h2>
+                <p className="mt-4 font-body leading-relaxed text-[var(--plum)]/80">
+                  SkøllRub est une blonde de style ALE (fermentation haute, d'inspiration anglaise), conçue pour être équilibrée et accessible. Elle repose sur un malt Pilsner peu torréfié, qui lui donne une robe blonde claire avec de légers reflets rosés. Le profil aromatique est construit autour du houblon Citra, choisi pour ses notes fruitées et sa polyvalence, apportant une amertume maîtrisée indispensable à l'équilibre.
+                </p>
+                <p className="mt-4 font-body leading-relaxed text-[var(--plum)]/80">
+                  Des framboises et cranberries séchées sont ajoutées pour renforcer les arômes de fruits rouges, apporter une légère acidité et créer une signature visuelle et gustative distinctive, sans rendre la bière trop sucrée. La fermentation est réalisée avec une levure Saccharomyces cerevisiae (souche Fermentis) en fermentation haute, ce qui développe des arômes plus expressifs.
+                </p>
+                <p className="mt-4 font-body leading-relaxed text-[var(--plum)]/80">
+                  Après concassage, empâtage, filtration et ébullition (avec ajout du houblon), la bière fermente, puis mature 2 à 4 semaines avant une mise en bouteille avec une légère réfermentation naturelle. Le résultat est une bière fruitée, équilibrée, où la fraîcheur du houblon rencontre l'intensité délicate des fruits rouges.
+                </p>
+              </section>
+
+              {/* BLOC 2: L'HISTOIRE */}
+              <section>
+                <h2 className="font-display text-2xl text-[var(--plum)]">L'Histoire & l'Univers</h2>
+                <p className="mt-4 font-body leading-relaxed text-[var(--plum)]/80">
+                  SkøllRub, c'est bien plus qu'une bière. C'est une histoire. Notre création s'inspire de la mythologie nordique et de l'univers du mage alchimiste pour proposer une création à la fois ancestrale et singulière. Née symboliquement d'une "tribu de six" en 1823, elle puise son identité dans la légende de deux grands loups magiques : Sköll et Hati.
+                </p>
+                <p className="mt-4 font-body leading-relaxed text-[var(--plum)]/80">
+                  Dans la mythologie nordique, l'un poursuit le soleil et l'autre poursuit la lune. Nous avons repris cette idée en les faisant courir après nos fruits : la cranberry et la framboise, aux teintes rubis. Nous nous sommes également inspirés du terme latin Rubus (qui veut dire framboise), qui fait évocation au rubis et à la magie des éléments, comme un élixir ancien revisité avec modernité.
+                </p>
+                <p className="mt-4 font-body leading-relaxed text-[var(--plum)]/80">
+                  Tout a commencé par nos fruits. La cranberry étant originaire d'Islande, le déclic s'est imposé naturellement : les pays nordiques. De là, l'idée de la mythologie nordique s'est imposée. Et quand nous avons découvert l'histoire de Sköll et Hati, nous avons tout de suite fait le lien avec la métaphore parfaite pour nos fruits (avec le soleil et la lune).
+                </p>
+                <p className="mt-4 font-body leading-relaxed text-[var(--plum)]/80">
+                  SkøllRub signifie un mix entre le loup Skoll et le Rub de Rubus — qui peut aussi faire analogie au rubis. Comme les loups sont magiques dans la légende, nous avons intégré cette dimension à l'univers de la marque. Nous avons créé plusieurs variantes de la bière, chacune basée sur une légende différente, cultivant une identité de « bon vivant » et profondément proche de sa communauté, que nous appelons « la meute ».
+                </p>
+              </section>
+
+              {/* BLOC 3: LES 4 VARIANTES */}
+              <section>
+                <h2 className="font-display text-2xl text-[var(--plum)]">Les 4 Variantes</h2>
+
+                <div className="mt-8 space-y-12">
+                  {/* ORIGINAL */}
+                  <div>
+                    <h3 className="font-display text-xl text-[var(--sakura)]">SkøllRub Original</h3>
+                    <p className="mt-2 text-sm uppercase tracking-widest text-[var(--plum)]/60">Sköll & Hati — Cranberry & Framboise</p>
+                    <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                      <img
+                        src="/assets/Etiquettes_SkøllRub_Original-1.png"
+                        alt="SkøllRub Original - Étiquette"
+                        className="w-full rounded-md object-cover shadow"
+                      />
+                      <img
+                        src="/assets/original1.png"
+                        alt="SkøllRub Original - Post Instagram 1"
+                        className="w-full rounded-md object-cover shadow"
+                      />
+                    </div>
+                    <p className="mt-4 font-body leading-relaxed text-[var(--plum)]/80">
+                      C'est la légende mère. Sköll et Hati, les deux loups magiques de la mythologie nordique, courent éternellement après le soleil et la lune. Avec SkøllRub, ils poursuivent nos deux fruits : la cranberry rougeâtre et la framboise. Cette saveur dite "original" est perceptible à travers la lune. La couleur de la lune sur le logo est rose/magenta, qui reflète parfaitement cet équilibre entre les fruits rouges et la magie du mythe originel. C'est la bière de base de la gamme, celle qui raconte l'histoire première de SkøllRub.
+                    </p>
+                  </div>
+
+                  {/* ANGERBODA */}
+                  <div>
+                    <h3 className="font-display text-xl text-[var(--sakura)]">Angerboda</h3>
+                    <p className="mt-2 text-sm uppercase tracking-widest text-[var(--plum)]/60">La Géante des Glaces — Mûre & Myrtille</p>
+                    <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                      <img
+                        src="/assets/Etiquettes_SkøllRub_Angerboda-1.png"
+                        alt="Angerboda - Étiquette"
+                        className="w-full rounded-md object-cover shadow"
+                      />
+                      <img
+                        src="/assets/angerboda1.png"
+                        alt="Angerboda - Post Instagram 1"
+                        className="w-full rounded-md object-cover shadow"
+                      />
+                    </div>
+                    <p className="mt-4 font-body leading-relaxed text-[var(--plum)]/80">
+                      Angerboda est la géante des glaces dans la mythologie nordique — la mère de Fenrir, Jörmungandr et Hel. Elle représente le côté primordial, ancestral, une force brute venue des temps anciens. C'est une bière plus sombre, plus intense, avec des notes de mûre et myrtille qui apportent une amertume plus prononcée et des arômes plus terriens. La lune du logo pour cette variante prend une teinte violette-noire, rappelant les nuits d'hiver nordiques et la couleur profonde des baies. C'est une bière pour ceux qui cherchent quelque chose de plus affirmé, de plus mystérieux.
+                    </p>
+                  </div>
+
+                  {/* CERISICIDE */}
+                  <div>
+                    <h3 className="font-display text-xl text-[var(--sakura)]">Cerisicide</h3>
+                    <p className="mt-2 text-sm uppercase tracking-widest text-[var(--plum)]/60">Dieu de la Guerre — Cerise & Figue</p>
+                    <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                      <img
+                        src="/assets/Etiquettes_SkøllRub_Cerisicide-1.png"
+                        alt="Cerisicide - Étiquette"
+                        className="w-full rounded-md object-cover shadow"
+                      />
+                      <img
+                        src="/assets/cerisicide1.png"
+                        alt="Cerisicide - Post Instagram 1"
+                        className="w-full rounded-md object-cover shadow"
+                      />
+                    </div>
+                    <p className="mt-4 font-body leading-relaxed text-[var(--plum)]/80">
+                      Cratos, c'est le dieu de la guerre dans la mythologie nordique : un guerrier brutal, puissant, symbole de destruction et de pouvoir absolu. L'inspiration vient du jeu God of War Ragnarök. La Cerisicide est la bière la plus intense, la plus affirmée de la gamme. Les cerises apportent une acidité mordante qui symbolise la fureur, tandis que les figues ajoutent une richesse sombre et chaleureuse. La lune du logo pour cette variante prend une teinte rougeâtre-sang. C'est une variante qui ne passe pas inaperçue.
+                    </p>
+                  </div>
+
+                  {/* FREYA */}
+                  <div>
+                    <h3 className="font-display text-xl text-[var(--sakura)]">Freya</h3>
+                    <p className="mt-2 text-sm uppercase tracking-widest text-[var(--plum)]/60">Déesse de l'Amour — Raisin & Kumquat (0% alcool)</p>
+                    <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                      <img
+                        src="/assets/Etiquettes_SkøllRub_Freya-1.png"
+                        alt="Freya - Étiquette"
+                        className="w-full rounded-md object-cover shadow"
+                      />
+                      <img
+                        src="/assets/freya1.png"
+                        alt="Freya - Post Instagram 1"
+                        className="w-full rounded-md object-cover shadow"
+                      />
+                    </div>
+                    <p className="mt-4 font-body leading-relaxed text-[var(--plum)]/80">
+                      Freya, c'est la déesse de l'amour, de la beauté et de la fertilité dans la mythologie nordique. Ça n'avait que du sens d'en faire notre variante sans alcool : une bière inclusive, accessible à tous, qui ne perd rien de son charme et de sa personnalité. Le raisin apporte une acidité naturelle et des notes plus classiques et rassurantes. Le kumquat, fruit exotique, ajoute une touche d'originalité et de légèreté. C'est une bière qui reste fruitée et équilibrée, mais sans alcool. La lune du logo est dorée et lumineuse, reflétant la chaleur et l'accessibilité que Freya représente.
+                    </p>
+                  </div>
+                </div>
+              </section>
+
+              {/* BLOC 4: DESIGN & IDENTITÉ */}
+              <section>
+                <h2 className="font-display text-2xl text-[var(--plum)]">Design & Identité Visuelle</h2>
+
+                <div className="mt-8 space-y-8">
+                  <div>
+                    <h3 className="font-display text-lg text-[var(--plum)]">Logo</h3>
+                    <div className="mt-4">
+                      <img
+                        src="/assets/logo.png"
+                        alt="SkøllRub - Logo"
+                        className="max-w-sm rounded-md object-cover shadow"
+                      />
+                    </div>
+                    <p className="mt-4 font-body leading-relaxed text-[var(--plum)]/80">
+                      Le logo SkøllRub représente les deux loups magiques de la mythologie nordique, avec la lune dont la couleur change selon chaque variante, symbolisant les fruits et l'essence de chaque déclinaison.
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 className="font-display text-lg text-[var(--plum)]">Étiquettes</h3>
+                    <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                      <img
+                        src="/assets/Etiquettes_SkøllRub_Original-1.png"
+                        alt="Étiquettes - Original"
+                        className="w-full rounded-md object-cover shadow"
+                      />
+                      <img
+                        src="/assets/Etiquettes_SkøllRub_Angerboda-1.png"
+                        alt="Étiquettes - Angerboda"
+                        className="w-full rounded-md object-cover shadow"
+                      />
+                      <img
+                        src="/assets/Etiquettes_SkøllRub_Cerisicide-1.png"
+                        alt="Étiquettes - Cerisicide"
+                        className="w-full rounded-md object-cover shadow"
+                      />
+                      <img
+                        src="/assets/Etiquettes_SkøllRub_Freya-1.png"
+                        alt="Étiquettes - Freya"
+                        className="w-full rounded-md object-cover shadow"
+                      />
+                    </div>
+                    <p className="mt-4 font-body leading-relaxed text-[var(--plum)]/80">
+                      Chaque étiquette est unique et raconte sa propre histoire. La variation de la lune et des couleurs crée une cohérence visuelle tout en distinguant clairement chaque variante.
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 className="font-display text-lg text-[var(--plum)]">Charte Graphique</h3>
+                    <div className="mt-4">
+                      <img
+                        src="/assets/chartegraphique_SkollRub.png"
+                        alt="SkøllRub - Charte Graphique"
+                        className="w-full rounded-md object-cover shadow"
+                      />
+                    </div>
+                    <p className="mt-4 font-body leading-relaxed text-[var(--plum)]/80">
+                      La charte graphique définit les principes visuels de la marque : typographies, palettes de couleurs, utilisation du logo et des éléments graphiques pour garantir une cohérence à travers tous les supports.
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 className="font-display text-lg text-[var(--plum)]">Moodboard</h3>
+                    <div className="mt-4">
+                      <img
+                        src="/assets/moodboard_lyna.png"
+                        alt="SkøllRub - Moodboard"
+                        className="w-full rounded-md object-cover shadow"
+                      />
+                    </div>
+                    <p className="mt-4 font-body leading-relaxed text-[var(--plum)]/80">
+                      Le moodboard synthétise l'univers visuel et émotionnel de SkøllRub, inspiré par la mythologie nordique, la magie alchimiste et une esthétique audacieuse refusant les codes minimalistes ou exclusivement premium.
+                    </p>
+                  </div>
+                </div>
+              </section>
+
+              {/* BLOC 5: COMMUNICATION */}
+              <section>
+                <h2 className="font-display text-2xl text-[var(--plum)]">Communication Instagram</h2>
+                <p className="mt-4 font-body leading-relaxed text-[var(--plum)]/80">
+                  Chaque variante dispose d'une stratégie de communication visuelle sur Instagram avec deux versions pour chaque bière, adaptant le ton et le design en fonction du public et du contexte.
+                </p>
+
+                <div className="mt-8 space-y-8">
+                  <div>
+                    <h3 className="font-display text-lg text-[var(--sakura)]">SkøllRub Original</h3>
+                    <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                      <img
+                        src="/assets/original1.png"
+                        alt="Original - Variante 1"
+                        className="w-full rounded-md object-cover shadow"
+                      />
+                      <img
+                        src="/assets/original2.png"
+                        alt="Original - Variante 2"
+                        className="w-full rounded-md object-cover shadow"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="font-display text-lg text-[var(--sakura)]">Angerboda</h3>
+                    <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                      <img
+                        src="/assets/angerboda1.png"
+                        alt="Angerboda - Variante 1"
+                        className="w-full rounded-md object-cover shadow"
+                      />
+                      <img
+                        src="/assets/angerboda2.png"
+                        alt="Angerboda - Variante 2"
+                        className="w-full rounded-md object-cover shadow"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="font-display text-lg text-[var(--sakura)]">Cerisicide</h3>
+                    <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                      <img
+                        src="/assets/cerisicide1.png"
+                        alt="Cerisicide - Variante 1"
+                        className="w-full rounded-md object-cover shadow"
+                      />
+                      <img
+                        src="/assets/cerisicide2.png"
+                        alt="Cerisicide - Variante 2"
+                        className="w-full rounded-md object-cover shadow"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="font-display text-lg text-[var(--sakura)]">Freya</h3>
+                    <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                      <img
+                        src="/assets/freya1.png"
+                        alt="Freya - Variante 1"
+                        className="w-full rounded-md object-cover shadow"
+                      />
+                      <img
+                        src="/assets/freya2.png"
+                        alt="Freya - Variante 2"
+                        className="w-full rounded-md object-cover shadow"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              {/* BLOC 6: UNIVERS DE MARQUE */}
+              <section>
+                <h2 className="font-display text-2xl text-[var(--plum)]">Univers de Marque</h2>
+                <p className="mt-4 font-body leading-relaxed text-[var(--plum)]/80">
+                  SkøllRub s'inscrit pleinement dans le segment dynamique des bières artisanales (craft beers), en se démarquant par un refus délibéré des codes minimalistes, urbains ou exclusivement premium. L'image de la marque repose avant tout sur des valeurs de tradition, de fiabilité et d'authenticité, cultivant une identité de « bon vivant » et profondément proche de sa communauté.
+                </p>
+                <p className="mt-4 font-body leading-relaxed text-[var(--plum)]/80">
+                  Sa véritable différenciation réside dans son univers mystique et atypique. Cette orientation audacieuse se traduit graphiquement par une identité visuelle osée et se prolonge à travers un storytelling puissant autour des récits légendaires nordiques. La communauté SkøllRub s'appelle « la meute », renforçant ce sentiment d'appartenance et de connivence entre la marque et ses consommateurs.
+                </p>
+              </section>
+            </div>
+          </Reveal>
+        )}
+
         {project.id === "sae-1" && (
           <Reveal delay={250}>
             <div className="mt-12 space-y-16">
