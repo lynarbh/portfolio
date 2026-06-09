@@ -437,6 +437,35 @@ function ProjectPage() {
                 </div>
               </section>
 
+              {/* ANIMATION */}
+              <section>
+                <h2 className="font-display text-4xl font-bold text-[var(--plum)]">Animation Interactive</h2>
+                <div className="mt-8">
+                  <iframe
+                    src="/animate/1_MOHAMED.html"
+                    className="w-full h-96"
+                    title="SkøllRub Animation"
+                    style={{border: 'none'}}
+                    allowFullScreen
+                  />
+                </div>
+              </section>
+
+              {/* VIDÉO PUBLICITAIRE */}
+              <section>
+                <h2 className="font-display text-4xl font-bold text-[var(--plum)]">Vidéo Publicitaire</h2>
+                <div className="mt-8 overflow-hidden rounded-md shadow-[var(--shadow-quest)]">
+                  <video
+                    className="w-full object-cover"
+                    controls
+                    playsInline
+                    preload="metadata"
+                  >
+                    <source src="/videos/Skollrub_official_pub.mp4" type="video/mp4" />
+                  </video>
+                </div>
+              </section>
+
               {/* LE SITE WEB */}
               <section>
                 <h2 className="font-display text-4xl font-bold text-[var(--plum)]">Le Site Web</h2>

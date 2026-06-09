@@ -347,6 +347,42 @@ function About() {
           </div>
         </Reveal>
       </div>
+
+      <Reveal delay={300}>
+        <div className="mx-auto max-w-4xl mt-16">
+          <div className="group relative overflow-hidden rounded-md shadow-[var(--shadow-quest)] bg-black">
+            <video
+              id="cv-video"
+              playsInline
+              preload="metadata"
+              className="w-full object-cover"
+              controlsList="nodownload"
+            >
+              <source src="/videos/56_Lyna_REBAHI_CVvideo.mp4" type="video/mp4" />
+            </video>
+
+            <button
+              id="play-btn"
+              className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/20 transition-all duration-300 group-hover:bg-black/25"
+              onClick={(e) => {
+                const video = (e.currentTarget.parentElement?.querySelector('video') as HTMLVideoElement | null);
+                if (video) {
+                  video.play();
+                  e.currentTarget.style.display = 'none';
+                }
+              }}
+            >
+              <svg
+                className="w-20 h-20 text-[var(--sakura)] drop-shadow-lg"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </Reveal>
     </section>
   );
 }
