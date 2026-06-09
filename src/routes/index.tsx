@@ -13,8 +13,7 @@ export const Route = createFileRoute("/")({
 });
 
 const HERO_VIDEO = "/videos/hero.mp4";
-const HERO_FALLBACK =
-  "https://images.unsplash.com/photo-1522383225653-ed111181a951?w=1600&q=85";
+const HERO_FALLBACK = "/assets/hero.png";
 
 const CATEGORIES = ["Tout", "Vidéo", "Photo", "Branding", "Illustration", "Projet universitaire"] as const;
 type Category = (typeof CATEGORIES)[number];
@@ -207,10 +206,10 @@ function Nav() {
   return (
     <header className="fixed top-0 left-0 right-0 z-40">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
-        <a href="#top" className="font-display text-xl text-[var(--cream)] tracking-[0.2em]">
+        <a href="#top" className="font-display text-xl text-[var(--cream)] tracking-[0.2em]" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.6)' }}>
            PORTFOLIO
         </a>
-        <nav className="hidden md:flex items-center gap-8 text-sm tracking-widest text-[var(--cream)]/90 uppercase">
+        <nav className="hidden md:flex items-center gap-8 text-sm tracking-widest text-[var(--cream)]/90 uppercase" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.6)' }}>
           {links.map((l) => (
             <a key={l.href} href={l.href} className="hover:text-[var(--sakura)] transition">
               {l.label}
@@ -239,18 +238,35 @@ function Nav() {
 }
 
 function Hero() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // Autoplay blocked - that's OK, poster image displays
+        });
+      }
+    }
+  }, []);
+
   return (
     <section id="top" className="relative h-screen w-full overflow-hidden">
       <div className="fixed inset-0 -z-10">
         <video
+          ref={videoRef}
           className="h-full w-full object-cover"
           poster={HERO_FALLBACK}
           autoPlay
           muted
           loop
           playsInline
+          preload="auto"
         >
           <source src={HERO_VIDEO} type="video/mp4" />
+          Votre navigateur ne supporte pas la vidéo HTML5.
         </video>
         <div
           className="absolute inset-0"

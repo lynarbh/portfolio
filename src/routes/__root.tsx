@@ -1,4 +1,5 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import * as React from "react";
 
 import appCss from "../styles.css?url";
 
@@ -29,16 +30,19 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Sakura Folio — Portfolio MMI" },
+      { title: "Lyna Rebahi - Portfolio" },
       { name: "description", content: "Portfolio créatif d'une étudiante MMI : design graphique, vidéo, photo et branding. À la recherche d'une alternance." },
-      { name: "author", content: "Sakura Folio" },
-      { property: "og:title", content: "Sakura Folio — Portfolio MMI" },
+      { name: "author", content: "Lyna Rebahi" },
+      { property: "og:title", content: "Lyna Rebahi - Portfolio" },
       { property: "og:description", content: "Portfolio créatif d'une étudiante MMI à la recherche d'une alternance." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
+      { rel: "icon", type: "image/png", href: "/logo.png" },
+      { rel: "shortcut icon", type: "image/png", href: "/logo.png" },
+      { rel: "apple-touch-icon", type: "image/png", href: "/logo.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@400;500;600&display=swap" },
@@ -65,5 +69,12 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
+  React.useEffect(() => {
+    const link = document.createElement('link');
+    link.rel = 'icon';
+    link.href = '/favicon.ico?' + Date.now();
+    document.head.appendChild(link);
+  }, []);
+
   return <Outlet />;
 }

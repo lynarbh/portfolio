@@ -87,12 +87,12 @@ function ProjectPage() {
                 <h2 className="font-display text-2xl text-[var(--plum)]">Mock-ups</h2>
                 <div className="mt-6 grid gap-4 sm:grid-cols-2">
                   <img
-                    src="/src/assets/mockupcarterose.png"
+                    src="/assets/mockupcarterose.png"
                     alt="Mock-up carte de visite — variante rose"
                     className="w-full rounded-md object-cover shadow"
                   />
                   <img
-                    src="/src/assets/mockupcartechocolat.png"
+                    src="/assets/mockupcartechocolat.png"
                     alt="Mock-up carte de visite — variante chocolat"
                     className="w-full rounded-md object-cover shadow"
                   />
@@ -106,12 +106,12 @@ function ProjectPage() {
                 <h2 className="font-display text-2xl text-[var(--plum)]">Design des cartes</h2>
                 <div className="mt-6 grid gap-4 sm:grid-cols-2">
                   <img
-                    src="/src/assets/designcarterose.png"
+                    src="/assets/designcarterose.png"
                     alt="Design de la carte — variante rose"
                     className="w-full rounded-md object-cover shadow"
                   />
                   <img
-                    src="/src/assets/designcartechocolat.png"
+                    src="/assets/designcartechocolat.png"
                     alt="Design de la carte — variante chocolat"
                     className="w-full rounded-md object-cover shadow"
                   />
@@ -125,7 +125,7 @@ function ProjectPage() {
                 <h2 className="font-display text-2xl text-[var(--plum)]">Logo & déclinaisons</h2>
                 <div className="mt-6">
                   <img
-                    src="/src/assets/logoen8variantes.png"
+                    src="/assets/logoen8variantes.png"
                     alt="Logo personnel L et R — déclinaisons de couleurs"
                     className="w-full rounded-md object-contain shadow"
                   />
@@ -139,7 +139,7 @@ function ProjectPage() {
                 <h2 className="font-display text-2xl text-[var(--plum)]">Palette de couleurs</h2>
                 <div className="mt-6 flex justify-center">
                   <img
-                    src="/src/assets/palette%20de%20couleurs.png"
+                    src="/assets/palette%20de%20couleurs.png"
                     alt="Palette de couleurs de l'identité personnelle"
                     className="w-full max-w-md rounded-md object-contain shadow"
                   />
@@ -179,12 +179,12 @@ function ProjectPage() {
                 <h2 className="font-display text-2xl text-[var(--plum)]">Logos</h2>
                 <div className="mt-6 grid gap-4 sm:grid-cols-2">
                   <img
-                    src="/src/assets/logoprincipal.png"
+                    src="/assets/logoprincipal.png"
                     alt="Logo principal SAE 1"
                     className="w-full rounded-md object-cover shadow"
                   />
                   <img
-                    src="/src/assets/logosecondaire.png"
+                    src="/assets/logosecondaire.png"
                     alt="Logo secondaire SAE 1"
                     className="w-full rounded-md object-cover shadow"
                   />
@@ -198,12 +198,12 @@ function ProjectPage() {
                 <h2 className="font-display text-2xl text-[var(--plum)]">Flyers</h2>
                 <div className="mt-6 grid gap-4 sm:grid-cols-2">
                   <img
-                    src="/src/assets/flyer1.png"
+                    src="/assets/flyer1.png"
                     alt="Flyer SAE 1 - visuel 1"
                     className="w-full rounded-md object-cover shadow"
                   />
                   <img
-                    src="/src/assets/flyer2.png"
+                    src="/assets/flyer2.png"
                     alt="Flyer SAE 1 - visuel 2"
                     className="w-full rounded-md object-cover shadow"
                   />
@@ -217,17 +217,17 @@ function ProjectPage() {
                 <h2 className="font-display text-2xl text-[var(--plum)]">Maquette et extrait vidéo</h2>
                 <div className="mt-6 grid gap-4 sm:grid-cols-3">
                   <img
-                    src="/src/assets/maquette1.png"
+                    src="/assets/maquette1.png"
                     alt="Maquette SAE 1 page 1"
                     className="w-full rounded-md object-cover shadow"
                   />
                   <img
-                    src="/src/assets/maquette3.png"
+                    src="/assets/maquette3.png"
                     alt="Maquette SAE 1 page 2"
                     className="w-full rounded-md object-cover shadow"
                   />
                   <img
-                    src="/src/assets/maquette4.png"
+                    src="/assets/maquette4.png"
                     alt="Maquette SAE 1 page 3"
                     className="w-full rounded-md object-cover shadow"
                   />
