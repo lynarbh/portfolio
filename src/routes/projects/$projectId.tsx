@@ -409,16 +409,13 @@ function ProjectPage() {
               {/* MOODBOARD */}
               <section>
                 <h2 className="font-display text-2xl text-[var(--plum)]">Moodboard</h2>
-                <div className="mt-6">
+                <div className="mt-6 flex justify-center">
                   <img
                     src="/assets/moodboard_lyna.png"
                     alt="SkøllRub - Moodboard"
-                    className="w-full rounded-md object-cover shadow"
+                    className="max-w-lg rounded-md object-cover shadow"
                   />
                 </div>
-                <p className="mt-4 font-body leading-relaxed text-[var(--plum)]/80">
-                  Le moodboard synthétise l'univers visuel et émotionnel de SkøllRub, inspiré par la mythologie nordique, la magie alchimiste et une esthétique audacieuse refusant les codes minimalistes ou exclusivement premium.
-                </p>
               </section>
 
               {/* COMMUNICATION INSTAGRAM */}
@@ -437,6 +434,46 @@ function ProjectPage() {
                   <img src="/assets/cerisicide2.png" alt="Cerisicide - Post 2" className="w-full rounded-md object-cover shadow" />
                   <img src="/assets/freya1.png" alt="Freya - Post 1" className="w-full rounded-md object-cover shadow" />
                   <img src="/assets/freya2.png" alt="Freya - Post 2" className="w-full rounded-md object-cover shadow" />
+                </div>
+              </section>
+
+              {/* LE SITE WEB */}
+              <section>
+                <h2 className="font-display text-2xl text-[var(--plum)]">Le Site Web</h2>
+                <p className="mt-4 font-body leading-relaxed text-[var(--plum)]/80">
+                  Découvrez la présence en ligne de SkøllRub, où l'univers mythologique se déploie à travers une interface immersive et captivante.
+                </p>
+
+                <div className="mt-8 grid gap-4 sm:grid-cols-3">
+                  <img src="/assets/site1.png" alt="Site Web - Vue 1" className="w-full rounded-md object-cover shadow" />
+                  <img src="/assets/site2.png" alt="Site Web - Vue 2" className="w-full rounded-md object-cover shadow" />
+                  <img src="/assets/site3.png" alt="Site Web - Vue 3" className="w-full rounded-md object-cover shadow" />
+                </div>
+
+                <div className="mt-8 pt-8 border-t border-[var(--plum)]/10">
+                  <a
+                    href="https://skollrub.but1.mmi-iutsf.org/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-3 px-6 py-3 bg-[var(--plum)] text-[var(--cream)] font-body text-sm uppercase tracking-widest rounded-full hover:bg-[var(--sakura)] hover:text-[var(--plum)] transition-all duration-300"
+                  >
+                    Visiter le site
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                      <polyline points="15 3 21 3 21 9" />
+                      <line x1="10" y1="14" x2="21" y2="3" />
+                    </svg>
+                  </a>
                 </div>
               </section>
             </div>
