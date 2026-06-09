@@ -444,10 +444,11 @@ function ProjectPage() {
                   Découvrez la présence en ligne de SkøllRub, où l'univers mythologique se déploie à travers une interface immersive et captivante.
                 </p>
 
-                <div className="mt-8 grid gap-4 sm:grid-cols-3">
+                <div className="mt-8 grid gap-4 sm:grid-cols-2">
                   <img src="/assets/site1.png" alt="Site Web - Vue 1" className="w-full rounded-md object-cover shadow" />
                   <img src="/assets/site2.png" alt="Site Web - Vue 2" className="w-full rounded-md object-cover shadow" />
                   <img src="/assets/site3.png" alt="Site Web - Vue 3" className="w-full rounded-md object-cover shadow" />
+                  <img src="/assets/site4.png" alt="Site Web - Vue 4" className="w-full rounded-md object-cover shadow" />
                 </div>
 
                 <div className="mt-8 pt-8 border-t border-[var(--plum)]/10">
