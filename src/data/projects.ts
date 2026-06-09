@@ -113,8 +113,19 @@ export const projects: Project[] = [
     thumbnail: "/assets/portfolio-thumbnail-04-video.png",
     video: "https://www.youtube.com/embed/Z2ge0r9_vfU",
     shortDescription: "Clip vidéo — Blue, Yung Kai (en cours de réalisation).",
-    description: "Clip vidéo sur le morceau Blue de Yung Kai, actuellement en cours de réalisation. Un projet pour traduire en images l'ambiance du titre, travailler le rythme du montage en lien avec la musique et explorer la mise en scène — un format que j'adore parce qu'il mêle tout ce qui me passionne : la musique, la vidéo et la direction artistique.",
+    description: "Clip vidéo sur le morceau Blue de Yung Kai, actuellement fini. Ce projet traduit en images l'ambiance du clip original, avec un montage en lien avec le rythme et les paroles de la musique. J'ai voulu exploré une mise en scène narrative et anecdotique.",
     tools: ["Photoshop", "Premiere Pro"],
+    role: "Réalisatrice & monteuse",
+  },
+  {
+    id: "mashup",
+    title: "Mashup vidéo — Hier encore",
+    category: "Vidéo",
+    thumbnail: "/assets/portfolio-thumbnail-04-video.png",
+    video: "https://www.youtube.com/embed/Q9N3hK1jLFc",
+    shortDescription: "Mashup vidéo sur la chanson « Hier encore » de Charles Aznavour.",
+    description: "Ce mashup vidéo recompose un récit intime à partir des rushes fournis par le professeur. Bien que la majorité des extraits proposés se concentrait sur des scènes de danse dynamiques, j'ai cherché à mettre en évidence des moments plus isolés et personnels — des fragments d'intimité et de mélancolie qui s'alignent avec la tonalité nostalgique d'« Hier encore » de Charles Aznavour. Le montage, sans voix off ni commentaire, s'appuie uniquement sur cette bande sonore pour générer une atmosphère émotionnelle. Les plans ont été réarrangés pour créer une nouvelle narration visuelle, où l'absence de mouvement frénétique laisse place à la contemplation et au souvenir. Le résultat final dure 3 minutes 15 et utilise entre 60% et 70% des rushes originaux, soigneusement sélectionnés pour leur capacité à évoquer une forme de solitude douce et d'introspection.",
+    tools: ["Premiere Pro"],
     role: "Réalisatrice & monteuse",
   },
 
@@ -140,6 +151,5 @@ export const projects: Project[] = [
     description: "Deuxième projet de groupe en SAE, davantage centré sur la conception graphique et le prototypage d'interface. Le travail collectif y a pris encore plus de place : itérations partagées sur Figma, allers-retours sur la charte graphique et recherche d'une cohérence visuelle d'un livrable à l'autre.",
     tools: ["Figma", "Illustrator"],
     role: "Membre du groupe",
-    inProgress: true,
   },
 ];
