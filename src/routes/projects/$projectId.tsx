@@ -307,11 +307,11 @@ function ProjectPage() {
 
               {/* LOGO */}
               <section>
-                <h2 className="font-display text-2xl text-[var(--plum)]">Logo</h2>
+                <h2 className="font-display text-4xl font-bold text-[var(--plum)]">Logo</h2>
                 <div className="mt-4 flex justify-center">
                   <img
-                    src="/assets/logo.png"
-                    alt="SkøllRub - Logo"
+                    src="/assets/skøllrub_logo_final.png"
+                    alt="SkøllRub - Logo Final"
                     className="max-w-xs rounded-md object-cover shadow"
                   />
                 </div>
@@ -322,7 +322,7 @@ function ProjectPage() {
 
               {/* CHARTE GRAPHIQUE */}
               <section>
-                <h2 className="font-display text-2xl text-[var(--plum)]">Charte Graphique</h2>
+                <h2 className="font-display text-4xl font-bold text-[var(--plum)]">Charte Graphique</h2>
                 <div className="mt-6">
                   <img
                     src="/assets/chartegraphique_SkollRub.png"
@@ -337,12 +337,12 @@ function ProjectPage() {
 
               {/* LES 4 VARIANTES */}
               <section>
-                <h2 className="font-display text-2xl text-[var(--plum)]">Les 4 Variantes</h2>
+                <h2 className="font-display text-4xl font-bold text-[var(--plum)]">Les 4 Variantes</h2>
 
                 <div className="mt-8 grid gap-6 sm:grid-cols-2">
                   {/* ORIGINAL */}
                   <div>
-                    <h3 className="font-display text-lg text-[var(--sakura)]">SkøllRub Original</h3>
+                    <h3 className="font-display text-xl font-bold" style={{color: '#D4348A'}}>SkøllRub Original</h3>
                     <p className="mt-1 text-xs uppercase tracking-widest text-[var(--plum)]/60">Cranberry & Framboise</p>
                     <div className="mt-4">
                       <img
@@ -358,7 +358,7 @@ function ProjectPage() {
 
                   {/* ANGERBODA */}
                   <div>
-                    <h3 className="font-display text-lg text-[var(--sakura)]">Angerboda</h3>
+                    <h3 className="font-display text-xl font-bold" style={{color: '#6B4C8A'}}>Angerboda</h3>
                     <p className="mt-1 text-xs uppercase tracking-widest text-[var(--plum)]/60">Mûre & Myrtille</p>
                     <div className="mt-4">
                       <img
@@ -374,7 +374,7 @@ function ProjectPage() {
 
                   {/* CERISICIDE */}
                   <div>
-                    <h3 className="font-display text-lg text-[var(--sakura)]">Cerisicide</h3>
+                    <h3 className="font-display text-xl font-bold" style={{color: '#A52A2A'}}>Cerisicide</h3>
                     <p className="mt-1 text-xs uppercase tracking-widest text-[var(--plum)]/60">Cerise & Figue</p>
                     <div className="mt-4">
                       <img
@@ -390,7 +390,7 @@ function ProjectPage() {
 
                   {/* FREYA */}
                   <div>
-                    <h3 className="font-display text-lg text-[var(--sakura)]">Freya</h3>
+                    <h3 className="font-display text-xl font-bold" style={{color: '#DAA520'}}>Freya</h3>
                     <p className="mt-1 text-xs uppercase tracking-widest text-[var(--plum)]/60">Raisin & Kumquat (0% alcool)</p>
                     <div className="mt-4">
                       <img
@@ -408,7 +408,7 @@ function ProjectPage() {
 
               {/* MOODBOARD */}
               <section>
-                <h2 className="font-display text-2xl text-[var(--plum)]">Moodboard</h2>
+                <h2 className="font-display text-4xl font-bold text-[var(--plum)]">Moodboard</h2>
                 <div className="mt-6 flex justify-center">
                   <img
                     src="/assets/moodboard_lyna.png"
@@ -420,7 +420,7 @@ function ProjectPage() {
 
               {/* COMMUNICATION INSTAGRAM */}
               <section>
-                <h2 className="font-display text-2xl text-[var(--plum)]">Communication Instagram</h2>
+                <h2 className="font-display text-4xl font-bold text-[var(--plum)]">Communication Instagram</h2>
                 <p className="mt-4 font-body leading-relaxed text-[var(--plum)]/80">
                   Chaque variante dispose d'une stratégie de communication visuelle sur Instagram avec deux versions pour chaque bière.
                 </p>
@@ -439,7 +439,7 @@ function ProjectPage() {
 
               {/* LE SITE WEB */}
               <section>
-                <h2 className="font-display text-2xl text-[var(--plum)]">Le Site Web</h2>
+                <h2 className="font-display text-4xl font-bold text-[var(--plum)]">Le Site Web</h2>
                 <p className="mt-4 font-body leading-relaxed text-[var(--plum)]/80">
                   Découvrez la présence en ligne de SkøllRub, où l'univers mythologique se déploie à travers une interface immersive et captivante.
                 </p>
