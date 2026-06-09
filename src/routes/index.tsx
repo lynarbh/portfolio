@@ -356,6 +356,7 @@ function About() {
               playsInline
               preload="metadata"
               className="w-full object-cover"
+              controls
               controlsList="nodownload"
             >
               <source src="/videos/56_Lyna_REBAHI_CVvideo.mp4" type="video/mp4" />
