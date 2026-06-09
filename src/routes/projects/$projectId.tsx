@@ -172,6 +172,126 @@ function ProjectPage() {
           </Reveal>
         )}
 
+        {project.id === "clip" && (
+          <Reveal delay={250}>
+            <div className="mt-12 space-y-16">
+              <section>
+                <h2 className="font-display text-2xl text-[var(--plum)]">Bloc 1 — Présentation du projet</h2>
+                <div className="mt-6">
+                  <img
+                    src="/assets/clip1.png"
+                    alt="Blue - Présentation du projet"
+                    className="w-full rounded-md object-cover shadow mb-6"
+                  />
+                  <p className="font-body leading-relaxed text-[var(--plum)]/80">
+                    Blue est un dossier de production audiovisuelle réalisé dans le cadre du BUT MMI. Il s'articule autour de la chanson Blue de Yung Kai, titre indie-pop sorti en août 2024, extrait de son premier album Stay with the Ocean, I'll Find You. La chanson dure 3 minutes 41 et se construit autour d'une structure classique : introduction, deux couplets, deux refrains, une transition instrumentale et un outro. Entièrement écrit et produit par Yung Kai lui-même, ce morceau est né d'une inspiration directe pour la série télévisée chinoise When I Fly Towards You.
+                  </p>
+                </div>
+              </section>
+
+              <section>
+                <h2 className="font-display text-2xl text-[var(--plum)]">Bloc 2 — Analyse musicale et lecture du clip original</h2>
+                <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                  <img
+                    src="/assets/clip2.png"
+                    alt="Blue - Analyse musicale part 1"
+                    className="w-full rounded-md object-cover shadow"
+                  />
+                  <img
+                    src="/assets/clip3.png"
+                    alt="Blue - Analyse musicale part 2"
+                    className="w-full rounded-md object-cover shadow"
+                  />
+                  <img
+                    src="/assets/clip4.png"
+                    alt="Blue - Analyse musicale part 3"
+                    className="w-full rounded-md object-cover shadow"
+                  />
+                  <img
+                    src="/assets/clip5.png"
+                    alt="Blue - Analyse musicale part 4"
+                    className="w-full rounded-md object-cover shadow"
+                  />
+                </div>
+                <p className="mt-4 font-body leading-relaxed text-[var(--plum)]/80">
+                  Le travail s'ouvre sur une étude musicale approfondie du clip officiel de Blue, séquence par séquence. L'introduction installe une ambiance de rêve éveillé grâce à des plans de nature surexposés (arbres, soleil, lac). Le premier couplet met en scène une femme observée à distance, idéalisée dès les premières paroles. Le refrain bascule vers l'imaginaire : les deux personnages courent, rient, se photographient au Polaroid — mais tout ce qu'on voit est une projection intérieure du narrateur, pas nécessairement la réalité. Le deuxième couplet rompt cette harmonie : l'homme est désormais seul, habillé différemment, et la femme semble ne plus le voir.
+                </p>
+              </section>
+
+              <section>
+                <h2 className="font-display text-2xl text-[var(--plum)]">Bloc 3 — Le plan final et l'ambiguïté narrative</h2>
+                <div className="mt-6">
+                  <img
+                    src="/assets/clip6.png"
+                    alt="Blue - Plan final"
+                    className="w-full rounded-md object-cover shadow mb-6"
+                  />
+                  <p className="font-body leading-relaxed text-[var(--plum)]/80">
+                    La fin du clip est particulièrement travaillée dans l'analyse. À partir de 3h15, la caméra zoome lentement sur le visage de l'homme avant de dézoomer à mesure que la mélodie ralentit. Il est seul. La musique s'efface, remplacée par le bruit des vagues. L'analyse pose trois hypothèses ouvertes : la femme n'a peut-être jamais existé que dans l'imaginaire du narrateur, ou la relation appartient au passé, ou encore c'est un souvenir qui s'efface au moment même où on le revit. C'est cette ambiguïté qui constitue le point de départ de la note d'intention.
+                  </p>
+                </div>
+              </section>
+
+              <section>
+                <h2 className="font-display text-2xl text-[var(--plum)]">Bloc 4 — Note d'intention : la mémoire comme reconstruction émotionnelle</h2>
+                <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                  <img
+                    src="/assets/clip7.png"
+                    alt="Blue - Note d'intention part 1"
+                    className="w-full rounded-md object-cover shadow"
+                  />
+                  <img
+                    src="/assets/clip8.png"
+                    alt="Blue - Note d'intention part 2"
+                    className="w-full rounded-md object-cover shadow"
+                  />
+                </div>
+                <p className="mt-4 font-body leading-relaxed text-[var(--plum)]/80">
+                  Pour la création du clip personnel, une transposition a été choisie : plutôt que de représenter une histoire romantique, l'idée centrale devient "la mémoire comme reconstruction émotionnelle du passé". Le clip raconte les souvenirs d'une femme âgée qui se remémore sa jeunesse et ses amitiés à travers une photographie. Ce qui se voit dans le clip n'est pas la réalité objective mais une réalité idéalisée — les moments entre amies deviennent plus beaux, plus doux, presque irréels, à l'image de la chanson elle-même. Le présent est traité de manière neutre et figée, tandis que le passé est lumineux, coloré, vivant.
+                </p>
+              </section>
+
+              <section>
+                <h2 className="font-display text-2xl text-[var(--plum)]">Bloc 5 — Dispositifs techniques et mise en scène</h2>
+                <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                  <img
+                    src="/assets/clip9.png"
+                    alt="Blue - Dispositifs techniques part 1"
+                    className="w-full rounded-md object-cover shadow"
+                  />
+                  <img
+                    src="/assets/clip10.png"
+                    alt="Blue - Dispositifs techniques part 2"
+                    className="w-full rounded-md object-cover shadow"
+                  />
+                </div>
+                <p className="mt-4 font-body leading-relaxed text-[var(--plum)]/80">
+                  Plusieurs effets techniques structurent la narration visuelle. Le passage entre présent et passé est déclenché par une photographie qui prend vie — l'image figée se transforme en vidéo, symbole que les souvenirs continuent de vivre. Un effet de rembobinage (rewind) ponctue le montage pour matérialiser l'idée de replonger dans ses souvenirs. L'écran se divise en split screen à quatre colonnes, chaque personnage associé à une couleur dominante propre. Les quatre femmes se retrouvent finalement dans les rues de Paris où leurs chemins convergent vers un même carrefour, symbolisant leur réunion.
+                </p>
+              </section>
+
+              <section>
+                <h2 className="font-display text-2xl text-[var(--plum)]">Bloc 6 — Esthétique visuelle et références</h2>
+                <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                  <img
+                    src="/assets/clip11.png"
+                    alt="Blue - Esthétique visuelle part 1"
+                    className="w-full rounded-md object-cover shadow"
+                  />
+                  <img
+                    src="/assets/clip12.png"
+                    alt="Blue - Esthétique visuelle part 2"
+                    className="w-full rounded-md object-cover shadow"
+                  />
+                </div>
+                <p className="mt-4 font-body leading-relaxed text-[var(--plum)]/80">
+                  L'esthétique du clip s'inspire d'une ambiance caméra DV années 2000 : luminosité très saturée, légèrement floue, grain numérique vintage. Des plans de nature récurrents (fleurs, feuillage, lumière dorée) servent d'écrin aux souvenirs. La référence formelle principale est Mean Girls pour l'effet split screen et la romantisation de l'amitié féminine. Le moodboard construit autour du projet illustre ce contraste entre le présent sobre et le passé chargé d'émotions — photos éparpillées, selfies miroir au digicam, sorties entre amies, lumière solaire chaude.
+                </p>
+              </section>
+            </div>
+          </Reveal>
+        )}
+
         {project.id === "sae-1" && (
           <Reveal delay={250}>
             <div className="mt-12 space-y-16">
