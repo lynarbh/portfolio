@@ -122,7 +122,7 @@ export const projects: Project[] = [
     title: "Mashup vidéo — Hier encore",
     category: "Vidéo",
     thumbnail: "/assets/portfolio-thumbnail-04-video.png",
-    video: "https://www.youtube.com/embed/Q9N3hK1jLFc",
+    video: "https://www.youtube.com/embed/vp8o1bCENnw",
     shortDescription: "Mashup vidéo sur la chanson « Hier encore » de Charles Aznavour.",
     description: "Ce mashup vidéo recompose un récit intime à partir des rushes fournis par le professeur. Bien que la majorité des extraits proposés se concentrait sur des scènes de danse dynamiques, j'ai cherché à mettre en évidence des moments plus isolés et personnels — des fragments d'intimité et de mélancolie qui s'alignent avec la tonalité nostalgique d'« Hier encore » de Charles Aznavour. Le montage, sans voix off ni commentaire, s'appuie uniquement sur cette bande sonore pour générer une atmosphère émotionnelle. Les plans ont été réarrangés pour créer une nouvelle narration visuelle, où l'absence de mouvement frénétique laisse place à la contemplation et au souvenir. Le résultat final dure 3 minutes 15 et utilise entre 60% et 70% des rushes originaux, soigneusement sélectionnés pour leur capacité à évoquer une forme de solitude douce et d'introspection.",
     tools: ["Premiere Pro"],
