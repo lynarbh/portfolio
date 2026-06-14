@@ -306,24 +306,28 @@ function About() {
     <section id="about" className="relative py-28 px-6">
       <div className="mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-[minmax(0,22rem)_1fr]">
         <Reveal>
-          <div className="portrait-wrapper relative mx-auto h-96 w-72 sm:h-[28rem] sm:w-[22rem] rounded-[1.5rem] overflow-hidden">
-            <div
-              className="absolute inset-0 float"
-              style={{
-                background:
-                  "conic-gradient(from 90deg, var(--sakura), var(--mint-sage), var(--gold), var(--sakura))",
-                filter: "blur(24px)",
-                opacity: 0.55,
-              }}
-            />
-            <img
-              src={portrait}
-              alt="Portrait de Lyna Rebahi"
-              width={384}
-              height={448}
-              loading="lazy"
-              className="relative h-full w-full rounded-[1.5rem] object-cover border-4 border-[var(--cream)] shadow-[var(--shadow-quest)]"
-            />
+          <div className="portrait-wrapper mx-auto">
+            {/* Conic gradient border */}
+            <div className="portrait-gradient-border" />
+
+            {/* Circular portrait */}
+            <div className="portrait-image">
+              <img
+                src={portrait}
+                alt="Portrait de Lyna Rebahi"
+                width={300}
+                height={300}
+                loading="lazy"
+              />
+            </div>
+
+            {/* Floating badge */}
+            <div className="floating-badge">
+              <div>
+                <span className="badge-icon">✦</span>20 ans
+              </div>
+              <div className="badge-title">Designer Multimédia</div>
+            </div>
           </div>
         </Reveal>
 
