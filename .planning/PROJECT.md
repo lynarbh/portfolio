@@ -29,8 +29,8 @@ Un recruteur qui ouvre le site comprend en 3 secondes que Lyna vit l'audiovisuel
 
 - [ ] Supprimer le code mort : `ProjectModal.tsx` (importé, jamais rendu), `Skills()` (retourne null), `Petals.tsx`, kit `src/components/ui/` non utilisé par les pages, dépendances inutilisées (`@tanstack/react-query`, `zod`, Radix non utilisés)
 - [ ] Retirer tous les effets déco pour une version lite : pétales, curseur rose personnalisé, badge flottant « 20 ans », ornements de coins, particules sur le portrait (`PORTRAIT_EFFECT_SETTINGS` / classe `Point`)
-- [ ] Dédupliquer les assets : `src/assets/` duplique 63 fichiers de `public/assets/` (141 Mo) ; `public/animate/videos/` duplique 82 Mo déjà présents à la racine de `public/animate/`
-- [ ] Retirer du dossier public les sources de travail : `.fla`, `.ai`, `~ai-*.tmp`, `RECOVER_*`, exports Animate non référencés (seul `1_MOHAMED.html` + ses dépendances est utilisé)
+- [ ] Dédupliquer les assets : `src/assets/` duplique 63 fichiers de `public/assets/` (141 Mo) ; les 8 vidéos à la racine de `public/animate/` (82 Mo) sont des doublons morts — l'animation `1_MOHAMED.js` référence uniquement `public/animate/videos/`, `images/` et `components/`
+- [ ] Retirer du dossier public les sources de travail : `.fla`, `.ai`, `~ai-*.tmp`, `RECOVER_*`, exports Animate non référencés (seul `1_MOHAMED.html` + `1_MOHAMED.js` + `components/` + `images/` + `videos/` est utilisé ; `illustrations/` 25 Mo, `imagesImad/`, `imagesframe2/` sont orphelins)
 - [ ] Supprimer les fichiers de `public/assets/` non référencés (capture d'écran, `mockup.jpg` 9,8 Mo, `site.jpg` 3,7 Mo, etc.) après vérification
 - [ ] Corriger les références cassées : `public/videos/extraitpubSAE1.mp4` (gitignoré, absent) dans `$projectId.tsx:589`, `festival-flyer.jpg` / `festival-goodies.jpg` dans `projects.ts`
 - [ ] Ne garder qu'une cible de déploiement (Cloudflare) : supprimer `vercel.json`, `server.js`, `package-lock.json` (bun est le gestionnaire primaire)
