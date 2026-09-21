@@ -27,18 +27,19 @@ Un recruteur qui ouvre le site comprend en 3 secondes que Lyna vit l'audiovisuel
 
 **Audit & nettoyage**
 
-- [ ] Supprimer le code mort : `ProjectModal.tsx` (importé, jamais rendu), `Skills()` (retourne null), `Petals.tsx`, kit `src/components/ui/` non utilisé par les pages, dépendances inutilisées (`@tanstack/react-query`, `zod`, Radix non utilisés)
+- [ ] Supprimer le code mort : `ProjectModal.tsx` (importé, jamais rendu), `Skills()` (retourne null), `Petals.tsx`, kit `src/components/ui/` non utilisé par les pages, dépendances inutilisées (`@tanstack/react-query`, `zod`, `react-hook-form`, Radix non utilisés — décision : la validation du formulaire de contact reste en HTML natif, pas de zod)
 - [ ] Retirer tous les effets déco pour une version lite : pétales, curseur rose personnalisé, badge flottant « 20 ans », ornements de coins, particules sur le portrait (`PORTRAIT_EFFECT_SETTINGS` / classe `Point`)
-- [ ] Dédupliquer les assets : `src/assets/` duplique 63 fichiers de `public/assets/` (141 Mo) ; les 8 vidéos à la racine de `public/animate/` (82 Mo) sont des doublons morts — l'animation `1_MOHAMED.js` référence uniquement `public/animate/videos/`, `images/` et `components/`
-- [ ] Retirer du dossier public les sources de travail : `.fla`, `.ai`, `~ai-*.tmp`, `RECOVER_*`, exports Animate non référencés (seul `1_MOHAMED.html` + `1_MOHAMED.js` + `components/` + `images/` + `videos/` est utilisé ; `illustrations/` 25 Mo, `imagesImad/`, `imagesframe2/` sont orphelins)
+- [ ] Dédupliquer les assets : `src/assets/` duplique 63 fichiers de `public/assets/` (141 Mo) — sauf `portrait.jpg`, import Vite vivant dans `index.tsx:8`, à migrer avant de supprimer le dossier ; les 8 vidéos à la racine de `public/animate/` (82 Mo) sont des doublons morts — l'animation `1_MOHAMED.js` référence uniquement `public/animate/videos/`, `images/` et `components/`
+- [ ] Retirer du dossier public les sources de travail : `.fla`, `.ai`, `~ai-*.tmp`, `RECOVER_*`, `illustrations/` (25 Mo) et l'export orphelin `3_CLEMENT.*` — ATTENTION : l'animation est une chaîne de 6 scènes (`1_MOHAMED → 1_LYNA → 2_IMAD → 2_CLEMENT → 2_SOPHIA → 3_ALBERTIN`, navigation par `window.open` dans le JS minifié) qui dépend de `components/`, `images/`, `imagesImad/`, `imagesframe2/` et `videos/` ; parcourir la chaîne complète après nettoyage
 - [ ] Supprimer les fichiers de `public/assets/` non référencés (capture d'écran, `mockup.jpg` 9,8 Mo, `site.jpg` 3,7 Mo, etc.) après vérification
 - [ ] Corriger les références cassées : `public/videos/extraitpubSAE1.mp4` (gitignoré, absent) dans `$projectId.tsx:589`, `festival-flyer.jpg` / `festival-goodies.jpg` dans `projects.ts`
 - [ ] Ne garder qu'une cible de déploiement (Cloudflare) : supprimer `vercel.json`, `server.js`, `package-lock.json` (bun est le gestionnaire primaire)
 
 **Poids**
 
-- [ ] Réencoder les images en visuellement sans perte : PNG/JPG géants (`affichepromo.png` 23 Mo, `prévention.png` 19 Mo, `affiche_sensibilisation` 9,6 Mo, `hero.png` 4,2 Mo, `portrait.jpg` 2,5 Mo…) → WebP/AVIF redimensionnés à la taille d'affichage réelle (cible : aucune image > 500 Ko)
-- [ ] Réencoder les vidéos à qualité constante : `hero.mp4` (17 Mo, 60 fps, 8,4 Mbit/s pour 17 s) → ~3 Mo ; vidéo CV (23,1 Mo) → confortablement sous les 25 Mio Cloudflare ; vidéos du process SkøllRub (empattage 22 Mo, mise en bouteille 16 Mo, filtration 14 Mo…) allégées
+- [ ] Réencoder les images en visuellement sans perte : redimensionner d'abord (≤ 2400 px grand côté — `chartegraphique_SkollRub.png` fait 9047×5032 soit ~173 Mio décodés pour 3 Mo sur disque, le poids disque n'est pas le bon critère), convertir en sRGB puis retirer l'ICC (certains PNG portent un profil moniteur « Color LCD »), deux presets : photos → AVIF/WebP 4:2:0 ; affiches, logos, typo → AVIF 4:4:4 ou PNG quantifié (jamais WebP lossy) ; renommer en kebab-case ASCII au passage (`ø`, `é`, espaces cassent les audits et la normalisation NFD/NFC)
+- [ ] `src/assets/affichepromo.png` (23 Mo) et `src/assets/prévention.png` (19 Mo) n'existent que dans `src/assets/` et ne sont référencés nulle part : décision de contenu à prendre avec Lyna (les afficher dans un projet ou les retirer), pas une tâche de compression
+- [ ] Réencoder les vidéos à qualité constante : `hero.mp4` (17 Mo, 60 fps, 8,4 Mbit/s pour 17 s) → ~3 Mo ; vidéo CV (23,1 Mo) → confortablement sous les 25 Mio Cloudflare ; vidéos du process SkøllRub (`empattage.mp4` 22,4 Mio — second asset proche de la limite, mise en bouteille 16 Mo, filtration 14 Mo…) allégées ; sortie obligatoire en H.264 8 bits `-pix_fmt yuv420p` + `-movflags +faststart`, vérifiée par `ffprobe` (le hero actuel est en High 10 / `yuv420p10le` et ne se lit pas sur iPhone ; la vidéo CV n'a pas de faststart et se télécharge entièrement avant la première image)
 - [ ] Aucun média existant supprimé : tous les visuels de projets, le portrait et la vidéo de fond restent, uniquement réencodés
 - [ ] Extraire les pages clés de `charte_graphique.pdf` (Tafsut Festival : logo, palette, typos, affiche, billets, goodies, signalétique) en images légères pour illustrer le projet « Identité d'un festival », et passer le projet en terminé ; retirer le PDF de 23 Mo du dossier public
 - [ ] Objectif global : `public/` + `src/assets` passent de ~525 Mo à moins de 60 Mo
@@ -52,7 +53,7 @@ Un recruteur qui ouvre le site comprend en 3 secondes que Lyna vit l'audiovisuel
 - [ ] Projets : les projets vidéo passent en premier ; chaque fiche projet affiche les logos des logiciels utilisés (à la place des tags texte) ; médias disposés en galerie soignée (vidéo en tête, images en grille/mosaïque)
 - [ ] Textes : tous les blocs de texte (hero, qui suis-je, descriptions) reçoivent un emplacement clairement identifié avec une consigne courte (longueur, angle) — Lyna rédige elle-même
 - [ ] Performance : plus de re-render React sur `mousemove`, lazy loading des médias hors écran, `poster` sur les vidéos, préchargement limité à la vidéo hero
-- [ ] Le build Cloudflare passe (`bun run build`) et aucun asset ne dépasse 25 Mio
+- [ ] Gate de taille dès la première phase et en continu : `tsc --noEmit && vite build`, puis `find dist -type f -size +20M` vide et `wrangler deploy --dry-run` OK (`vite build` copie `public/` tel quel et ne vérifie rien ; la limite de 25 Mio s'applique à l'upload)
 
 ### Out of Scope
 
@@ -73,6 +74,8 @@ Un recruteur qui ouvre le site comprend en 3 secondes que Lyna vit l'audiovisuel
 - `routeTree.gen.ts` est généré, ne pas éditer à la main
 - Les logos Adobe (Premiere, After Effects, Photoshop…) ne sont pas disponibles dans les bibliothèques d'icônes libres pour raisons de marque : prévoir des placeholders nommés (`/assets/logos/premiere-pro.svg`, etc.) que Lyna remplira
 - Incident passé : dépassement de la limite Cloudflare de 25 Mio sur la vidéo CV (compressée depuis, mais toujours à 23,1 Mio)
+- `public/assets/charte_graphique.pdf` (22,5 Mio) est non suivi par git et ajouté au `.gitignore` : ne jamais le commiter (`.git` pèse déjà 333 Mo) ; sauvegarder les originaux hors repo avant tout réencodage
+- Aucun `prefers-reduced-motion` dans le code actuel ; les 3 embeds YouTube utilisent `www.youtube.com` sans `loading="lazy"` ; CreateJS est chargé depuis `code.createjs.com` sans fallback
 - Poids actuel : `public/animate` 223 Mo, `src/assets` 141 Mo, `public/assets` 122 Mo, `public/videos` 40 Mo
 - Aucun test, aucune CI, ESLint laxiste sur le code mort (`no-unused-vars` désactivé)
 - Inspiration visuelle : GIF Behance (serif rouge calligraphiée, grain VHS, cadre écran bombé, métadonnées de contact en coins)
