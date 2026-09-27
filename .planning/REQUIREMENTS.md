@@ -13,11 +13,11 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **CLEAN-02**: Tous les effets déco sont retirés pour la version lite : pétales, curseur rose personnalisé, badge flottant « 20 ans », ornements de coins, particules sur le portrait (`PORTRAIT_EFFECT_SETTINGS` / classe `Point`)
 - [ ] **CLEAN-03**: Les dépendances inutilisées sont retirées après passage de `knip` (`@tanstack/react-query`, `zod`, `react-hook-form`, `@hookform/resolvers`, `date-fns`, paquets `@radix-ui/*` orphelins) ; la validation du formulaire reste en HTML natif
 - [ ] **CLEAN-04**: `src/assets/` est supprimé après migration de `portrait.jpg` (import Vite vivant dans `index.tsx:8`) ; un seul emplacement canonique pour les médias : `public/media/**`
-- [ ] **CLEAN-05**: `public/animate/` est nettoyé (`.fla`, `.ai`, `~ai-*.tmp`, `RECOVER_*`, `illustrations/`, `3_CLEMENT.*`, les 8 vidéos à la racine) et la chaîne complète des 6 scènes (`1_MOHAMED → 1_LYNA → 2_IMAD → 2_CLEMENT → 2_SOPHIA → 3_ALBERTIN`) se parcourt jusqu'au bout
+- [x] **CLEAN-05**: `public/animate/` est nettoyé (`.fla`, `.ai`, `~ai-*.tmp`, `RECOVER_*`, `illustrations/`, `3_CLEMENT.*`, les 8 vidéos à la racine) et la chaîne complète des 6 scènes (`1_MOHAMED → 1_LYNA → 2_IMAD → 2_CLEMENT → 2_SOPHIA → 3_ALBERTIN`) se parcourt jusqu'au bout
 - [ ] **CLEAN-06**: Les fichiers de `public/assets/` non référencés sont retirés après un inventaire qui décode les URL (`%20`, `ø`, `é`, normalisation NFD/NFC) et une étape de quarantaine avant suppression
 - [ ] **CLEAN-07**: Les références cassées sont corrigées (`extraitpubSAE1.mp4` gitignoré/absent dans `$projectId.tsx`, `festival-flyer.jpg` / `festival-goodies.jpg` dans `projects.ts`)
 - [ ] **CLEAN-08**: Cloudflare est la seule cible de déploiement : `vercel.json`, `server.js`, `bun.lockb` et `bunfig.toml` sont supprimés ; npm (déjà utilisé pour `node_modules`) reste le gestionnaire de paquets avec `package-lock.json`
-- [ ] **CLEAN-09**: `charte_graphique.pdf` (22,5 Mio) n'est jamais commité (`.gitignore`) et tous les originaux sont sauvegardés hors repo dans `media-src/` (gitignoré) avant tout réencodage
+- [x] **CLEAN-09**: `charte_graphique.pdf` (22,5 Mio) n'est jamais commité (`.gitignore`) et tous les originaux sont sauvegardés hors repo dans `media-src/` (gitignoré) avant tout réencodage
 
 ### Poids & pipeline média (SIZE)
 
@@ -27,7 +27,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **SIZE-04**: La vidéo CV est réencodée ≤ 12 Mo, `yuv420p`, `+faststart`, audio AAC, sans dégradation visible
 - [ ] **SIZE-05**: Les vidéos du process SkøllRub sont réencodées à 25 fps, `yuv420p`, `+faststart`, ≤ 12 Mo chacune, en conservant les chemins relatifs `videos/*.mp4` attendus par `1_MOHAMED.js`
 - [ ] **SIZE-06**: ~10 pages clés de la charte Tafsut (logo, palette, typos, affiche, billets, goodies, signalétique) sont extraites via `gs` à 300 dpi puis passées au preset graphic ; le PDF sort de `public/`
-- [ ] **SIZE-07**: Un garde-fou `npm run check` (`tsc --noEmit && vite build && scripts/check-assets.mjs`) échoue si un fichier destiné à `dist/` dépasse 20 Mio ou si une vidéo n'est pas `yuv420p` / faststart ; `wrangler deploy --dry-run` passe ; le garde-fou existe dès la première phase
+- [x] **SIZE-07**: Un garde-fou `npm run check` (`tsc --noEmit && vite build && scripts/check-assets.mjs`) échoue si un fichier destiné à `dist/` dépasse 20 Mio ou si une vidéo n'est pas `yuv420p` / faststart ; `wrangler deploy --dry-run` passe ; le garde-fou existe dès la première phase
 - [ ] **SIZE-08**: `public/` pèse moins de 60 Mo au total ; les médias hors écran sont chargés en lazy ; seul le hero est préchargé
 - [ ] **SIZE-09**: `affichepromo.png` et `prévention.png` sont réencodées et intégrées à un projet existant choisi par Lyna (projet à préciser)
 
@@ -125,18 +125,18 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CLEAN-02 | Phase 1 | Pending |
 | CLEAN-03 | Phase 1 | Pending |
 | CLEAN-04 | Phase 1 | Pending |
-| CLEAN-05 | Phase 1 | Pending |
+| CLEAN-05 | Phase 1 | Complete |
 | CLEAN-06 | Phase 1 | Pending |
 | CLEAN-07 | Phase 1 | Pending |
 | CLEAN-08 | Phase 1 | Pending |
-| CLEAN-09 | Phase 1 | Pending |
+| CLEAN-09 | Phase 1 | Complete |
 | SIZE-01 | Phase 2 | Pending |
 | SIZE-02 | Phase 2 | Pending |
 | SIZE-03 | Phase 2 | Pending |
 | SIZE-04 | Phase 2 | Pending |
 | SIZE-05 | Phase 2 | Pending |
 | SIZE-06 | Phase 2 | Pending |
-| SIZE-07 | Phase 1 | Pending |
+| SIZE-07 | Phase 1 | Complete |
 | SIZE-08 | Phase 2 | Pending |
 | SIZE-09 | Phase 4 | Pending |
 | HERO-01 | Phase 2 | Pending |

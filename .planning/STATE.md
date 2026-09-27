@@ -4,13 +4,13 @@ milestone: v1.0
 milestone_name: milestone
 status: executing
 stopped_at: Roadmap et STATE initialisés, en attente d'approbation
-last_updated: "2026-09-27T20:11:41.959Z"
-last_activity: 2026-09-27 -- Phase 1 execution started
+last_updated: "2026-09-27T20:16:19.519Z"
+last_activity: 2026-09-27
 progress:
   total_phases: 5
   completed_phases: 0
   total_plans: 4
-  completed_plans: 0
+  completed_plans: 1
   percent: 0
 ---
 
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-09-21)
 ## Current Position
 
 Phase: 1 (Nettoyage & filet de sécurité) — EXECUTING
-Plan: 1 of 4
-Status: Executing Phase 1
-Last activity: 2026-09-27 -- Phase 1 execution started
+Plan: 2 of 4
+Status: Ready to execute
+Last activity: 2026-09-27
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [███░░░░░░░] 25%
 
 ## Performance Metrics
 
@@ -52,6 +52,7 @@ Progress: [░░░░░░░░░░] 0%
 - Trend: -
 
 *Updated after each plan completion*
+| Phase 01 P01 | 5 min | 3 tasks | 27 files |
 
 ## Accumulated Context
 
@@ -66,6 +67,8 @@ Recent decisions affecting current work:
 - [Roadmap]: PROJ-06 / PROJ-07 livrés en phase 2 (consommateurs directs du pipeline média) ; les branches `project.id === "…"` restent, refactor `ProjectBlock[]` en v2
 - [Roadmap]: `src/data/tools.ts` créé en phase 3 (grille de compétences) et réutilisé en phase 4 (logos par projet)
 - [Roadmap]: Ghostscript `gs` pour la charte Tafsut (pas `pdftoppm`, poppler absent)
+- [01-01]: check-assets.mjs garde seulement le 1er champ CSV de ffprobe (sortie 'yuv420p10le,')
+- [01-01]: plafond 25 Mio et extensions interdites non dérogeables ; dérogations par fichier et par règle (size, pix_fmt, faststart)
 
 ### Pending Todos
 
@@ -92,6 +95,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-09-27
+Last session: 2026-09-27T20:16:13.512Z
 Stopped at: Roadmap et STATE initialisés, en attente d'approbation
 Resume file: None

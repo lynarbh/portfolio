@@ -40,7 +40,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 Plans:
 **Wave 1**
 
-- [ ] 01-01-PLAN.md — Filet de sécurité : media-src/ gitignoré + sauvegarde vérifiée, PDF et sources Animate hors de public/, garde-fou `npm run check` prouvé par fixtures
+- [x] 01-01-PLAN.md — Filet de sécurité : media-src/ gitignoré + sauvegarde vérifiée, PDF et sources Animate hors de public/, garde-fou `npm run check` prouvé par fixtures
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -157,7 +157,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Nettoyage & filet de sécurité | 0/TBD | Not started | - |
+| 1. Nettoyage & filet de sécurité | 1/4 | In Progress|  |
 | 2. Médias légers & hero qui joue partout | 0/TBD | Not started | - |
 | 3. Hero & Qui suis-je en scène | 0/TBD | Not started | - |
 | 4. Projets mis en scène | 0/TBD | Not started | - |
