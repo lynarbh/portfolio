@@ -521,7 +521,7 @@ Any "NEW BLOB" > 1 MiB should block the commit.
 | A6 | Production Cloudflare decodes `%20` like local workerd (production 404s today only because that build predates/differs) | Asset inventory | palette image 404 in prod → caught by the post-deploy curl check |
 | A7 | knip / wrangler legitimacy (slopcheck unavailable) | Package audit | negligible: first-party tools already in use |
 
-## Open Questions
+## Open Questions (RESOLVED — see 01-CONTEXT.md « Décisions ajoutées après recherche » : dry-run only / npm, fond.jpeg → quarantaine, halo + float retirés, wrangler linked via npm)
 
 1. **Replace the 2026-09-01 webp production with the PNG build now?**
    - Known: production is lighter and not reproducible from git. Phase 2 will make the repo build lighter than both.

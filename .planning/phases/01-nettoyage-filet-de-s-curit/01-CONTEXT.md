@@ -6,7 +6,7 @@
 <domain>
 ## Phase Boundary
 
-Le site déployé ne contient plus ni code mort, ni effet décoratif, ni doublon d'assets, ni source de travail — et un garde-fou `bun run check` empêche tout commit de dépasser la limite Cloudflare de 25 Mio. Périmètre : CLEAN-01..09, SIZE-07, PERF-02. Aucun réencodage de média (phase 2), aucune nouvelle interface (phases 3-5). Le dernier geste de la phase est un déploiement Cloudflare réel du site nettoyé.
+Le site déployé ne contient plus ni code mort, ni effet décoratif, ni doublon d'assets, ni source de travail — et un garde-fou `bun run check` empêche tout commit de dépasser la limite Cloudflare de 25 Mio. Périmètre : CLEAN-01..09, SIZE-07, PERF-02. Aucun réencodage de média (phase 2), aucune nouvelle interface (phases 3-5). Le dernier geste de la phase est un `wrangler deploy --dry-run` vert et un push de `main` ; le déploiement réel est reporté à la phase 2 (décision Lyna, voir « Décisions ajoutées après recherche »).
 
 </domain>
 
