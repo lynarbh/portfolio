@@ -51,7 +51,7 @@ export const projects: Project[] = [
     title: "Identité d'un festival",
     category: "Branding",
     thumbnail: "/assets/portfolio-thumbnail-01-branding.png",
-    media: ["/assets/festival-flyer.jpg", "/assets/festival-goodies.jpg"],
+    media: [],
     shortDescription: "Identité visuelle complète d'un festival imaginaire.",
     description: "Conception de l'identité visuelle complète d'un festival imaginé de A à Z : du logo aux déclinaisons sur supports de communication (flyers, affiches, goodies). Un projet qui m'a permis d'explorer la construction d'un univers cohérent — direction artistique, charte graphique, ton de voix — et de raconter une histoire à travers chaque pièce.",
     tools: ["Illustrator", "Photoshop"],

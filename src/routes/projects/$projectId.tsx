@@ -575,22 +575,6 @@ function ProjectPage() {
                 <p className="mt-4 font-body leading-relaxed text-[var(--sakura)]/90">
                   Voir le site en ligne : <a href="https://foodfighters.fr" target="_blank" rel="noreferrer" className="font-semibold text-[var(--sakura)] hover:text-[var(--plum)]">https://foodfighters.fr</a>
                 </p>
-
-                <div className="mt-8">
-                  <div className="overflow-hidden rounded-md bg-black shadow">
-                    <video
-                      className="w-full object-cover"
-                      controls
-                      playsInline
-                      preload="metadata"
-                    >
-                      <source src="/videos/extraitpubSAE1.mp4" type="video/mp4" />
-                    </video>
-                  </div>
-                  <p className="mt-4 font-body leading-relaxed text-[var(--plum)]/80">
-                    Extrait de la publicité du projet, illustrant le ton visuel et le message de la campagne SAE 1. La vidéo complète est disponible sur le <a href="https://foodfighters.fr" target="_blank" rel="noreferrer" className="font-semibold text-[var(--sakura)] hover:text-[var(--plum)]">site en ligne</a>.
-                  </p>
-                </div>
               </section>
             </div>
           </Reveal>
