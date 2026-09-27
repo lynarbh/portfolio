@@ -104,7 +104,7 @@ Markup changes. The layout, gradient, `h1`, subtitle and CTA are unchanged.
 | Attribute | Contract |
 |-----------|----------|
 | `src` | The hero MP4 path from `media.generated.ts` (H.264 High 8-bit `yuv420p`, bt709 SDR, 30 fps, no audio track, `+faststart`, **≤ 4 MB**) |
-| `poster` | The hero poster WebP from the manifest: first frame of the **converted SDR output**, about 1600px wide, **< 80 KB**. It must match frame 0, so autoplay starts without a visible jump in colour or framing. |
+| `poster` | The hero poster WebP from the manifest: first frame of the **converted SDR output**, native width (1080px, the master is 1080×574), **≤ 110 KB** (measured: WebP q60 ≈ 104 KB — decision added after research). It must match frame 0, so autoplay starts without a visible jump in colour or framing. |
 | `preload` | `"metadata"` (was `"auto"`) |
 | `muted`, `loop`, `playsInline` | present |
 | `autoPlay` | **removed**. Playback starts from JS after hydration so that `prefers-reduced-motion` is honoured before any frame moves (see the state machine). |
@@ -150,14 +150,14 @@ Markup changes. The layout, gradient, `h1`, subtitle and CTA are unchanged.
 | `id` | `MediaId` (key union exported from `src/data/media.generated.ts`) | Required. An unknown id is a **type error**, not a runtime empty state. |
 | `alt` | `string` | Required. `""` only for purely decorative images. |
 | `sizes` | `string` | Required. Use the values in the table below. |
-| `className` | `string?` | Applied to the `<img>` through `cn()` |
+| `className` | `string?` | Applied to the `<img>` by template-literal concatenation (`cn()` was removed in phase 1) |
 
 Rendered output:
 ```
 <picture className="contents">
   <source type="image/avif" srcSet="…-640.avif 640w, …-1200.avif 1200w, …-2400.avif 2400w" sizes={sizes} />
   {preset === "photo" && <source type="image/webp" srcSet="… 640w, … 1200w, … 2400w" sizes={sizes} />}
-  <img src={fallback} width={w} height={h} alt={alt} loading="lazy" decoding="async" className={cn("h-auto", className)} />
+  <img src={fallback} width={w} height={h} alt={alt} loading="lazy" decoding="async" className={`h-auto ${className ?? ""}`} />
 </picture>
 ```
 - Widths are never upscaled. A width larger than the source is omitted by the manifest. Grid tiles (card thumbnails) get at most 1200.
@@ -217,7 +217,7 @@ All rendered copy is French. Lyna writes final copy. New strings are either func
 | Item | Budget |
 |------|--------|
 | Hero video | ≤ 4 MB, H.264 High 8-bit `yuv420p`, bt709, 30 fps, `moov` before `mdat` |
-| Hero poster | < 80 KB WebP, about 1600px wide, identical to frame 0 of the SDR output, **LCP element** |
+| Hero poster | ≤ 110 KB WebP, native 1080px wide (research: 1080w q60 ≈ 104 KB), identical to frame 0 of the SDR output, **LCP element** |
 | Preloaded resources | exactly one: the hero poster |
 | Any delivered image | ≤ 2400px long edge |
 | Grid tile sources | ≤ 1200px |
