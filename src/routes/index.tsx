@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router"; // Ajoute Link i
 import { useEffect, useMemo, useRef, useState } from "react";
 import { projects, type Project } from "@/data/projects";
 import { Reveal } from "@/components/Reveal";
-import portrait from "@/assets/portrait.jpg";
 import emailjs from "@emailjs/browser";
 
 export const Route = createFileRoute("/")({
@@ -11,6 +10,7 @@ export const Route = createFileRoute("/")({
 
 const HERO_VIDEO = "/videos/hero.mp4";
 const HERO_FALLBACK = "/assets/hero.png";
+const PORTRAIT = "/media/portrait.jpg";
 
 const CATEGORIES = ["Tout", "Vidéo", "Photo", "Branding", "Illustration", "Projet universitaire"] as const;
 type Category = (typeof CATEGORIES)[number];
@@ -134,7 +134,7 @@ function About() {
             {/* Circular portrait */}
             <div className="portrait-image">
               <img
-                src={portrait}
+                src={PORTRAIT}
                 alt="Portrait de Lyna Rebahi"
                 width={300}
                 height={300}
