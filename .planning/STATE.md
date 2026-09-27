@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-stopped_at: Completed 01-03-PLAN.md
-last_updated: "2026-09-27T20:27:29.835Z"
+status: verifying
+stopped_at: Completed 01-04-PLAN.md (validation visuelle humaine en attente)
+last_updated: "2026-09-27T20:39:24.140Z"
 last_activity: 2026-09-27
 progress:
   total_phases: 5
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 4
-  completed_plans: 3
-  percent: 0
+  completed_plans: 4
+  percent: 20
 ---
 
 # Project State
@@ -27,10 +27,10 @@ See: .planning/PROJECT.md (updated 2026-09-21)
 
 Phase: 1 (Nettoyage & filet de sécurité) — EXECUTING
 Plan: 4 of 4
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-09-27
 
-Progress: [████████░░] 75%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -55,6 +55,7 @@ Progress: [████████░░] 75%
 | Phase 01 P01 | 5 min | 3 tasks | 27 files |
 | Phase 01 P02 | 12 min | 2 tasks | 72 files |
 | Phase 01 P03 | 5 min | 3 tasks | 60 files |
+| Phase 01 P04 | 12 min | 3 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -74,6 +75,8 @@ Recent decisions affecting current work:
 - [Phase 01]: 01-02: portrait servi par URL absolue /media/portrait.jpg (constante PORTRAIT), src/assets supprimé
 - [Phase 01]: 01-03: @tanstack/react-query retiré malgré resolve.dedupe du wrapper Lovable — build vert (A1 réfutée)
 - [Phase 01]: 01-03: knip.json garde @tanstack/router-plugin, tailwindcss, tw-animate-css en ignoreDependencies ; knip lancé via npx knip@6.38.0, jamais installé
+- [Phase 01]: 01-04: push de main ne déclenche aucun build Cloudflare (0b1ccd2a toujours dernière 154 s après push)
+- [Phase 01]: 01-04: 5 assets non référencés de public/assets en quarantaine media-src/quarantine/ (inventaire REF=62 UNREF=0 MISSING=0)
 
 ### Pending Todos
 
@@ -89,6 +92,7 @@ None yet.
 - Production `lynarebahi.fr` déployée hors git le 2026-09-01 (version `0b1ccd2a-db8e-4136-b65c-55615d6787b4`, WebP + hero 10,8 Mo, mais PDF et `.fla` publics) : aucun déploiement réel avant la phase 2 ; rollback = `wrangler rollback 0b1ccd2a-db8e-4136-b65c-55615d6787b4`
 - Gestionnaire de paquets : npm (bun non installé) ; scripts en `.mjs`
 - Rendu de l'export Adobe Animate sur iOS réel non vérifié (phase 4 / QA phase 5)
+- Validation visuelle humaine de la phase 1 EN ATTENTE (Task 2 de 01-04 reportée par l'utilisatrice) : accueil sans pétales/curseur rose/badge/ornements, 0 × 404 sur accueil + 9 pages, chaîne Animate 1_MOHAMED→3_ALBERTIN complète sur /projects/sae-2 — preuves automatiques seulement (curl 67 URL, 0 × 404)
 
 ## Deferred Items
 
@@ -96,10 +100,10 @@ Items acknowledged and carried forward from previous milestone close:
 
 | Category | Item | Status | Deferred At |
 |----------|------|--------|-------------|
-| *(none)* | | | |
+| human-verify | Phase 1 : validation visuelle de la version lite + chaîne Animate 6 scènes (01-04 Task 2, checklist dans 01-04-SUMMARY.md) | PENDING | 2026-09-27 |
 
 ## Session Continuity
 
-Last session: 2026-09-27T20:27:23.743Z
-Stopped at: Completed 01-03-PLAN.md
+Last session: 2026-09-27T20:39:24.132Z
+Stopped at: Completed 01-04-PLAN.md (validation visuelle humaine en attente)
 Resume file: None

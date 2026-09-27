@@ -14,7 +14,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **CLEAN-03**: Les dépendances inutilisées sont retirées après passage de `knip` (`@tanstack/react-query`, `zod`, `react-hook-form`, `@hookform/resolvers`, `date-fns`, paquets `@radix-ui/*` orphelins) ; la validation du formulaire reste en HTML natif
 - [x] **CLEAN-04**: `src/assets/` est supprimé après migration de `portrait.jpg` (import Vite vivant dans `index.tsx:8`) ; un seul emplacement canonique pour les médias : `public/media/**`
 - [x] **CLEAN-05**: `public/animate/` est nettoyé (`.fla`, `.ai`, `~ai-*.tmp`, `RECOVER_*`, `illustrations/`, `3_CLEMENT.*`, les 8 vidéos à la racine) et la chaîne complète des 6 scènes (`1_MOHAMED → 1_LYNA → 2_IMAD → 2_CLEMENT → 2_SOPHIA → 3_ALBERTIN`) se parcourt jusqu'au bout
-- [ ] **CLEAN-06**: Les fichiers de `public/assets/` non référencés sont retirés après un inventaire qui décode les URL (`%20`, `ø`, `é`, normalisation NFD/NFC) et une étape de quarantaine avant suppression
+- [x] **CLEAN-06**: Les fichiers de `public/assets/` non référencés sont retirés après un inventaire qui décode les URL (`%20`, `ø`, `é`, normalisation NFD/NFC) et une étape de quarantaine avant suppression
 - [x] **CLEAN-07**: Les références cassées sont corrigées (`extraitpubSAE1.mp4` gitignoré/absent dans `$projectId.tsx`, `festival-flyer.jpg` / `festival-goodies.jpg` dans `projects.ts`)
 - [x] **CLEAN-08**: Cloudflare est la seule cible de déploiement : `vercel.json`, `server.js`, `bun.lockb` et `bunfig.toml` sont supprimés ; npm (déjà utilisé pour `node_modules`) reste le gestionnaire de paquets avec `package-lock.json`
 - [x] **CLEAN-09**: `charte_graphique.pdf` (22,5 Mio) n'est jamais commité (`.gitignore`) et tous les originaux sont sauvegardés hors repo dans `media-src/` (gitignoré) avant tout réencodage
@@ -125,8 +125,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CLEAN-02 | Phase 1 | Complete |
 | CLEAN-03 | Phase 1 | Complete |
 | CLEAN-04 | Phase 1 | Complete |
-| CLEAN-05 | Phase 1 | Complete |
-| CLEAN-06 | Phase 1 | Pending |
+| CLEAN-05 | Phase 1 | Complete (parcours visuel humain des 6 scènes en attente) |
+| CLEAN-06 | Phase 1 | Complete |
 | CLEAN-07 | Phase 1 | Complete |
 | CLEAN-08 | Phase 1 | Complete |
 | CLEAN-09 | Phase 1 | Complete |

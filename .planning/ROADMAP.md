@@ -13,7 +13,7 @@ Ce milestone sauve un portfolio existant (~525 Mo, vidéo hero illisible sur iPh
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Nettoyage & filet de sécurité** - Code mort, décor, doublons et sources de travail retirés ; garde-fou de taille actif ; site redéployé plus léger
+- [x] **Phase 1: Nettoyage & filet de sécurité** - Code mort, décor, doublons et sources de travail retirés ; garde-fou de taille actif ; site redéployé plus léger (completed 2026-09-27)
 - [ ] **Phase 2: Médias légers & hero qui joue partout** - Pipeline média offline, `public/` < 60 Mo, vidéos conformes iPhone, charte Tafsut extraite
 - [ ] **Phase 3: Hero & Qui suis-je en scène** - Mise en scène hybride cinéma, positionnement explicite, compétences en logos, textes en slots nommés
 - [ ] **Phase 4: Projets mis en scène** - Vraies vignettes, vidéo en tête, logos d'outils, crédits type générique, bande process, embeds allégés
@@ -52,7 +52,7 @@ Plans:
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 01-04-PLAN.md — Inventaire décodant + quarantaine public/assets, validation humaine (décor, 404, 6 scènes Animate), porte de phase + push sans déploiement
+- [x] 01-04-PLAN.md — Inventaire décodant + quarantaine public/assets, validation humaine (décor, 404, 6 scènes Animate), porte de phase + push sans déploiement
 
 **Notes**:
 
@@ -157,7 +157,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Nettoyage & filet de sécurité | 3/4 | In Progress|  |
+| 1. Nettoyage & filet de sécurité | 4/4 | Complete   | 2026-09-27 |
 | 2. Médias légers & hero qui joue partout | 0/TBD | Not started | - |
 | 3. Hero & Qui suis-je en scène | 0/TBD | Not started | - |
 | 4. Projets mis en scène | 0/TBD | Not started | - |
