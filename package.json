@@ -14,7 +14,9 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "check": "tsc --noEmit && vite build && node scripts/check-assets.mjs && wrangler deploy --dry-run",
-    "deploy": "npm run check && wrangler deploy"
+    "deploy": "npm run check && wrangler deploy",
+    "media": "node scripts/media.mjs",
+    "verify-media": "node scripts/verify-media.mjs"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.25.5",
@@ -42,6 +44,7 @@
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^15.15.0",
     "prettier": "^3.7.3",
+    "sharp": "0.35.4",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.56.1",
     "vite": "^7.3.1"
