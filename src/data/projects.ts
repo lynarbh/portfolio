@@ -1,8 +1,10 @@
+import type { MediaId } from "@/data/media.generated";
+
 export type Project = {
   id: string;
   title: string;
   category: "Site Web" | "Design" | "Branding" | "Illustration" | "Vidéo" | "SAE" | "Photo" | "Projet universitaire";
-  thumbnail: string;
+  thumbnail: MediaId;
   media?: string[];
   video?: string;
   url?: string;
@@ -22,7 +24,7 @@ export const projects: Project[] = [
     id: "prototype-site-accessible",
     title: "Prototype de site accessible",
     category: "Site Web",
-    thumbnail: "/assets/portfolio-thumbnail-03-web.png",
+    thumbnail: "thumbnails/portfolio-thumbnail-03-web",
     media: ["/assets/prototype1.png", "/assets/prototype2.png"],
     shortDescription: "Prototype d'un site web accessible pour tous.",
     description:
@@ -37,7 +39,7 @@ export const projects: Project[] = [
     id: "business-card-mockup",
     title: "Identité personnelle",
     category: "Branding",
-    thumbnail: "/assets/portfolio-thumbnail-01-branding.png",
+    thumbnail: "thumbnails/portfolio-thumbnail-01-branding",
     media: [],
     shortDescription: "Mock-up d'une carte de visite pour une identité personnelle.",
     description: "Création d'un mock-up de carte de visite à partir d'une identité visuelle personnelle. L'exercice m'a permis de travailler sur le choix typographique, la palette de couleurs et la mise en scène du support, en cherchant un rendu qui me ressemble : sobre, doux, mais affirmé.",
@@ -50,7 +52,7 @@ export const projects: Project[] = [
     id: "festival-identite",
     title: "Identité d'un festival",
     category: "Branding",
-    thumbnail: "/assets/portfolio-thumbnail-01-branding.png",
+    thumbnail: "thumbnails/portfolio-thumbnail-01-branding",
     media: [],
     shortDescription: "Identité visuelle complète d'un festival imaginaire.",
     description: "Conception de l'identité visuelle complète d'un festival imaginé de A à Z : du logo aux déclinaisons sur supports de communication (flyers, affiches, goodies). Un projet qui m'a permis d'explorer la construction d'un univers cohérent — direction artistique, charte graphique, ton de voix — et de raconter une histoire à travers chaque pièce.",
@@ -64,7 +66,7 @@ export const projects: Project[] = [
     id: "illustration-photoshop",
     title: "Illustration Photoshop",
     category: "Photo",
-    thumbnail: "/assets/portfolio-thumbnail-02-flyers.png",
+    thumbnail: "thumbnails/portfolio-thumbnail-02-flyers",
     media: ["/assets/affiche_sensibilisation_Lyna_Rebahi.png"],
     shortDescription: "Illustration numérique réalisée sur Photoshop.",
     description: "Affiche de sensibilisation réalisée dans le cadre du cours de culture artistique, sur un brief de campagne éco-citoyenne commanditée par l'UPEC pour ses étudiants. J'ai choisi de traiter l'acidification des océans à travers un angle moins évoqué que celui des coraux : ses conséquences sur le plancton, ces micro-organismes invisibles qui forment pourtant la base de la chaîne alimentaire marine. L'affiche montre trois pierres tombales portant chacune le nom d'une espèce de plancton, posées sur un fond océanique sombre. Derrière elles, un corail blanchi sur lequel se concentre toute la lumière de la scène. La phrase « Et si les premières victimes de l'acidification des océans étaient invisibles ? » traverse l'image, à moitié éclairée du côté du corail, à moitié plongée dans l'ombre — une manière de jouer sur ce qu'on voit et ce qu'on choisit de ne pas voir. Le travail a été réalisé sur Photoshop au format A2, 300 dpi.",
@@ -75,7 +77,7 @@ export const projects: Project[] = [
     id: "portraits-illustration",
     title: "Portraits vectoriels",
     category: "Illustration",
-    thumbnail: "/assets/portfolio-thumbnail-02-flyers.png",
+    thumbnail: "thumbnails/portfolio-thumbnail-02-flyers",
     media: ["/assets/Lyna.jpg", "/assets/Joseph.jpg", "/assets/Imad.jpg"],
     shortDescription: "Série de portraits réalisés sur Illustrator.",
     description: "Série de trois portraits vectoriels réalisés sur Illustrator : un autoportrait et deux portraits de camarades de promo. J'ai cherché à garder une vraie cohérence d'ensemble, en travaillant tous les visages dans le même style — notamment au niveau des ombrestion : retranscrire un visage uniquement avec des courbes, des aplats et des nuances, sans trahir l'identité du modèle.",
@@ -88,7 +90,7 @@ export const projects: Project[] = [
     id: "stop-motion",
     title: "Stop motion",
     category: "Vidéo",
-    thumbnail: "/assets/portfolio-thumbnail-04-video.png",
+    thumbnail: "thumbnails/portfolio-thumbnail-04-video",
     video: "https://www.youtube.com/embed/hKmZZ7tPWEY",
     shortDescription: "Courte vidéo en stop motion.",
     description: "Courte vidéo en stop motion pensée comme une mini-séquence façon dessin animé. Je me suis inspirée des génériques Disney Channel, ceux qui présentent un par un les personnages d'une série — ici, deux camarades de promo et moi qui passons à l'écran tour à tour. Une technique qui demande beaucoup : storyboard, prises de vue image par image, montage, calage du rythme... mais qui m'a confirmé mon goût pour la narration visuelle et l'envie de continuer à explorer la vidéo.",
@@ -99,7 +101,7 @@ export const projects: Project[] = [
     id: "clip",
     title: "Clip — Blue (Yung Kai)",
     category: "Vidéo",
-    thumbnail: "/assets/portfolio-thumbnail-04-video.png",
+    thumbnail: "thumbnails/portfolio-thumbnail-04-video",
     video: "https://www.youtube.com/embed/Z2ge0r9_vfU",
     shortDescription: "Clip vidéo — Blue, Yung Kai (en cours de réalisation).",
     description: "Clip vidéo sur le morceau Blue de Yung Kai, actuellement fini. Ce projet traduit en images l'ambiance du clip original, avec un montage en lien avec le rythme et les paroles de la musique. J'ai voulu exploré une mise en scène narrative et anecdotique.",
@@ -112,7 +114,7 @@ export const projects: Project[] = [
     id: "sae-1",
     title: "SAE — Projet 1",
     category: "Projet universitaire",
-    thumbnail: "/assets/SAE1.png",
+    thumbnail: "thumbnails/sae1",
     media: [],
     shortDescription: "Projet universitaire en groupe — SAE.",
     description: "Projet pluridisciplinaire réalisé en groupe dans le cadre d'une SAE (Situation d'Apprentissage et d'Évaluation). Une expérience qui m'a poussée à mobiliser un large éventail de compétences — design graphique, vidéo, prototypage, intégration — tout en apprenant à coordonner les rôles, à gérer un planning (Diagramme de GANTT, tableau de bord) et à défendre nos choix créatifs face à un commanditaire.",
@@ -123,7 +125,7 @@ export const projects: Project[] = [
     id: "sae-2",
     title: "SkøllRub — Bière artisanale",
     category: "Projet universitaire",
-    thumbnail: "/assets/SAE2.png",
+    thumbnail: "thumbnails/sae2",
     media: [],
     shortDescription: "Projet de branding et design pour une bière artisanale inspirée de la mythologie nordique.",
     description: "SkøllRub est une bière artisanale blonde de style ALE, conçue comme un projet pluridisciplinaire combinant branding, design graphique et storytelling. Inspirée de la mythologie nordique avec ses deux loups magiques Sköll et Hati, la marque propose quatre variantes distinctes, chacune basée sur une légende différente. Le projet inclut une identité visuelle complète, une charte graphique détaillée et une stratégie de communication intégrée.",

@@ -9,7 +9,8 @@ import { env } from "cloudflare:workers";
 // cached.
 const VIDEO = /^\/(?:media\/video|animate\/videos)\/[^/]+\.mp4$/;
 // Every path run_worker_first sends here. Non-MP4 files under these prefixes (the hero
-// poster lives in /media/video/) go straight back to Static Assets, never to the SSR handler.
+// poster sits next to the hero video) go straight back to Static Assets, never to the SSR
+// handler.
 const WORKER_FIRST = /^\/(?:media\/video|animate\/videos)\//;
 
 async function serveVideo(request: Request): Promise<Response> {

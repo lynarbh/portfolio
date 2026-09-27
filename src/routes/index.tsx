@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router"; // Ajoute Link i
 import { useEffect, useMemo, useRef, useState } from "react";
 import { projects, type Project } from "@/data/projects";
 import { Reveal } from "@/components/Reveal";
+import { Picture } from "@/components/Picture";
 import { videos } from "@/data/media.generated";
 import emailjs from "@emailjs/browser";
 
@@ -19,8 +20,6 @@ export const Route = createFileRoute("/")({
   }),
   component: Index,
 });
-
-const PORTRAIT = "/media/portrait.jpg";
 
 const CATEGORIES = [
   "Tout",
@@ -195,12 +194,10 @@ function About() {
           <div className="portrait-wrapper mx-auto">
             {/* Circular portrait */}
             <div className="portrait-image">
-              <img
-                src={PORTRAIT}
+              <Picture
+                id="home/portrait"
                 alt="Portrait de Lyna Rebahi"
-                width={300}
-                height={300}
-                loading="lazy"
+                sizes="(min-width: 640px) 350px, 280px"
               />
             </div>
           </div>
@@ -279,10 +276,10 @@ function ProjectCard({ p }: { p: Project }) {
       aria-label={`Voir le projet ${p.title}`}
     >
       <div className="relative aspect-[4/5] overflow-visible">
-        <img
-          src={p.thumbnail}
+        <Picture
+          id={p.thumbnail}
           alt={p.title}
-          loading="lazy"
+          sizes="(min-width: 1280px) 395px, (min-width: 1024px) 31vw, (min-width: 640px) 46vw, calc(100vw - 48px)"
           className="h-full w-full object-cover transition duration-700 group-hover:scale-110"
         />
         <div className="absolute top-3 left-3">
