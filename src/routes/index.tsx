@@ -12,13 +12,17 @@ const HERO_VIDEO = "/videos/hero.mp4";
 const HERO_FALLBACK = "/assets/hero.png";
 const PORTRAIT = "/media/portrait.jpg";
 
-const CATEGORIES = ["Tout", "Vidéo", "Photo", "Branding", "Illustration", "Projet universitaire"] as const;
+const CATEGORIES = [
+  "Tout",
+  "Vidéo",
+  "Photo",
+  "Branding",
+  "Illustration",
+  "Projet universitaire",
+] as const;
 type Category = (typeof CATEGORIES)[number];
 
-const SKILL_TAGS = [
-  "Illustrator", "Photoshop", "Premiere Pro",
-  "Figma", "Canva", "HTML / CSS",
-];
+const SKILL_TAGS = ["Illustrator", "Photoshop", "Premiere Pro", "Figma", "Canva", "HTML / CSS"];
 
 function Nav() {
   const [open, setOpen] = useState(false);
@@ -30,10 +34,17 @@ function Nav() {
   return (
     <header className="fixed top-0 left-0 right-0 z-40">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
-        <a href="#top" className="font-display text-xl text-[var(--cream)] tracking-[0.2em]" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.6)' }}>
-           PORTFOLIO
+        <a
+          href="#top"
+          className="font-display text-xl text-[var(--cream)] tracking-[0.2em]"
+          style={{ textShadow: "0 2px 8px rgba(0,0,0,0.6)" }}
+        >
+          PORTFOLIO
         </a>
-        <nav className="hidden md:flex items-center gap-8 text-sm tracking-widest text-[var(--cream)]/90 uppercase" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.6)' }}>
+        <nav
+          className="hidden md:flex items-center gap-8 text-sm tracking-widest text-[var(--cream)]/90 uppercase"
+          style={{ textShadow: "0 2px 8px rgba(0,0,0,0.6)" }}
+        >
           {links.map((l) => (
             <a key={l.href} href={l.href} className="hover:text-[var(--sakura)] transition">
               {l.label}
@@ -63,18 +74,46 @@ function Nav() {
 
 function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [state, setState] = useState<"playing" | "paused">("paused");
+  const [failed, setFailed] = useState(false);
+  const userPaused = useRef(false);
 
   useEffect(() => {
-    const video = videoRef.current;
-    if (video) {
-      const playPromise = video.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          // Autoplay blocked - that's OK, poster image displays
-        });
-      }
-    }
+    const v = videoRef.current;
+    if (!v) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const onPlay = () => setState("playing");
+    const onPause = () => setState("paused");
+    const onError = () => setFailed(true);
+    const onVisibility = () => {
+      if (document.hidden) v.pause();
+      else if (!userPaused.current && !reduce) v.play().catch(() => {});
+    };
+    v.addEventListener("play", onPlay);
+    v.addEventListener("pause", onPause);
+    v.addEventListener("error", onError);
+    document.addEventListener("visibilitychange", onVisibility);
+    v.muted = true;
+    if (!reduce) v.play().catch(() => {});
+    return () => {
+      v.removeEventListener("play", onPlay);
+      v.removeEventListener("pause", onPause);
+      v.removeEventListener("error", onError);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
   }, []);
+
+  const toggle = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    if (state === "playing") {
+      userPaused.current = true;
+      v.pause();
+    } else {
+      userPaused.current = false;
+      v.play().catch(() => {});
+    }
+  };
 
   return (
     <section id="top" className="relative h-screen w-full overflow-hidden">
@@ -82,14 +121,14 @@ function Hero() {
         <video
           ref={videoRef}
           className="h-full w-full object-cover"
+          src={HERO_VIDEO}
           poster={HERO_FALLBACK}
-          autoPlay
           muted
           loop
           playsInline
-          preload="auto"
+          preload="metadata"
+          aria-hidden="true"
         >
-          <source src={HERO_VIDEO} type="video/mp4" />
           Votre navigateur ne supporte pas la vidéo HTML5.
         </video>
         <div
@@ -100,6 +139,19 @@ function Hero() {
           }}
         />
       </div>
+
+      <button
+        type="button"
+        aria-pressed={state === "paused"}
+        hidden={failed}
+        onClick={toggle}
+        className="fixed z-30 flex h-11 w-11 items-center justify-center rounded-[2px] border bottom-[calc(1rem+env(safe-area-inset-bottom))] right-[calc(1rem+env(safe-area-inset-right))] sm:bottom-[calc(1.5rem+env(safe-area-inset-bottom))] sm:right-[calc(1.5rem+env(safe-area-inset-right))] border-[color-mix(in_oklab,var(--gold)_70%,transparent)] bg-[rgba(61,31,58,0.85)] backdrop-blur-[6px] text-[var(--cream)] hover:bg-[color-mix(in_oklab,var(--sakura)_35%,rgb(61_31_58))] transition-colors duration-300 motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--sakura)]"
+      >
+        <span className="sr-only">Mettre en pause la vidéo</span>
+        <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path d={state === "playing" ? "M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" : "M8 5v14l11-7z"} />
+        </svg>
+      </button>
 
       <div className="relative z-10 grain h-full flex flex-col items-center justify-center px-6 text-center text-[var(--cream)]">
         <Reveal delay={150}>
@@ -150,14 +202,16 @@ function About() {
               Qui <em className="text-[var(--sakura)]">suis-je ?</em>
             </h2>
             <p className="mt-5 font-body leading-relaxed text-[var(--plum)]/85">
-              Une cinéphile accro à l'audiovisuel qui pense résoudre le monde avec des vidéos.
-              J'ai 20 ans, je crée des contenus visuels (vidéos, affiches, identités) et je
-              passe mes journées à rêver de courts-métrages et mes soirées à faire du bénévolat.
-              Pas mal, non ?
+              Une cinéphile accro à l'audiovisuel qui pense résoudre le monde avec des vidéos. J'ai
+              20 ans, je crée des contenus visuels (vidéos, affiches, identités) et je passe mes
+              journées à rêver de courts-métrages et mes soirées à faire du bénévolat. Pas mal, non
+              ?
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
               {SKILL_TAGS.map((t) => (
-                <span key={t} className="hud-tag">{t}</span>
+                <span key={t} className="hud-tag">
+                  {t}
+                </span>
               ))}
             </div>
           </div>
@@ -182,10 +236,12 @@ function About() {
               id="play-btn"
               className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/20 transition-all duration-300 group-hover:bg-black/25"
               onClick={(e) => {
-                const video = (e.currentTarget.parentElement?.querySelector('video') as HTMLVideoElement | null);
+                const video = e.currentTarget.parentElement?.querySelector(
+                  "video",
+                ) as HTMLVideoElement | null;
                 if (video) {
                   video.play();
-                  e.currentTarget.style.display = 'none';
+                  e.currentTarget.style.display = "none";
                 }
               }}
             >
@@ -231,7 +287,9 @@ function ProjectCard({ p }: { p: Project }) {
             }}
           >
             <div className="text-center text-[#d4a574] font-bold text-sm leading-tight">
-              En cours<br />de dev
+              En cours
+              <br />
+              de dev
             </div>
           </div>
         )}
@@ -252,16 +310,18 @@ function ProjectCard({ p }: { p: Project }) {
   );
 }
 
-
 function Projects() {
   const [filter, setFilter] = useState<Category>("Tout");
   const filtered = useMemo(
     () => (filter === "Tout" ? projects : projects.filter((p) => p.category === filter)),
-    [filter]
+    [filter],
   );
 
   return (
-    <section id="projects" className="relative py-28 px-6 bg-[color-mix(in_oklab,var(--cream)_95%,var(--sakura))]">
+    <section
+      id="projects"
+      className="relative py-28 px-6 bg-[color-mix(in_oklab,var(--cream)_95%,var(--sakura))]"
+    >
       <div className="mx-auto max-w-7xl">
         <Reveal>
           <div className="flex flex-col items-center text-center">
@@ -348,7 +408,7 @@ function Contact() {
     >
       <div className="mx-auto max-w-3xl">
         <Reveal>
-           <div className="flex flex-col items-center text-center">
+          <div className="flex flex-col items-center text-center">
             <h2 className="chapter-title mt-4 text-4xl sm:text-6xl text-[var(--cream)]">
               Prenons contact
             </h2>
@@ -364,11 +424,7 @@ function Contact() {
         </Reveal>
 
         <Reveal delay={150}>
-          <form
-            ref={formRef}
-            onSubmit={handleSubmit}
-            className="mt-12 grid gap-5"
-          >
+          <form ref={formRef} onSubmit={handleSubmit} className="mt-12 grid gap-5">
             <input
               required
               name="name"
@@ -405,14 +461,24 @@ function Contact() {
             lyna.rebahi@gmail.com
           </a>
           <span className="text-[var(--gold)]">·</span>
-          <a href="https://www.linkedin.com/in/lyna-rebahi/" className="hover:text-[var(--sakura)] transition">LinkedIn</a>
+          <a
+            href="https://www.linkedin.com/in/lyna-rebahi/"
+            className="hover:text-[var(--sakura)] transition"
+          >
+            LinkedIn
+          </a>
           <span className="text-[var(--gold)]">·</span>
-          <a href="https://www.instagram.com/lynae.quiet/" className="hover:text-[var(--sakura)] transition">Instagram</a>
+          <a
+            href="https://www.instagram.com/lynae.quiet/"
+            className="hover:text-[var(--sakura)] transition"
+          >
+            Instagram
+          </a>
         </div>
       </div>
 
       <footer className="mt-20 text-center text-xs tracking-widest text-[var(--cream)]/50">
-        Lyna Rebahi Portfolio {new Date().getFullYear()} 
+        Lyna Rebahi Portfolio {new Date().getFullYear()}
       </footer>
     </section>
   );
