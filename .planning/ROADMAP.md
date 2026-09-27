@@ -31,7 +31,13 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Dans l'iframe SkøllRub, la chaîne complète des 6 scènes (`1_MOHAMED → 1_LYNA → 2_IMAD → 2_CLEMENT → 2_SOPHIA → 3_ALBERTIN`) se parcourt jusqu'au bout après le nettoyage de `public/animate/` (`.fla`, `.ai`, `~ai-*.tmp`, `RECOVER_*`, `illustrations/`, `3_CLEMENT.*`, 8 vidéos racine retirés ; `images/`, `imagesImad/`, `imagesframe2/`, `components/`, `videos/` intacts)
   4. `src/assets/` n'existe plus et le portrait s'affiche depuis `public/media/` ; les fichiers non référencés de `public/assets/` sont passés par une quarantaine après un inventaire qui décode les URL (NFD/NFC, `%20`) ; `vercel.json`, `server.js`, `bun.lockb`, `bunfig.toml` et les dépendances signalées par `knip` ont disparu
   5. Tous les originaux (dont `affichepromo.png`, `prévention.png` et `charte_graphique.pdf`) sont sauvegardés dans `media-src/` gitignoré ; `git log --stat` du milestone ne montre aucun binaire de plusieurs Mo ajouté et le PDF n'a jamais été commité
-**Plans**: TBD
+**Plans**: 4 plans (4 vagues séquentielles)
+
+Plans:
+- [ ] 01-01-PLAN.md — Filet de sécurité : media-src/ gitignoré + sauvegarde vérifiée, PDF et sources Animate hors de public/, garde-fou `npm run check` prouvé par fixtures
+- [ ] 01-02-PLAN.md — Version lite : décor et mousemove retirés, portrait sur /media, src/assets supprimé, références cassées corrigées (0 × 404)
+- [ ] 01-03-PLAN.md — Élagage : kit ui, dépendances knip, lint opérationnel, Cloudflare seule cible (vercel.json, server.js, bun.lockb, bunfig.toml)
+- [ ] 01-04-PLAN.md — Inventaire décodant + quarantaine public/assets, validation humaine (décor, 404, 6 scènes Animate), porte de phase + push sans déploiement
 **Notes**:
 - Invariant : aucun fichier de `src/routes/` n'est créé, supprimé ou renommé (seul le contenu de `index.tsx` / `$projectId.tsx` est édité) → `routeTree.gen.ts` reste inchangé.
 - Ordre de suppression imposé : fichiers `src/components/ui/*` → paquets → lint ; ne jamais éditer `vite.config.ts` en réaction à une erreur de build (wrapper Lovable).
