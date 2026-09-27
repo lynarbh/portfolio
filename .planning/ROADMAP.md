@@ -74,7 +74,16 @@ Plans:
   4. `node scripts/media.mjs` régénère `public/media/**` et `src/data/media.generated.ts` depuis `media-src/` de façon reproductible (deux exécutions → mêmes fichiers), sans jamais tourner dans le build Cloudflare
   5. La page « Identité d'un festival » affiche la galerie des ~10 planches Tafsut extraites (logo, palette, typos, affiche, billets, goodies, signalétique) et n'est plus marquée « en cours » ; le PDF n'est plus dans `public/` ; les branches `project.id === "…"` de `$projectId.tsx` sont conservées et pointent vers `public/media/**`
 
-**Plans**: TBD
+**Plans**: 7 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — Worker Range (206) `src/server.ts` + `wrangler.jsonc`, machine d'état et bouton pause accessible du hero, porte de légitimité sharp
+- [ ] 02-02-PLAN.md — Squelette du pipeline `scripts/media.mjs` (manifeste, cache, `media.generated.ts`, verify-media) + hero SDR CRF 32 ≤ 4 Mo et poster préchargé, validation visuelle de Lyna
+- [ ] 02-03-PLAN.md — Branche images (presets photo/graphic, srcset 640/1200/2400) + `<Picture>` sur l'accueil (portrait + 9 cartes)
+- [ ] 02-04-PLAN.md — 50 images des pages projet via le pipeline, branches `project.id` re-pointées vers `<Picture>` (PROJ-07), suppression de `public/assets/`
+- [ ] 02-05-PLAN.md — Branche PDF (`gs` 300 dpi, une page par appel) : galerie des 10 planches Tafsut sur « Identité d'un festival », `inProgress` retiré
+- [ ] 02-06-PLAN.md — Vidéo CV (CRF 29) + 8 vidéos process en 720p (point de contrôle Lyna sur empattage avant le lot), exceptions vidées, `public/` < 60 Mio
+- [ ] 02-07-PLAN.md — Règle de budget 60 Mio dans le garde-fou, porte de fin de phase depuis zéro, premier `npm run deploy`, curl en production, rollback documenté, push, UAT appareils réels
 **UI hint**: yes
 **Notes**:
 
