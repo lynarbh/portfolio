@@ -26,7 +26,51 @@ if (!existsSync(DIST)) {
   process.exit(2);
 }
 
-const exceptions = JSON.parse(readFileSync(EXCEPTIONS_FILE, "utf8")).exceptions ?? [];
+const errors = [];
+const warns = [];
+
+// Rules an exception may waive. The 25 MiB ceiling, forbidden extensions and ffprobe
+// failures are deliberately absent: they can never be waived.
+const RULES = new Set(["size", "faststart", "pix_fmt"]);
+
+function loadExceptions() {
+  if (!existsSync(EXCEPTIONS_FILE)) {
+    warns.push("exceptions file not found: no exceptions applied");
+    return [];
+  }
+  const invalid = (msg) => {
+    console.error(`check-assets: invalid ${relative(ROOT, EXCEPTIONS_FILE)}: ${msg}`);
+    process.exit(2);
+  };
+  let parsed;
+  try {
+    parsed = JSON.parse(readFileSync(EXCEPTIONS_FILE, "utf8"));
+  } catch (err) {
+    invalid(err.message);
+  }
+  const list = parsed?.exceptions ?? [];
+  if (!Array.isArray(list)) invalid('"exceptions" must be an array');
+  for (const [i, e] of list.entries()) {
+    const where = `exception #${i} ${JSON.stringify(e)}`;
+    if (typeof e?.path !== "string" || e.path === "") invalid(`${where}: "path" must be a string`);
+    if (!Array.isArray(e.waive) || e.waive.length === 0) {
+      invalid(`${where}: "waive" must be a non-empty array`);
+    }
+    const unknown = e.waive.filter((r) => !RULES.has(r));
+    if (unknown.length) {
+      invalid(
+        `${where}: unknown rule(s) ${unknown.join(", ")}; valid rules: ${[...RULES].join(", ")}` +
+          " (25 MiB ceiling and forbidden extensions are never waivable)",
+      );
+    }
+    if (e.reason !== undefined && typeof e.reason !== "string") {
+      invalid(`${where}: "reason" must be a string`);
+    }
+  }
+  return list;
+}
+
+const exceptions = loadExceptions();
 const waived = (rel, rule) =>
   exceptions.some((e) => e.path.normalize("NFC") === rel && e.waive.includes(rule));
 
@@ -103,8 +147,6 @@ function pixFmt(file) {
   return value ? { pixFmt: value } : { error: "no video stream" };
 }
 
-const errors = [];
-const warns = [];
 const report = (rel, rule, message) => {
   if (waived(rel, rule)) warns.push(`${message} [waived]`);
   else errors.push(message);
@@ -150,7 +192,7 @@ console.log(
   `check-assets: ${(total / MiB).toFixed(1)} MiB in dist/client, ${exceptions.length} exception(s):`,
 );
 for (const e of exceptions) {
-  console.log(`  EXCEPTION ${e.path} waive=[${e.waive.join(",")}]: ${e.reason}`);
+  console.log(`  EXCEPTION ${e.path} waive=[${e.waive.join(",")}]: ${e.reason ?? ""}`);
 }
 for (const w of warns) console.warn(`  WARN  ${w}`);
 for (const e of errors) console.error(`  FAIL  ${e}`);
