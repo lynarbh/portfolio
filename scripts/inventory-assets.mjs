@@ -67,16 +67,33 @@ const existing = new Set(walk(PUBLIC).map((f) => nfc(toUrl(f))));
 const missing = new Set();
 // Scanned on the raw (still percent-encoded) text so that "%20" is not turned into a space
 // that would cut the match short; each match is decoded afterwards. Two passes:
-// - quoted literals ("...", '...', `...`) that start with the prefix: the whole literal is the
-//   path, so spaces, parentheses and commas inside it are kept;
+// - quoted literals ("...", '...', `...`) that start with the prefix: the whole literal, trimmed,
+//   is the path, so spaces, parentheses, commas and the other quote characters (l'image.png) are
+//   kept. A literal holding a srcset candidate list ("/assets/a.png 1x, /assets/a@2x.png 2x") is
+//   split on commas and each candidate loses its width/density descriptor;
 // - bare text (quoted literals blanked out): stops at whitespace, quotes, brackets and commas,
 //   drops trailing sentence punctuation, and skips external URLs and template pieces (a path
 //   preceded by a host, path or "}" character, e.g. https://cdn.example.com/assets/x.png or
 //   ${BASE}/assets/x.png).
-const QUOTED_RE = /(["'`])(\/(?:assets|videos|animate|media)\/[^"'`\n]+?)\1/g;
+// Known limits: JSON-escaped slashes ("\/assets\/a.png") are not detected, and an apostrophe
+// directly before a bare path (l'/assets/a.png d'abord) is read as an opening quote.
+const PREFIX = String.raw`\/(?:assets|videos|animate|media)\/`;
+const QUOTED_RE = new RegExp(
+  `"(${PREFIX}[^"\\n]+?)"|'(${PREFIX}[^'\\n]+?)'|\`(${PREFIX}[^\`\\n]+?)\``,
+  "g",
+);
 const BARE_RE = /(?<![\w.:/}-])\/(?:assets|videos|animate|media)\/[^\s"'`()<>,]+/g;
+const DESCRIPTOR_RE = /\s+\d+(?:\.\d+)?[wx]\s*(?:,|$)/;
+const PREFIX_RE = new RegExp(`^${PREFIX}`);
+const splitQuoted = (literal) =>
+  DESCRIPTOR_RE.test(literal)
+    ? literal
+        .split(",")
+        .map((c) => c.trim().replace(/\s+\d+(?:\.\d+)?[wx]$/, ""))
+        .filter((c) => PREFIX_RE.test(c))
+    : [literal.trim()];
 const candidates = (text) => [
-  ...[...text.matchAll(QUOTED_RE)].map((m) => m[2]),
+  ...[...text.matchAll(QUOTED_RE)].flatMap((m) => splitQuoted(m[1] ?? m[2] ?? m[3])),
   ...[...text.replace(QUOTED_RE, " ").matchAll(BARE_RE)].map((m) =>
     m[0].replace(/[.,;:!?)>\]]+$/, ""),
   ),
