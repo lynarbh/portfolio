@@ -1,10 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router"; // Ajoute Link ici
 import { useEffect, useMemo, useRef, useState } from "react";
 import { projects, type Project } from "@/data/projects";
-import { Petals } from "@/components/Petals";
 import { Reveal } from "@/components/Reveal";
-import { CornerOrnament } from "@/components/CornerOrnament";
-import { ProjectModal } from "@/components/ProjectModal";
 import portrait from "@/assets/portrait.jpg";
 import emailjs from "@emailjs/browser";
 
@@ -22,179 +19,6 @@ const SKILL_TAGS = [
   "Illustrator", "Photoshop", "Premiere Pro",
   "Figma", "Canva", "HTML / CSS",
 ];
-
-const PORTRAIT_EFFECT_SETTINGS = {
-  particles: {
-    length: 700,
-    duration: 2,
-    velocity: 120,
-    effect: -0.9,
-    size: 40,
-  },
-};
-
-class Point {
-  x: number;
-  y: number;
-
-  constructor(x = 0, y = 0) {
-    this.x = x;
-    this.y = y;
-  }
-
-  clone() {
-    return new Point(this.x, this.y);
-  }
-
-  length(): number;
-  length(length: number): this;
-  length(length?: number): number | this {
-    if (typeof length === "undefined") {
-      return Math.sqrt(this.x * this.x + this.y * this.y);
-    }
-    this.normalize();
-    this.x *= length;
-    this.y *= length;
-    return this;
-  }
-
-  normalize() {
-    const length = Math.sqrt(this.x * this.x + this.y * this.y);
-    if (length !== 0) {
-      this.x /= length;
-      this.y /= length;
-    }
-    return this;
-  }
-}
-
-class Particle {
-  position = new Point();
-  velocity = new Point();
-  acceleration = new Point();
-  age = 0;
-
-  initialize(x: number, y: number, dx: number, dy: number) {
-    this.position.x = x;
-    this.position.y = y;
-    this.velocity.x = dx;
-    this.velocity.y = dy;
-    this.acceleration.x = dx * PORTRAIT_EFFECT_SETTINGS.particles.effect;
-    this.acceleration.y = dy * PORTRAIT_EFFECT_SETTINGS.particles.effect;
-    this.age = 0;
-  }
-
-  update(deltaTime: number) {
-    this.position.x += this.velocity.x * deltaTime;
-    this.position.y += this.velocity.y * deltaTime;
-    this.velocity.x += this.acceleration.x * deltaTime;
-    this.velocity.y += this.acceleration.y * deltaTime;
-    this.age += deltaTime;
-  }
-
-  draw(context: CanvasRenderingContext2D, image: HTMLImageElement) {
-    function ease(t: number) {
-      return (--t) * t * t + 1;
-    }
-    const size = image.width * ease(this.age / PORTRAIT_EFFECT_SETTINGS.particles.duration);
-    context.globalAlpha = 1 - this.age / PORTRAIT_EFFECT_SETTINGS.particles.duration;
-    context.drawImage(image, this.position.x - size / 2, this.position.y - size / 2, size, size);
-  }
-}
-
-class ParticlePool {
-  particles: Particle[];
-  firstActive = 0;
-  firstFree = 0;
-  duration = PORTRAIT_EFFECT_SETTINGS.particles.duration;
-
-  constructor(length: number) {
-    this.particles = Array.from({ length }, () => new Particle());
-  }
-
-  add(x: number, y: number, dx: number, dy: number) {
-    this.particles[this.firstFree].initialize(x, y, dx, dy);
-    this.firstFree++;
-    if (this.firstFree === this.particles.length) this.firstFree = 0;
-    if (this.firstActive === this.firstFree) this.firstActive++;
-    if (this.firstActive === this.particles.length) this.firstActive = 0;
-  }
-
-  update(deltaTime: number) {
-    if (this.firstActive < this.firstFree) {
-      for (let i = this.firstActive; i < this.firstFree; i++) {
-        this.particles[i].update(deltaTime);
-      }
-    }
-    if (this.firstFree < this.firstActive) {
-      for (let i = this.firstActive; i < this.particles.length; i++) {
-        this.particles[i].update(deltaTime);
-      }
-      for (let i = 0; i < this.firstFree; i++) {
-        this.particles[i].update(deltaTime);
-      }
-    }
-    while (this.particles[this.firstActive].age >= this.duration && this.firstActive !== this.firstFree) {
-      this.firstActive++;
-      if (this.firstActive === this.particles.length) this.firstActive = 0;
-    }
-  }
-
-  draw(context: CanvasRenderingContext2D, image: HTMLImageElement) {
-    if (this.firstActive < this.firstFree) {
-      for (let i = this.firstActive; i < this.firstFree; i++) {
-        this.particles[i].draw(context, image);
-      }
-    }
-    if (this.firstFree < this.firstActive) {
-      for (let i = this.firstActive; i < this.particles.length; i++) {
-        this.particles[i].draw(context, image);
-      }
-      for (let i = 0; i < this.firstFree; i++) {
-        this.particles[i].draw(context, image);
-      }
-    }
-  }
-}
-
-function pointOnHeart(t: number) {
-  return new Point(
-    160 * Math.pow(Math.sin(t), 3),
-    130 * Math.cos(t) - 50 * Math.cos(2 * t) - 20 * Math.cos(3 * t) - 10 * Math.cos(4 * t) + 25
-  );
-}
-
-function createParticleImage(size: number) {
-  const imageCanvas = document.createElement("canvas");
-  const context = imageCanvas.getContext("2d");
-  if (!context) throw new Error("Canvas context unavailable");
-  imageCanvas.width = size;
-  imageCanvas.height = size;
-
-  const to = (t: number) => {
-    const point = pointOnHeart(t);
-    point.x = size / 2 + (point.x * size) / 350;
-    point.y = size / 2 - (point.y * size) / 350;
-    return point;
-  };
-
-  context.beginPath();
-  let t = -Math.PI;
-  let point = to(t);
-  context.moveTo(point.x, point.y);
-  while (t < Math.PI) {
-    t += 0.01;
-    point = to(t);
-    context.lineTo(point.x, point.y);
-  }
-  context.closePath();
-  context.fillStyle = "#ea80b0";
-  context.fill();
-
-  const image = new Image();
-  image.src = imageCanvas.toDataURL();
-  return image;
-}
 
 function Nav() {
   const [open, setOpen] = useState(false);
@@ -307,9 +131,6 @@ function About() {
       <div className="mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-[minmax(0,22rem)_1fr]">
         <Reveal>
           <div className="portrait-wrapper mx-auto">
-            {/* Conic gradient border */}
-            <div className="portrait-gradient-border" />
-
             {/* Circular portrait */}
             <div className="portrait-image">
               <img
@@ -320,20 +141,11 @@ function About() {
                 loading="lazy"
               />
             </div>
-
-            {/* Floating badge */}
-            <div className="floating-badge">
-              <div>
-                <span className="badge-icon">✦</span>20 ans
-              </div>
-              <div className="badge-title">Designer Multimédia</div>
-            </div>
           </div>
         </Reveal>
 
         <Reveal delay={150}>
           <div className="ornament-card relative bg-[var(--card)] p-8 sm:p-10">
-            <CornerOrnament />
             <h2 className="mt-4 font-display text-4xl sm:text-5xl">
               Qui <em className="text-[var(--sakura)]">suis-je ?</em>
             </h2>
@@ -492,10 +304,6 @@ function Projects() {
   );
 }
 
-function Skills() {
-  return null;
-}
-
 function Contact() {
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -610,32 +418,13 @@ function Contact() {
   );
 }
 
-function CustomCursor() {
-  const [pos, setPos] = useState({ x: -100, y: -100 });
-  useEffect(() => {
-    const fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-    if (!fine) return;
-    document.documentElement.classList.add("sakura-cursor");
-    const onMove = (e: MouseEvent) => setPos({ x: e.clientX, y: e.clientY });
-    window.addEventListener("mousemove", onMove);
-    return () => {
-      document.documentElement.classList.remove("sakura-cursor");
-      window.removeEventListener("mousemove", onMove);
-    };
-  }, []);
-  return <div className="cursor-dot" style={{ left: pos.x, top: pos.y }} />;
-}
-
 function Index() {
   return (
     <main className="relative">
-      <Petals />
-      <CustomCursor />
       <Nav />
       <Hero />
       <About />
       <Projects />
-      <Skills />
       <Contact />
     </main>
   );

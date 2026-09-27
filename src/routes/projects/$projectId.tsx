@@ -1,7 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { projects } from "@/data/projects";
 import { Reveal } from "@/components/Reveal";
-import { Petals } from "@/components/Petals";
 
 export const Route = createFileRoute("/projects/$projectId")({
   component: ProjectPage,
@@ -30,7 +29,6 @@ function ProjectPage() {
 
   return (
     <>
-      <Petals />
       <main className="min-h-screen bg-[var(--cream)] px-6 py-24">
       <div className="mx-auto max-w-4xl">
 
