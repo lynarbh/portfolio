@@ -2,6 +2,9 @@
 // src/data/media.generated.ts (Node type stripping) and checks every video it lists:
 // file under public/, faststart, yuv420p, ≤ 12,000,000 B; for the hero, the exact SDR
 // signature, no audio, ≤ 4,000,000 B, 1080×574 and a WebP poster ≤ 110,000 B at 1080 px.
+// Every image: all files exist, long edge ≤ 2400 (≤ 1200 for thumbnails/*), no ICC
+// profile, w descriptors equal to the real widths, fallback ≤ 640 px, kebab-case names,
+// graphic = no WebP and AVIF in 4:4:4.
 // Finally, every "/media/..." URL in the module must exist on disk.
 // Never writes anything. Exit codes: 2 = generated module missing, 1 = any FAIL, 0 = OK.
 import { existsSync, readFileSync, statSync } from "node:fs";
@@ -26,9 +29,10 @@ if (!existsSync(GENERATED)) {
   console.error("verify-media: src/data/media.generated.ts missing: run `npm run media` first");
   process.exit(2);
 }
-const { videos } = await import(pathToFileURL(GENERATED).href);
+const { images, videos } = await import(pathToFileURL(GENERATED).href);
 
 const errors = [];
+const warns = [];
 const fail = (msg) => errors.push(msg);
 const urlToPath = (url) => join(PUBLIC, url.replace(/^\//, ""));
 
@@ -110,6 +114,81 @@ for (const [id, v] of Object.entries(videos)) {
   }
 }
 
+// Images.
+const IMAGE_MAX = 2400;
+const THUMB_MAX = 1200;
+const FALLBACK_MAX = 640;
+const FILE_RE = /^[a-z0-9-]+\.(avif|webp|jpg|png)$/;
+const DIR_RE = /^[a-z0-9-]+$/;
+
+// AVIF chroma subsampling: sharp does not expose it for HEIF, ffprobe reports the pix_fmt.
+function avifPixFmt(file) {
+  try {
+    const { stdout } = run("ffprobe", [
+      "-v",
+      "error",
+      "-select_streams",
+      "v:0",
+      "-show_entries",
+      "stream=pix_fmt",
+      "-of",
+      "csv=p=0",
+      file,
+    ]);
+    return stdout.trim().split("\n")[0] || undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+for (const [id, img] of Object.entries(images)) {
+  const cap = id.startsWith("thumbnails/") ? THUMB_MAX : IMAGE_MAX;
+  const files = [
+    ...img.avif.map(([w, url]) => ({ w, url, kind: "avif" })),
+    ...(img.webp ?? []).map(([w, url]) => ({ w, url, kind: "webp" })),
+    { url: img.fallback, kind: "fallback" },
+  ];
+  if (img.preset === "graphic" && img.webp) fail(`${id}: graphic entry has webp`);
+  if (!img.avif.length) fail(`${id}: no avif rung`);
+  for (const { w, url, kind } of files) {
+    const parts = url.split("/");
+    const name = parts.at(-1);
+    const dir = parts.at(-2);
+    if (!url.startsWith("/media/") || !FILE_RE.test(name) || !DIR_RE.test(dir)) {
+      fail(`${id}: bad file name ${url}`);
+    }
+    const file = urlToPath(url);
+    if (!existsSync(file)) {
+      fail(`${id}: ${url} missing under public/`);
+      continue;
+    }
+    try {
+      const meta = await sharp(file).metadata();
+      const edge = Math.max(meta.width, meta.height);
+      if (edge > IMAGE_MAX) fail(`${id}: ${url} long edge ${edge} > ${IMAGE_MAX}`);
+      if (kind !== "fallback" && edge > cap) fail(`${id}: ${url} long edge ${edge} > ${cap}`);
+      if (meta.icc !== undefined) fail(`${id}: ${url} carries an ICC profile`);
+      if (w !== undefined && w !== meta.width) {
+        fail(`${id}: ${url} descriptor ${w}w but file is ${meta.width} px wide`);
+      }
+      if (kind === "fallback" && edge > FALLBACK_MAX) {
+        fail(`${id}: fallback long edge ${edge} > ${FALLBACK_MAX}`);
+      }
+      if (kind === "avif" && img.preset === "graphic") {
+        const pixFmt = meta.chromaSubsampling ?? avifPixFmt(file);
+        if (pixFmt === undefined) warns.push(`${id}: ${url} chroma non vérifiable`);
+        else if (pixFmt !== "4:4:4" && pixFmt !== "yuv444p") {
+          fail(`${id}: ${url} graphic AVIF is ${pixFmt}, want 4:4:4`);
+        }
+      }
+    } catch (err) {
+      fail(`${id}: ${url}: ${err.message}`);
+    }
+  }
+  const top = img.avif.at(-1);
+  if (top && top[0] !== img.width) fail(`${id}: width ${img.width} != top rung ${top[0]}w`);
+}
+
 // Every /media/... literal of the generated module must exist on disk.
 const urls = new Set(readFileSync(GENERATED, "utf8").match(/"\/media\/[^"]+"/g) ?? []);
 for (const quoted of urls) {
@@ -117,6 +196,7 @@ for (const quoted of urls) {
   if (!existsSync(urlToPath(url))) fail(`missing on disk: ${url}`);
 }
 
+for (const w of warns) console.warn(`  WARN  ${w}`);
 for (const e of errors) console.error(`  FAIL  ${e}`);
 console.log(errors.length ? `verify-media: ${errors.length} failure(s)` : "verify-media: OK");
 process.exit(errors.length ? 1 : 0);

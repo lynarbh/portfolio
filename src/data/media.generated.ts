@@ -22,7 +22,100 @@ export type VideoEntry = {
   readonly poster?: string;
 };
 
-export const images = {} as const satisfies Record<string, ImageEntry>;
+export const images = {
+  "home/portrait": {
+    preset: "photo",
+    width: 1139,
+    height: 1512,
+    avif: [
+      [482, "/media/home/portrait-640.avif"],
+      [904, "/media/home/portrait-1200.avif"],
+      [1139, "/media/home/portrait-1512.avif"],
+    ],
+    webp: [
+      [482, "/media/home/portrait-640.webp"],
+      [904, "/media/home/portrait-1200.webp"],
+      [1139, "/media/home/portrait-1512.webp"],
+    ],
+    fallback: "/media/home/portrait.jpg",
+  },
+  "thumbnails/portfolio-thumbnail-01-branding": {
+    preset: "photo",
+    width: 896,
+    height: 1200,
+    avif: [
+      [478, "/media/thumbnails/portfolio-thumbnail-01-branding-640.avif"],
+      [896, "/media/thumbnails/portfolio-thumbnail-01-branding-1200.avif"],
+    ],
+    webp: [
+      [478, "/media/thumbnails/portfolio-thumbnail-01-branding-640.webp"],
+      [896, "/media/thumbnails/portfolio-thumbnail-01-branding-1200.webp"],
+    ],
+    fallback: "/media/thumbnails/portfolio-thumbnail-01-branding.jpg",
+  },
+  "thumbnails/portfolio-thumbnail-02-flyers": {
+    preset: "photo",
+    width: 1024,
+    height: 1024,
+    avif: [
+      [640, "/media/thumbnails/portfolio-thumbnail-02-flyers-640.avif"],
+      [1024, "/media/thumbnails/portfolio-thumbnail-02-flyers-1024.avif"],
+    ],
+    webp: [
+      [640, "/media/thumbnails/portfolio-thumbnail-02-flyers-640.webp"],
+      [1024, "/media/thumbnails/portfolio-thumbnail-02-flyers-1024.webp"],
+    ],
+    fallback: "/media/thumbnails/portfolio-thumbnail-02-flyers.jpg",
+  },
+  "thumbnails/portfolio-thumbnail-03-web": {
+    preset: "photo",
+    width: 1024,
+    height: 1024,
+    avif: [
+      [640, "/media/thumbnails/portfolio-thumbnail-03-web-640.avif"],
+      [1024, "/media/thumbnails/portfolio-thumbnail-03-web-1024.avif"],
+    ],
+    webp: [
+      [640, "/media/thumbnails/portfolio-thumbnail-03-web-640.webp"],
+      [1024, "/media/thumbnails/portfolio-thumbnail-03-web-1024.webp"],
+    ],
+    fallback: "/media/thumbnails/portfolio-thumbnail-03-web.jpg",
+  },
+  "thumbnails/portfolio-thumbnail-04-video": {
+    preset: "photo",
+    width: 1024,
+    height: 1024,
+    avif: [
+      [640, "/media/thumbnails/portfolio-thumbnail-04-video-640.avif"],
+      [1024, "/media/thumbnails/portfolio-thumbnail-04-video-1024.avif"],
+    ],
+    webp: [
+      [640, "/media/thumbnails/portfolio-thumbnail-04-video-640.webp"],
+      [1024, "/media/thumbnails/portfolio-thumbnail-04-video-1024.webp"],
+    ],
+    fallback: "/media/thumbnails/portfolio-thumbnail-04-video.jpg",
+  },
+  "thumbnails/sae1": {
+    preset: "graphic",
+    width: 951,
+    height: 1200,
+    avif: [
+      [507, "/media/thumbnails/sae1-640.avif"],
+      [951, "/media/thumbnails/sae1-1200.avif"],
+    ],
+    fallback: "/media/thumbnails/sae1.png",
+  },
+  "thumbnails/sae2": {
+    preset: "graphic",
+    width: 948,
+    height: 1200,
+    avif: [
+      [505, "/media/thumbnails/sae2-640.avif"],
+      [948, "/media/thumbnails/sae2-1200.avif"],
+    ],
+    fallback: "/media/thumbnails/sae2.png",
+  },
+} as const satisfies Record<string, ImageEntry>;
 
 export type MediaId = keyof typeof images;
 

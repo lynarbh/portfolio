@@ -32,14 +32,17 @@ import {
   requireBins,
   sha256,
   sha256File,
+  toKebab,
 } from "./media/util.mjs";
 
 // Bump on any encoder change (arguments, filters, poster settings) to invalidate the cache.
-const PIPELINE_VERSION = "1";
+const PIPELINE_VERSION = "2";
 const MiB = 1024 * 1024;
 const BUDGET_MIB = 60;
 const HERO_SSIM_WARN = 0.9;
 const CLASSES = new Set(["hero"]);
+const PRESET_NAMES = new Set(["photo", "graphic"]);
+const IMAGE_SSIM_WARN = { photo: 0.93, graphic: 0.96 };
 const OUT_PREFIXES = ["media/", "animate/videos/"];
 const CACHE_FILE = join(MEDIA_SRC, ".cache.json");
 const TMP_DIR = join(MEDIA_SRC, ".tmp");
@@ -80,10 +83,15 @@ function loadManifest() {
   if (typeof m.galleries !== "object" || m.galleries === null || Array.isArray(m.galleries)) {
     invalid('"galleries" must be an object');
   }
-  if (m.images.length || m.pdf.length || Object.keys(m.galleries).length) {
-    invalid("images, pdf and galleries are not implemented yet (plan 02-03 / 02-06)");
+  if (m.pdf.length || Object.keys(m.galleries).length) {
+    invalid("pdf and galleries are not implemented yet (plan 02-06)");
+  }
+  const defaults = m.defaults ?? {};
+  if (typeof defaults !== "object" || Array.isArray(defaults)) {
+    invalid('"defaults" must be an object');
   }
 
+  // Ids are shared by images and videos: a collision is a configuration error.
   const ids = new Set();
   const outPath = (where, rel) => {
     let abs;
@@ -129,6 +137,46 @@ function loadManifest() {
     v.srcAbs = srcAbs;
     v.outAbs = outAbs;
   }
+  for (const [i, img] of m.images.entries()) {
+    const where = `images[${i}]`;
+    if (typeof img !== "object" || img === null) invalid(`${where}: must be an object`);
+    let srcAbs;
+    try {
+      srcAbs = insideDir(MEDIA_SRC, img.src);
+    } catch (err) {
+      invalid(`${where}.src: ${err.message} (sources must stay inside media-src/)`);
+    }
+    if (!existsSync(srcAbs)) invalid(`${where}.src: media-src/${img.src} not found`);
+    const segments = img.src.split("/");
+    const project = segments[0];
+    if (segments.length < 2 || !/^[a-z0-9-]+$/.test(project)) {
+      invalid(`${where}.src: first segment "${project}" must be a /^[a-z0-9-]+$/ project folder`);
+    }
+    img.preset ??= defaults.preset ?? "graphic";
+    if (!PRESET_NAMES.has(img.preset)) {
+      invalid(
+        `${where}: unknown preset ${JSON.stringify(img.preset)}; valid: ${[...PRESET_NAMES]}`,
+      );
+    }
+    if (img.max !== undefined && (!Number.isInteger(img.max) || img.max < 640 || img.max > 2400)) {
+      invalid(`${where}: "max" must be an integer in 640..2400`);
+    }
+    if (img.alt !== undefined && typeof img.alt !== "string") {
+      invalid(`${where}: "alt" must be a string`);
+    }
+    if (img.id !== undefined) {
+      if (typeof img.id !== "string" || !/^[a-z0-9-]+\/[a-z0-9-]+$/.test(img.id)) {
+        invalid(`${where}: "id" must match /^[a-z0-9-]+\\/[a-z0-9-]+$/`);
+      }
+    } else {
+      const name = toKebab(segments[segments.length - 1].replace(/\.[^.]*$/, ""));
+      if (!name) invalid(`${where}.src: cannot derive an id from "${img.src}"`);
+      img.id = `${project}/${name}`;
+    }
+    if (ids.has(img.id)) invalid(`${where}: duplicate id "${img.id}"`);
+    ids.add(img.id);
+    img.srcAbs = srcAbs;
+  }
   return m;
 }
 
@@ -158,6 +206,23 @@ const cacheHit = (id, key) => {
 
 // Effective options: everything that changes the output bytes, except the source path.
 const videoOptions = (v) => ({ class: v.class, out: v.out, crf: v.crf, poster: v.poster });
+const imageOptions = (img) => ({ id: img.id, preset: img.preset, max: img.max, alt: img.alt });
+
+// Encodes (or reuses the cache for) one entry, records its outputs as produced.
+async function processEntry(id, key, encode) {
+  let status = "cached";
+  if (FORCE || !cacheHit(id, key)) {
+    const { outputs, meta } = await encode();
+    cache[id] = {
+      key,
+      outputs: outputs.map((abs) => ({ path: toRootRel(abs), sha256: sha256File(abs) })),
+      meta,
+    };
+    status = "encoded";
+  }
+  for (const o of cache[id].outputs) produced.add(o.path);
+  return { status, ...cache[id] };
+}
 
 const produced = new Set();
 const lines = [];
@@ -165,25 +230,19 @@ const lines = [];
 // d) Scratch directory, always removed.
 mkdirSync(TMP_DIR, { recursive: true });
 try {
-  const { encodeVideo } = await import("./media/video.mjs").catch((err) => {
-    console.error(`media: cannot load encoders (is sharp installed?): ${err.message}`);
-    process.exit(2);
-  });
+  const loadEncoders = (path) =>
+    import(path).catch((err) => {
+      console.error(`media: cannot load encoders (is sharp installed?): ${err.message}`);
+      process.exit(2);
+    });
+  const { encodeVideo } = await loadEncoders("./media/video.mjs");
+  const { encodeImage } = await loadEncoders("./media/images.mjs");
   for (const v of manifest.videos) {
     const key = sha256(sha256File(v.srcAbs) + JSON.stringify(videoOptions(v)) + PIPELINE_VERSION);
     try {
-      let status = "cached";
-      if (FORCE || !cacheHit(v.id, key)) {
-        const { outputs, meta } = await encodeVideo(v, v.srcAbs, v.outAbs, TMP_DIR);
-        cache[v.id] = {
-          key,
-          outputs: outputs.map((abs) => ({ path: toRootRel(abs), sha256: sha256File(abs) })),
-          meta,
-        };
-        status = "encoded";
-      }
-      const { outputs, meta } = cache[v.id];
-      for (const o of outputs) produced.add(o.path);
+      const { status, meta } = await processEntry(v.id, key, () =>
+        encodeVideo(v, v.srcAbs, v.outAbs, TMP_DIR),
+      );
       const mib = (statSync(v.outAbs).size / MiB).toFixed(2);
       lines.push(`media: ${v.id} ${status} ${mib} MiB SSIM ${meta.ssim.toFixed(4)}`);
       if (v.class === "hero" && meta.ssim < HERO_SSIM_WARN) {
@@ -193,6 +252,26 @@ try {
       errors.push(`${v.id}: ${err.message}`);
     }
   }
+  for (const img of [...manifest.images].sort((a, b) => byKey(a.id, b.id))) {
+    const key = sha256(
+      sha256File(img.srcAbs) + JSON.stringify(imageOptions(img)) + PIPELINE_VERSION,
+    );
+    try {
+      const { status, outputs, meta } = await processEntry(img.id, key, () =>
+        encodeImage(img, img.srcAbs, TMP_DIR),
+      );
+      const kib = outputs.reduce((sum, o) => sum + statSync(join(ROOT, o.path)).size, 0) / 1024;
+      const low = meta.ssim < IMAGE_SSIM_WARN[meta.preset];
+      lines.push(
+        `media: ${img.id} ${status} ${kib.toFixed(1)} KiB SSIM ${meta.ssim.toFixed(4)}${low ? " WARN" : ""}`,
+      );
+      if (low) {
+        warns.push(`${img.id} SSIM ${meta.ssim.toFixed(4)} < ${IMAGE_SSIM_WARN[meta.preset]}`);
+      }
+    } catch (err) {
+      errors.push(`${img.id}: ${err.message}`);
+    }
+  }
 } finally {
   rmSync(TMP_DIR, { recursive: true, force: true });
 }
@@ -200,7 +279,7 @@ try {
 // Keep only entries still in the manifest, keys sorted: stable file across runs.
 const cacheOut = {};
 for (const id of Object.keys(cache).sort(byKey)) {
-  if (manifest.videos.some((v) => v.id === id)) cacheOut[id] = cache[id];
+  if ([...manifest.videos, ...manifest.images].some((e) => e.id === id)) cacheOut[id] = cache[id];
 }
 writeFileSync(CACHE_FILE, JSON.stringify(cacheOut, null, 2) + "\n");
 
@@ -219,6 +298,22 @@ function renderGenerated() {
     videoLines.push(`  ${str(v.id)}: {`);
     for (const [k, val] of fields) videoLines.push(`    ${k}: ${val},`);
     videoLines.push("  },");
+  }
+  const imageLines = [];
+  const rungs = (list) => list.map(([w, url]) => `      [${w}, ${str(url)}],`);
+  const imgs = manifest.images
+    .filter((img) => cache[img.id]?.meta)
+    .sort((a, b) => byKey(a.id, b.id));
+  for (const img of imgs) {
+    const { meta } = cache[img.id];
+    imageLines.push(`  ${str(img.id)}: {`);
+    imageLines.push(`    preset: ${str(meta.preset)},`);
+    imageLines.push(`    width: ${meta.width},`, `    height: ${meta.height},`);
+    imageLines.push("    avif: [", ...rungs(meta.avif), "    ],");
+    if (meta.webp) imageLines.push("    webp: [", ...rungs(meta.webp), "    ],");
+    imageLines.push(`    fallback: ${str(meta.fallback)},`);
+    if (meta.alt !== undefined) imageLines.push(`    alt: ${str(meta.alt)},`);
+    imageLines.push("  },");
   }
   return [
     "/* eslint-disable */",
@@ -245,7 +340,9 @@ function renderGenerated() {
     "  readonly poster?: string;",
     "};",
     "",
-    "export const images = {} as const satisfies Record<string, ImageEntry>;",
+    "export const images = {",
+    ...imageLines,
+    "} as const satisfies Record<string, ImageEntry>;",
     "",
     "export type MediaId = keyof typeof images;",
     "",
