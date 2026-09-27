@@ -77,13 +77,34 @@ Plans:
 **Plans**: 7 plans
 
 Plans:
+**Wave 1**
+
 - [ ] 02-01-PLAN.md — Worker Range (206) `src/server.ts` + `wrangler.jsonc`, machine d'état et bouton pause accessible du hero, porte de légitimité sharp
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [ ] 02-02-PLAN.md — Squelette du pipeline `scripts/media.mjs` (manifeste, cache, `media.generated.ts`, verify-media) + hero SDR CRF 32 ≤ 4 Mo et poster préchargé, validation visuelle de Lyna
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
 - [ ] 02-03-PLAN.md — Branche images (presets photo/graphic, srcset 640/1200/2400) + `<Picture>` sur l'accueil (portrait + 9 cartes)
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
 - [ ] 02-04-PLAN.md — 50 images des pages projet via le pipeline, branches `project.id` re-pointées vers `<Picture>` (PROJ-07), suppression de `public/assets/`
+
+**Wave 5** *(blocked on Wave 4 completion)*
+
 - [ ] 02-05-PLAN.md — Branche PDF (`gs` 300 dpi, une page par appel) : galerie des 10 planches Tafsut sur « Identité d'un festival », `inProgress` retiré
+
+**Wave 6** *(blocked on Wave 5 completion)*
+
 - [ ] 02-06-PLAN.md — Vidéo CV (CRF 29) + 8 vidéos process en 720p (point de contrôle Lyna sur empattage avant le lot), exceptions vidées, `public/` < 60 Mio
+
+**Wave 7** *(blocked on Wave 6 completion)*
+
 - [ ] 02-07-PLAN.md — Règle de budget 60 Mio dans le garde-fou, porte de fin de phase depuis zéro, premier `npm run deploy`, curl en production, rollback documenté, push, UAT appareils réels
+
 **UI hint**: yes
 **Notes**:
 

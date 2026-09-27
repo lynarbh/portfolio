@@ -661,17 +661,17 @@ useEffect(() => {
 | A5 | SSIM thresholds 0.96 (graphic) and 0.93 (photo) are reasonable alert levels | Code Examples | Only affects warnings. Tune after A/B. |
 | A6 | AVIF support is high enough that a 640 px fallback is acceptable for the rest | Budget | Non-AVIF browsers see softer images. Visible only on very old Safari/Edge. |
 
-## Open Questions
+## Open Questions (RESOLVED — 2026-09-28, see 02-CONTEXT.md « Décisions ajoutées après recherche »)
 
-1. **Process videos at 720p (deviation from "même résolution").**
+1. **Process videos at 720p (deviation from "même résolution").** RESOLVED: Lyna accepted 720p / 25 fps / CRF 30 / AAC 64k; human checkpoint on one clip in the Animate scene before the batch (plan 02-06).
    - Known: 1080p cannot fit the budget. 720p is visually equivalent at the Animate display size (SSIM evidence plus an A/B crop).
    - Recommendation: a planner checkpoint (`checkpoint:human-verify`) that shows Lyna one 720p process clip inside the Animate scene on `wrangler dev` before the batch run.
-2. **Hero CRF 32 acceptable?**
+2. **Hero CRF 32 acceptable?** RESOLVED: Lyna chose CRF 32 ≤ 4 Mo at native 1080×574, 30 fps; human checkpoint under the real gradient (plan 02-02).
    - Moving water is the worst case for H.264.
    - Recommendation: A/B of CRF 30 (5.06 MiB, over budget), 31 (4.28 MiB, over) and 32 (3.61 MiB) under the real gradient overlay. Only 32 fits ≤ 4 MB at 30 fps. If rejected, the alternatives are 25 fps CRF 30 (4.65 MiB, still over) or relaxing the 4 MB budget.
-3. **Poster budget: 100 KB at 1080 px or 69 KB at 800 px?** Recommend 1080w q60 and amend the UI-SPEC budget.
-4. **Where do shared thumbnails live?** Recommend the `thumbnails/` project key until PROJ-01 (phase 4) gives each project its own.
-5. **CV output name:** `/media/video/cv-lyna-rebahi.mp4` (recommended, kebab) versus keeping `56_Lyna_REBAHI_CVvideo`.
+3. **Poster budget: 100 KB at 1080 px or 69 KB at 800 px?** RESOLVED: 1080 px WebP q60, budget raised to ≤ 110 KB (UI-SPEC amended). Recommend 1080w q60 and amend the UI-SPEC budget.
+4. **Where do shared thumbnails live?** RESOLVED: `media-src/thumbnails/` → `public/media/thumbnails/` until phase 4. Recommend the `thumbnails/` project key until PROJ-01 (phase 4) gives each project its own.
+5. **CV output name:** RESOLVED: `public/media/video/cv-lyna-rebahi.mp4`. `/media/video/cv-lyna-rebahi.mp4` (recommended, kebab) versus keeping `56_Lyna_REBAHI_CVvideo`.
 
 ## Environment Availability
 
