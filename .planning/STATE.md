@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: verifying
-stopped_at: Completed 01-04-PLAN.md (validation visuelle humaine en attente)
-last_updated: "2026-09-27T20:39:24.140Z"
+status: ready_to_plan
+stopped_at: Phase 1 complete (4/4) — ready to discuss Phase 2
+last_updated: 2026-09-27T21:28:42.463Z
 last_activity: 2026-09-27
 progress:
   total_phases: 5
@@ -21,13 +21,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-09-21)
 
 **Core value:** Un recruteur qui ouvre le site comprend en 3 secondes que Lyna vit l'audiovisuel — la vidéo domine, les médias sont mis en scène — et le site se charge vite malgré des visuels de qualité.
-**Current focus:** Phase 1 — Nettoyage & filet de sécurité
+**Current focus:** Phase 2 — médias légers & hero qui joue partout
 
 ## Current Position
 
-Phase: 1 (Nettoyage & filet de sécurité) — EXECUTING
-Plan: 4 of 4
-Status: Phase complete — ready for verification
+Phase: 2
+Plan: Not started
+Status: Ready to plan
 Last activity: 2026-09-27
 
 Progress: [██████████] 100%
@@ -36,7 +36,7 @@ Progress: [██████████] 100%
 
 **Velocity:**
 
-- Total plans completed: 0
+- Total plans completed: 4
 - Average duration: -
 - Total execution time: 0 hours
 
@@ -44,7 +44,7 @@ Progress: [██████████] 100%
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| - | - | - | - |
+| 1 | 4 | - | - |
 
 **Recent Trend:**
 
