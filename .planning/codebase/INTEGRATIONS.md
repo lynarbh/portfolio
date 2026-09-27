@@ -1,86 +1,80 @@
+---
+last_mapped_commit: 163c48737bad29b01210096abf6fb8eeec45c5a0
+---
+
 # External Integrations
 
-**Analysis Date:** 2026-09-21
+**Analysis Date:** 2026-09-27
 
 ## APIs & External Services
 
-**Email / Contact Form:**
-- EmailJS - Sends the site's contact-form submissions directly from the browser (no backend involved)
-  - SDK/Client: `@emailjs/browser` 4.4.1, imported in `src/routes/index.tsx:9`
-  - Init call: `emailjs.init("vH9gSi4D3ru6ad63Z")` — `src/routes/index.tsx:506` (inside `Contact()` component's `useEffect`)
-  - Send call: `emailjs.send("service_mkurl73", "template_b9lcxkl", templateParams)` — `src/routes/index.tsx:524`
-  - Payload: `{ name, email, message }` built from a native `<form>` via `FormData` — `src/routes/index.tsx:509-540` onward
-  - Auth: **Public key, service ID, and template ID are hardcoded as string literals in source**, not read from environment variables. There is no `.env`/`VITE_EMAILJS_*` indirection.
-    - Public key: `vH9gSi4D3ru6ad63Z`
-    - Service ID: `service_mkurl73`
-    - Template ID: `template_b9lcxkl`
-  - Note: EmailJS public keys are designed to be exposed client-side (that's the intended usage model for this SDK), so this is not a leaked secret in the traditional sense, but the service/template IDs being inline in `src/routes/index.tsx` means rotating them requires a code change and redeploy rather than an env var update.
+**Email delivery:**
+- EmailJS - Sends contact-form submissions directly from the browser, no backend involved
+  - SDK/Client: `@emailjs/browser` 4.4.1, imported in `src/routes/index.tsx:5`
+  - Initialization: `emailjs.init("vH9gSi4D3ru6ad63Z")` inside a `useEffect` in the `Contact` component (`src/routes/index.tsx:314`) — re-initializes on every mount of that component rather than once globally (no module-level singleton)
+  - Send call: `emailjs.send("service_mkurl73", "template_b9lcxkl", templateParams)` (`src/routes/index.tsx:332`), where `templateParams` is `{ name, email, message }` read from the form's `FormData`
+  - Auth: no environment variable — the EmailJS public key, service ID, and template ID are hardcoded string literals in `src/routes/index.tsx`. These are EmailJS "public" identifiers by design (meant to be exposed client-side) but are nonetheless visible verbatim in the bundled client JS; there is no server-side proxy.
+
+**Video embeds:**
+- YouTube (iframe embed, no SDK/API key) - Two portfolio project videos are embedded via `youtube.com/embed/...` iframes
+  - Data source: `video: "https://www.youtube.com/embed/hKmZZ7tPWEY"` and `video: "https://www.youtube.com/embed/Z2ge0r9_vfU"` in `src/data/projects.ts:92,103`
+  - Render: `src/routes/projects/$projectId.tsx:57-65` checks `project.video.includes("youtube.com/embed")` and renders an `<iframe>` when true
+  - A third, page-specific YouTube embed is hardcoded directly in the route (not sourced from `projects.ts`): `src="https://www.youtube.com/embed/jYkGO5j1BM4"` (`src/routes/projects/$projectId.tsx:458`)
+
+**Third-party script (via static asset export, not npm):**
+- CreateJS (`code.createjs.com/1.0.0/createjs.min.js`) - Loaded by `<script>` tags inside the Adobe Animate HTML export at `public/animate/*.html` (e.g. `public/animate/1_LYNA.html`). This is a compiled/vendored asset, not a project dependency — it is fetched from Adobe's CDN by the exported HTML/JS itself when one of those pages is loaded (embedded via `<iframe src="/animate/1_MOHAMED.html">` in `src/routes/projects/$projectId.tsx:443`). Do not edit the minified `.js` files under `public/animate/`; treat the whole directory as an opaque static asset (6 scene HTML/JS files + `images/`, `imagesImad/`, `imagesframe2/`, `components/`, `videos/`).
 
 **Fonts:**
-- Google Fonts - Loaded via `<link>` tags (not self-hosted, not npm package)
-  - Declared in `src/routes/__root.tsx` `head()` links array
-  - Preconnects to `fonts.googleapis.com` and `fonts.gstatic.com`
-  - Stylesheet: `https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@400;500;600&display=swap`
+- Google Fonts - `fonts.googleapis.com` / `fonts.gstatic.com`, loaded via `<link rel="preconnect">` + `<link rel="stylesheet">` tags in `src/routes/__root.tsx:46-48` (families: Cormorant Garamond, DM Sans). Not an npm package — pure external `<link>` reference resolved at request time.
 
 ## Data Storage
 
 **Databases:**
-- None. No ORM, database client, or connection string found anywhere in `package.json` or `src/`.
+- None. No database client, ORM, or connection string anywhere in the codebase.
 
 **File Storage:**
-- Local filesystem only — all portfolio media (images, videos, PDFs) are static assets checked into the repo:
-  - `public/assets/` - images, `charte_graphique.pdf`
-  - `public/videos/` - `hero.mp4`, `56_Lyna_REBAHI_CVvideo.mp4`
-  - `public/animate/` - Adobe Animate exports (`.fla`, `.html`, `.js`) and brewing-process videos
-  - `src/assets/` - additional imported images (bundled by Vite)
-  - Project content/metadata itself is a static TypeScript array in `src/data/projects.ts` (no CMS, no API-backed content)
+- Local filesystem only, via Vite's static asset pipeline — all media (`public/assets/`, `public/videos/`, `public/media/`, `public/animate/`) is served as static files from the built `dist/client` output on Cloudflare Workers. No cloud storage (S3, R2, Cloudinary, etc.) integration.
 
 **Caching:**
-- None detected (no Redis, no CDN cache config beyond whatever Cloudflare/Vercel apply by default at the platform level)
+- None detected. No Redis/KV client, no `@tanstack/react-query` usage (the package is not present in current dependencies — it was removed in the cleanup).
 
 ## Authentication & Identity
 
 **Auth Provider:**
-- None. This is a public, unauthenticated static/SSR portfolio site — no login, sessions, or user accounts.
+- None. This is a static/public-facing portfolio site with no login, no user accounts, and no auth middleware.
 
 ## Monitoring & Observability
 
 **Error Tracking:**
-- None (no Sentry, Bugsnag, etc.). The only error surfacing is client-side: a `DefaultErrorComponent` in `src/router.tsx` that displays `error.message` when `import.meta.env.DEV` is true, and a try/catch around the EmailJS send call in `src/routes/index.tsx` that sets a French-language error message in UI state.
+- None. No Sentry/Bugsnag/similar SDK. Errors are handled locally in-app: `DefaultErrorComponent` (`src/router.tsx`) and `NotFoundComponent` (`src/routes/__root.tsx`) render fallback UI; the contact form logs failures with `console.error(err)` (`src/routes/index.tsx:338`).
 
 **Logs:**
-- `console.error` calls only, e.g. `src/routes/index.tsx` (EmailJS send failure) and `server.js` (unhandled request errors in the Node HTTP wrapper)
+- No structured logging or log-shipping integration. `console.error` is the only logging call in `src/`.
 
 ## CI/CD & Deployment
 
 **Hosting:**
-- Dual target, both driven from the same TanStack Start build:
-  - **Cloudflare Workers** - `wrangler.jsonc` (app name `tanstack-start-app`, `nodejs_compat`, entry `@tanstack/react-start/server-entry`); build integration via `@cloudflare/vite-plugin` (bundled into `@lovable.dev/vite-tanstack-config`)
-  - **Vercel / generic Node** - `vercel.json` (`buildCommand: "npm run build"`, `outputDirectory: "dist/server"`); `server.js` provides a plain Node `http.createServer` wrapper around the built `dist/server/index.js` handler for non-edge Node hosting
+- Cloudflare Workers only — `wrangler.jsonc` (app name `tanstack-start-app`, `nodejs_compat` flag, entry `@tanstack/react-start/server-entry`). There is no Vercel config (`vercel.json` removed) and no standalone Node server (`server.js` removed); Cloudflare Workers is the sole deploy target.
 
 **CI Pipeline:**
-- None detected — no `.github/workflows/`, no other CI config files found in the repo root.
-
-**Platform note:**
-- The project scaffold originates from Lovable.dev: devDependency `@lovable.dev/vite-tanstack-config` (installed version 1.5.0) wraps Vite config and injects a dev-only "component tagger" plugin and sandbox environment detection. This implies the project may also be edited/deployed through the Lovable.dev platform in addition to Cloudflare/Vercel.
+- No CI config files detected (no `.github/workflows/`, no other CI provider config found in the repo root). Verification is manual, via `npm run check` (typecheck + build + asset guard + `wrangler deploy --dry-run`) and `npm run deploy` (adds the real `wrangler deploy`).
 
 ## Environment Configuration
 
 **Required env vars:**
-- None required for the app to build or run — no `.env*` files exist in the repo, and no `VITE_*`/`process.env` variables are referenced in `src/` (only the Vite built-in `import.meta.env.DEV` is used, in `src/router.tsx`).
-- `.gitignore` proactively excludes `.dev.vars` and `.wrangler/` (Cloudflare local dev secrets directory), even though none are currently present.
+- None. No `.env`/`.env.*` files exist, and no `VITE_*` variables are consumed by `src/` (only the Vite built-in `import.meta.env.DEV` is read, in `src/router.tsx`).
 
 **Secrets location:**
-- None present in the repo. All third-party credentials currently in use (EmailJS public key/service ID/template ID) are inlined directly in `src/routes/index.tsx` rather than stored as secrets — see the "Email / Contact Form" note above.
+- No secrets-management integration. The one credential-shaped values in the codebase (EmailJS public key/service ID/template ID) are inline string literals in `src/routes/index.tsx`, not pulled from any secret store — see the Email delivery entry above for the security caveat.
 
 ## Webhooks & Callbacks
 
 **Incoming:**
-- None — no server-side API routes, no webhook handlers found under `src/routes/`.
+- None. No webhook endpoints exist; the app has no server-side route handlers beyond the SSR page render (both `/` and `/projects/$projectId` read static in-memory data, no `loader`).
 
 **Outgoing:**
-- None beyond the EmailJS SDK call described above (which is a direct API call, not a webhook).
+- None beyond the EmailJS `send()` call described above (a direct client-to-EmailJS-API request, not a webhook in the traditional sense).
 
 ---
 
-*Integration audit: 2026-09-21*
+*Integration audit: 2026-09-27*

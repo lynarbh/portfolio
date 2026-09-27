@@ -1,163 +1,183 @@
+---
+last_mapped_commit: 163c48737bad29b01210096abf6fb8eeec45c5a0
+---
 # Codebase Structure
 
-**Analysis Date:** 2026-09-21
+**Analysis Date:** 2026-09-27
 
 ## Directory Layout
 
 ```
 portfolio/
-├── public/                       # Static files served as-is at the site root (not processed by Vite bundler)
-│   ├── favicon.ico
-│   ├── logo.png
-│   ├── videos/                   # Hero video + CV video (large MP4 files)
-│   ├── assets/                   # Project images/PDFs referenced by absolute "/assets/..." paths in src/data/projects.ts
-│   └── animate/                  # Embedded interactive HTML/JS mini-app (iframe'd into the "sae-2" project page)
-│       ├── components/{sdk,video/src}/
-│       ├── illustrations/, images/, imagesImad/, imagesframe2/, videos/
+├── .planning/              # GSD workflow artifacts (PROJECT.md, ROADMAP.md, phases/, codebase/) — not app code
+├── .nvmrc                   # Pins Node 24 for local dev
+├── CLAUDE.md                # Project-level instructions for Claude Code
+├── components.json          # shadcn/ui config (legacy — the ui/ kit it configures no longer exists in src/)
+├── eslint.config.js         # ESLint 9 flat config
+├── knip.json                # Unused-code/dead-file detector config (new since last map)
+├── package.json / package-lock.json   # npm-only now (no bun.lockb/bunfig.toml present)
+├── tsconfig.json            # TS strict mode, @/* → ./src/* alias
+├── vite.config.ts           # Thin wrapper delegating to @lovable.dev/vite-tanstack-config
+├── wrangler.jsonc           # Cloudflare Workers deploy config — the only deployment target
+├── .prettierrc / .prettierignore
+├── .gitignore                # ignores public/videos/extraitpubSAE1.mp4, public/assets/charte_graphique.pdf, media-src/
+├── scripts/
+│   ├── check-assets.mjs               # post-build asset guard (size/encoding rules), run by `npm run check`
+│   ├── check-assets.exceptions.json   # waiver list for legacy oversized/non-faststart media
+│   └── inventory-assets.mjs           # manual reference-audit script (not wired into any npm script)
 ├── src/
-│   ├── assets/                   # Image assets imported directly by TS/TSX (bundled, hashed by Vite), e.g. portrait.jpg
-│   ├── components/                # Shared, reusable React components (top-level = hand-written, ui/ = shadcn/Radix kit)
-│   │   └── ui/                   # shadcn-style Radix UI primitive wrappers (accordion, dialog, form, sidebar, etc.)
+│   ├── components/
+│   │   └── Reveal.tsx                # only shared component; scroll-triggered fade-in wrapper
 │   ├── data/
-│   │   └── projects.ts           # Single source of truth: `Project` type + `projects` array (all portfolio content)
-│   ├── hooks/
-│   │   └── use-mobile.tsx        # `useIsMobile()` media-query hook (used by ui/sidebar.tsx)
-│   ├── lib/
-│   │   └── utils.ts              # `cn()` class-name helper (clsx + tailwind-merge)
-│   ├── routes/                    # TanStack Start file-based routes (one file = one route)
-│   │   ├── __root.tsx            # Root route: HTML shell, <head> meta/fonts, 404 component
-│   │   ├── index.tsx              # "/" — the entire one-page site (hero/about/projects/contact)
+│   │   └── projects.ts                # Project type + the full projects[] array (single content source)
+│   ├── routes/
+│   │   ├── __root.tsx                 # HTML shell, <head> meta, global 404
+│   │   ├── index.tsx                  # home page: Nav, Hero, About, Projects, Contact (all inline)
 │   │   └── projects/
-│   │       └── $projectId.tsx    # "/projects/:projectId" — project detail page
-│   ├── router.tsx                 # `getRouter()` factory; default error component
-│   ├── routeTree.gen.ts          # AUTO-GENERATED route registration — do not hand-edit
-│   └── styles.css                 # Tailwind v4 theme tokens + custom design-system classes (imported by __root.tsx)
-├── server.js                      # Minimal Node http server wrapping the built SSR fetch handler (used by `npm start`)
-├── vite.config.ts                 # Wraps `@lovable.dev/vite-tanstack-config` (bundles TanStack Start/React/Tailwind/Cloudflare plugins)
-├── tsconfig.json                  # `@/*` → `./src/*` path alias, strict mode, bundler resolution
-├── components.json                # shadcn CLI config (new-york style, `@/components/ui` alias, lucide icons)
-├── eslint.config.js                # Flat ESLint config (typescript-eslint + react-hooks + react-refresh + prettier)
-├── .prettierrc                    # Prettier formatting rules (100 col width, double quotes off/false → double quotes, trailing commas)
-├── wrangler.jsonc                 # Cloudflare Workers deploy config (nodejs_compat, entry = @tanstack/react-start/server-entry)
-├── vercel.json                    # Vercel deploy config (build + outputDirectory = dist/server)
-├── package.json                   # Scripts: dev, build, build:dev, preview, start, lint, format
-├── bun.lockb / package-lock.json  # Dual lockfiles present (Bun and npm) — see naming/tooling note below
-└── bunfig.toml                    # Bun config (repo uses Bun as the primary package manager per lockfile + bunfig)
+│   │       └── $projectId.tsx         # project detail page, per-id hardcoded content branches
+│   ├── router.tsx                     # router factory + default error component
+│   ├── routeTree.gen.ts               # GENERATED — do not hand-edit
+│   └── styles.css                     # Tailwind v4 CSS-first theme + custom "quest" design-system classes
+├── public/                  # static assets served as-is
+│   ├── assets/               # (~82M) project images/screenshots referenced from src/data/projects.ts
+│   ├── videos/                # (~40M) hero.mp4, CV video
+│   ├── media/                  # (~2.5M) portrait.jpg
+│   ├── animate/                # (~90M) vendored Adobe Animate/CreateJS export — DO NOT deep-edit, iframed in
+│   │                            #   $projectId.tsx's "sae-2" branch; scene chain 1_MOHAMED → 1_LYNA →
+│   │                            #   2_IMAD → 2_CLEMENT → 2_SOPHIA → 3_ALBERTIN, navigated via window.open
+│   ├── favicon.ico
+│   └── logo.png
+├── media-src/                # gitignored working-media backups/quarantine (never committed, never deployed)
+├── dist/                     # build output (gitignored)
+└── node_modules/             # gitignored
 ```
+
+**Directories that no longer exist** (present in older documentation, absent from the current tree — verified via `find src -type f`): `src/components/ui/`, `src/lib/`, `src/hooks/`, `src/assets/`. Do not recreate them speculatively; if new shared logic is needed, place it directly under `src/` following the flat structure above (e.g. a new top-level `src/lib/utils.ts` only if a genuine cross-file utility need arises).
+
+**Files that no longer exist**: `server.js` (standalone Node HTTP server), `vercel.json`, `bun.lockb`, `bunfig.toml`. The project is npm-only (`package-lock.json` present) and Cloudflare-Workers-only.
 
 ## Directory Purposes
 
-**`public/`:**
-- Purpose: Files served verbatim at the site root by the SSR/static host; referenced in code via absolute URL strings (e.g. `"/videos/hero.mp4"`, `"/assets/hero.png"`), not via JS `import`.
-- Contains: Large media (`videos/`), all portfolio project images and one PDF (`assets/`), and a self-contained interactive HTML/CSS/JS sub-app (`animate/`) that is embedded via `<iframe src="/animate/1_MOHAMED.html">` inside the SkøllRub ("sae-2") project detail page (`src/routes/projects/$projectId.tsx:445`).
-- Key files: `public/videos/hero.mp4`, `public/videos/56_Lyna_REBAHI_CVvideo.mp4`, `public/assets/*.png|jpg|pdf`, `public/animate/1_MOHAMED.html` (implied entry for the iframe).
-
-**`src/assets/`:**
-- Purpose: Images imported directly in TS/TSX via `import x from "@/assets/..."` so Vite bundles, hashes, and optimizes them (distinct from `public/assets`, which is unprocessed).
-- Contains: Portrait, mockups, logos, and various project reference images — many of these filenames overlap conceptually with `public/assets` but the two are separate, non-deduplicated collections.
-- Key files: `src/assets/portrait.jpg` (imported in `src/routes/index.tsx:8`).
+**`src/routes/`:**
+- Purpose: TanStack Router file-based route definitions — the entire page-level composition of the site.
+- Contains: `__root.tsx` (root shell/404), `index.tsx` (single-page home, 431 lines), `projects/$projectId.tsx` (project detail, 647 lines — the largest source file in the repo).
+- Key files: `src/routes/index.tsx`, `src/routes/projects/$projectId.tsx`.
+- Invariant for this milestone: no route file is added, removed, or renamed, so `src/routeTree.gen.ts` never needs regeneration mid-milestone.
 
 **`src/components/`:**
-- Purpose: Hand-written, reusable, presentational components used directly by routes.
-- Contains: `Reveal.tsx` (scroll animation), `Petals.tsx` (decorative background), `CornerOrnament.tsx` (decorative SVG), `ProjectModal.tsx` (currently unused/dead — see `ARCHITECTURE.md` Anti-Patterns).
-- Key files: `src/components/Reveal.tsx`, `src/components/Petals.tsx`.
-
-**`src/components/ui/`:**
-- Purpose: shadcn-generated wrappers around Radix UI primitives, scaffolded via `components.json` but not currently wired into the live pages.
-- Contains: `accordion.tsx`, `alert-dialog.tsx`, `button.tsx`, `card.tsx`, `dialog.tsx`, `form.tsx`, `sidebar.tsx`, `chart.tsx`, and ~25 more.
-- Key files: `src/components/ui/button.tsx` (variant pattern via `class-variance-authority`, unused elsewhere in `src/routes`).
+- Purpose: Reusable, presentational, cross-page building blocks.
+- Contains: exactly one file, `Reveal.tsx` (40 lines) — a scroll-triggered `IntersectionObserver` fade-in wrapper used throughout both routes.
+- Key files: `src/components/Reveal.tsx`.
 
 **`src/data/`:**
-- Purpose: Static content module — the only "data layer" in the app.
-- Contains: `projects.ts` — `Project` TypeScript type + `projects: Project[]` array with all portfolio entries.
+- Purpose: Single source of truth for portfolio project content (pure static data, no I/O).
+- Contains: `projects.ts` — `Project` TypeScript type (id, title, category, thumbnail, optional `media[]`/`video`/`url`, descriptions, tools, role, `inProgress`) plus the `projects` array (9 entries, grouped by `// --- CATEGORY ---` comment dividers).
 - Key files: `src/data/projects.ts`.
 
-**`src/hooks/`:**
-- Purpose: Shared React hooks.
-- Contains: `use-mobile.tsx` (`useIsMobile()`), currently only consumed by `src/components/ui/sidebar.tsx`.
+**`scripts/`:**
+- Purpose: Node/ESM tooling that runs outside the Vite build — asset-weight and asset-reference enforcement for the "lite" milestone.
+- Contains: `check-assets.mjs` (post-build guard: 25 MiB hard Cloudflare ceiling, 20 MiB fail threshold, 10 MiB warn threshold, forbidden source extensions `.fla/.ai/.tmp/.pdf/.psd/.xd/.aep/.prproj`, video `pix_fmt`/faststart checks via `ffprobe`), `check-assets.exceptions.json` (waiver list, tied to a "phase 2 re-encode" TODO for `videos/hero.mp4`, `videos/56_Lyna_REBAHI_CVvideo.mp4`, `animate/videos/empattage.mp4`), `inventory-assets.mjs` (classifies every `public/` file — excluding `public/animate/` — as REF/NAME-ONLY/UNREF and reverse-scans `src/` for dangling media URLs; not wired into any npm script, run manually).
+- Key files: `scripts/check-assets.mjs`, `scripts/inventory-assets.mjs`.
 
-**`src/lib/`:**
-- Purpose: Small framework-agnostic utilities.
-- Contains: `utils.ts` (`cn()` helper used throughout `src/components/ui/*`).
+**`public/`:**
+- Purpose: Static media served verbatim by the Cloudflare Worker/Vite dev server.
+- Contains (sizes via `du -sh public/*`): `animate/` (90M, vendored Adobe Animate export — treat as opaque, do not deep-edit or deep-map), `assets/` (82M, project images/screenshots), `videos/` (40M, `hero.mp4` 17M + `56_Lyna_REBAHI_CVvideo.mp4` 23M), `media/` (2.5M, `portrait.jpg`), plus root-level `favicon.ico` (248K) and `logo.png` (60K).
+- Largest individual files in `public/assets/`: `affiche_sensibilisation_Lyna_Rebahi.png` (9.6M), `hero.png` (4.2M), `chartegraphique_SkollRub.png` (3.0M), several `clip*.png`/`flyer*.png`/`SAE*.png`/`logo*.png` in the 1.7–2.8M range — these are the primary targets for any future "lighten without visible quality loss" re-encode pass.
+- Generated: No (all hand-placed/exported media, none Vite-generated).
+- Committed: Yes, except the two files/patterns explicitly gitignored (`public/videos/extraitpubSAE1.mp4`, `public/assets/charte_graphique.pdf`).
 
-**`src/routes/`:**
-- Purpose: TanStack Start file-based routing — each file/folder maps to a URL path and is registered into `src/routeTree.gen.ts` by the TanStack Router Vite plugin.
-- Contains: `__root.tsx` (layout/shell), `index.tsx` (`/`), `projects/$projectId.tsx` (`/projects/:projectId`).
-- Key files: `src/routes/index.tsx` (642 lines — largest file in the codebase), `src/routes/projects/$projectId.tsx` (665 lines).
+**`media-src/`:**
+- Purpose: Working originals/backups/quarantine for media re-encoding work.
+- Generated: No — manually populated.
+- Committed: No (gitignored via `media-src/`).
+
+**`.planning/`:**
+- Purpose: GSD workflow artifacts (milestone/phase plans, research, this `codebase/` reference set). Not application code; not read by the Vite build.
+- Key files: `.planning/PROJECT.md`, `.planning/ROADMAP.md`, `.planning/phases/`, `.planning/codebase/*.md` (this document set).
 
 ## Key File Locations
 
 **Entry Points:**
-- `src/router.tsx`: Router factory (`getRouter()`), consumed by the TanStack Start Vite plugin for SSR/hydration.
-- `src/routes/__root.tsx`: Document shell (`<html>/<head>/<body>`), global meta tags, stylesheet injection.
-- `server.js`: Standalone Node production server entry (`npm start`), wraps `dist/server/index.js`.
+- `src/router.tsx`: Router factory (`getRouter`), default error component.
+- `src/routes/__root.tsx`: Root route — HTML shell, `<head>` metadata, global 404.
+- `wrangler.jsonc`: Cloudflare Workers entry (`main: "@tanstack/react-start/server-entry"`) — the sole production entry point; no `server.js` exists.
 
 **Configuration:**
-- `vite.config.ts`: Delegates to `@lovable.dev/vite-tanstack-config` preset (bundles TanStack Start, React, Tailwind v4, tsconfig-paths, Cloudflare build plugin — do not manually add these plugins, per the inline comment).
-- `tsconfig.json`: `@/*` path alias → `src/*`, `strict: true`, `noUnusedLocals`/`noUnusedParameters` disabled.
-- `components.json`: shadcn CLI settings (style `new-york`, base color `slate`, CSS variables enabled, aliases for `components`/`utils`/`ui`/`lib`/`hooks`).
-- `eslint.config.js`: Flat config combining `typescript-eslint` recommended, `react-hooks`, `react-refresh`, and `eslint-plugin-prettier` (formatting enforced as lint errors); `@typescript-eslint/no-unused-vars` explicitly turned off.
-- `.prettierrc` / `.prettierignore`: 100-char line width, double quotes, trailing commas everywhere, semicolons on.
-- `wrangler.jsonc`, `vercel.json`: Deployment targets for Cloudflare Workers and Vercel respectively.
+- `vite.config.ts`: Delegates entirely to `@lovable.dev/vite-tanstack-config`'s `defineConfig()` — do not manually re-add plugins it already bundles (see comment block at the top of the file).
+- `tsconfig.json`: ES2022 target, Bundler resolution, strict mode, `@/*` → `./src/*`.
+- `components.json`: shadcn/ui config — kept for reference/history but the `ui/` component kit it targets (`@/components/ui`) no longer exists in `src/`; do not treat this file as evidence that shadcn primitives are in use.
+- `wrangler.jsonc`: Cloudflare deployment config (`compatibility_date: 2025-09-24`, `nodejs_compat`).
+- `knip.json`: Configuration for the `knip` dead-code/unused-dependency detector (new tooling addition since the previous map — check this file before assuming any file/export is dead code).
 
 **Core Logic:**
-- `src/routes/index.tsx`: Entire single-page site UI (Nav, Hero, About, Projects grid + filter, Contact form with EmailJS, custom cursor).
-- `src/routes/projects/$projectId.tsx`: Project detail page, including project-specific hardcoded content blocks.
-- `src/data/projects.ts`: All portfolio project content and the `Project` type contract.
+- `src/routes/index.tsx`: Entire home page (hero, about, filterable project grid, contact form).
+- `src/routes/projects/$projectId.tsx`: Project detail page and all per-project bespoke content.
+- `src/data/projects.ts`: All project content/metadata.
 
 **Testing:**
-- Not applicable — no test framework, test files, or test scripts are present anywhere in the repository (`package.json` has no `test` script).
+- Not applicable — no test runner, no `*.test.*`/`*.spec.*` files, no test script in `package.json` (confirmed via `find` for test file patterns and `package.json` script list: `dev`, `build`, `build:dev`, `preview`, `lint`, `format`, `check`, `deploy`).
 
 ## Naming Conventions
 
 **Files:**
-- React components: `PascalCase.tsx` (e.g., `Reveal.tsx`, `CornerOrnament.tsx`, `ProjectModal.tsx`).
-- shadcn/ui primitives: `kebab-case.tsx` matching the shadcn CLI convention (e.g., `alert-dialog.tsx`, `hover-card.tsx`, `use-mobile.tsx`).
-- Route files: TanStack Start file-based routing conventions — `index.tsx` for a directory's index route, `__root.tsx` for the root layout, `$paramName.tsx` for dynamic segments (e.g., `$projectId.tsx`).
-- Data/lib/utils: lowercase, descriptive (`projects.ts`, `utils.ts`).
+- React components: `PascalCase.tsx` — `src/components/Reveal.tsx`.
+- Route files: TanStack Router file-based routing, lower-case / `$param` dynamic segments — `src/routes/index.tsx`, `src/routes/__root.tsx`, `src/routes/projects/$projectId.tsx`.
+- Data modules: `camelCase.ts` — `src/data/projects.ts`.
+- Generated files are not hand-edited: `src/routeTree.gen.ts` (excluded from Prettier via `.prettierignore`).
+- Tooling scripts: `kebab-case.mjs` — `scripts/check-assets.mjs`, `scripts/inventory-assets.mjs`.
 
 **Directories:**
-- Lowercase, single-word or hyphenated where needed (`components`, `routes`, `ui`, `use-mobile.tsx` lives directly in `hooks/` without further nesting).
-- Route directories mirror URL structure (`routes/projects/$projectId.tsx` → `/projects/:projectId`).
+- Lower-case, singular-purpose nouns — `components/`, `data/`, `routes/`, `scripts/`, `public/`.
+- Route sub-directories mirror URL segments — `routes/projects/` for the `/projects/*` path family.
 
 ## Where to Add New Code
 
-**New page/route:**
-- Add a new file under `src/routes/` (e.g., `src/routes/about.tsx` for `/about`, or `src/routes/blog/$slug.tsx` for `/blog/:slug`). The TanStack Router Vite plugin regenerates `src/routeTree.gen.ts` automatically — never hand-edit that file.
+**New project entry (most common addition):**
+- Add to `src/data/projects.ts`, under (or creating) the matching `// --- CATEGORY ---` comment block.
+- If it needs bespoke detail-page content beyond the generic description/tools/media block, add a new `{project.id === "new-id" && (...)}` branch in `src/routes/projects/$projectId.tsx` — consistent with the existing (if debt-laden) pattern; do not introduce a different content mechanism without an explicit phase for that refactor.
+- Do not create a new route file for it — the dynamic `$projectId` route already handles all project detail pages, and this milestone's invariant forbids adding/removing/renaming files under `src/routes/`.
 
-**New portfolio project:**
-- Add an entry to the `projects` array in `src/data/projects.ts`, following the existing `Project` shape. Place new images in `public/assets/` and reference them with an absolute `/assets/...` path (matches the existing convention for all current project media), or import from `src/assets/` if the image should be bundled/optimized by Vite.
-- Avoid adding a new `project.id === "..."` branch in `src/routes/projects/$projectId.tsx` for rich per-project content — see `ARCHITECTURE.md` Anti-Patterns for the recommended data-driven alternative (extend `Project` with structured `sections`).
+**New shared UI behavior:**
+- Add alongside `src/components/Reveal.tsx` in `src/components/` — this is the only place for reusable presentational components in the current tree.
 
-**New shared component:**
-- Hand-written presentational components: `src/components/*.tsx` (PascalCase), following the pattern in `Reveal.tsx`/`Petals.tsx` (typed props inline, no separate `.types.ts` files).
-- If deliberately adopting a shadcn primitive that already exists under `src/components/ui/`, wire it in directly; if a new shadcn primitive is needed, use the shadcn CLI (`components.json` is already configured) rather than hand-writing a new file in `ui/`.
+**New section on the home page:**
+- Add as a new inline component function inside `src/routes/index.tsx`, following the existing pattern (`Nav`, `Hero`, `About`, `Projects`, `Contact`), and render it from `Index` (`src/routes/index.tsx:421-431`).
 
-**Utilities:**
-- Shared, framework-agnostic helpers: `src/lib/utils.ts` (extend with additional small helpers, following the `cn()` pattern) or a new file in `src/lib/` for larger concerns.
-- Shared React hooks: `src/hooks/` (kebab-case filename, `use-` prefix, matching `use-mobile.tsx`).
+**Asset/tooling changes:**
+- Size/encoding rule changes: `scripts/check-assets.mjs` (`RULES`, `HARD`/`FAIL`/`WARN` thresholds, `FORBIDDEN` extensions).
+- New waivers for known-oversized legacy media: `scripts/check-assets.exceptions.json` (each entry needs `path`, `waive: [...]`, `reason`).
+- Reference-audit changes: `scripts/inventory-assets.mjs` (note it explicitly excludes `public/animate/` from its scan by design).
 
-**Styling:**
-- New design tokens (colors, radii): add to the `:root` block and `@theme inline` mapping in `src/styles.css`.
-- New reusable visual patterns: add a custom CSS class to `src/styles.css` (following `.quest-btn`/`.hud-tag`/`.ornament-card` naming) rather than introducing a new shadcn component variant, to stay consistent with the styling approach actually used by the live pages.
+**Styling/theme tokens:**
+- Add new CSS custom properties or component classes to `src/styles.css`, reusing existing tokens (`var(--plum)`, `var(--cream)`, `var(--sakura)`, `var(--gold)`) rather than introducing new raw hex colors.
 
 ## Special Directories
 
-**`public/animate/`:**
-- Purpose: A separate, self-contained interactive HTML/CSS/JS mini-project (with its own `components/sdk`, `components/video/src`, `images*`, `videos` subfolders) embedded via iframe into one specific project detail page.
-- Generated: Not part of the Vite/React build pipeline — served as static files, untouched by the bundler.
-- Committed: Yes.
-
 **`src/routeTree.gen.ts`:**
-- Purpose: Auto-generated route registration and type definitions produced by the TanStack Router Vite plugin from the contents of `src/routes/`.
-- Generated: Yes — regenerated automatically on dev/build whenever files under `src/routes/` change. The file itself carries `/* eslint-disable */` and `// @ts-nocheck` headers and explicit instructions not to hand-edit it.
-- Committed: Yes (present in the working tree; typical for TanStack Start projects so the type-safe route map is available without a build step).
+- Purpose: TanStack Router's auto-generated route registration/type map.
+- Generated: Yes (by the `@tanstack/router-plugin` Vite plugin, part of `@lovable.dev/vite-tanstack-config`).
+- Committed: Yes (tracked in git, but excluded from Prettier via `.prettierignore` and marked `/* eslint-disable */`/`// @ts-nocheck` at the top of the file).
 
-**`dist/` (build output, not present in a fresh checkout):**
-- Purpose: Vite build output (`dist/server/index.js` is the SSR handler referenced by `server.js` and by `vercel.json`'s `outputDirectory`).
-- Generated: Yes, via `npm run build`.
-- Committed: No (not observed in the working tree; standard build-artifact directory).
+**`public/animate/`:**
+- Purpose: Vendored Adobe Animate (CreateJS) interactive export, embedded via `<iframe>` in the `sae-2` project's detail-page branch.
+- Generated: Yes, but by an external Adobe Animate export process, not by this repo's build — treat as a black box.
+- Committed: Yes (90M total), but excluded from `scripts/inventory-assets.mjs`'s reference scan and out of scope for deep exploration per this milestone's directives.
+
+**`dist/`:**
+- Purpose: Vite build output (`dist/client`, `dist/server`), consumed by `wrangler deploy` and `scripts/check-assets.mjs`.
+- Generated: Yes (`vite build`).
+- Committed: No (gitignored).
+
+**`media-src/`:**
+- Purpose: Pre-optimization working copies / backups / quarantine for media assets.
+- Generated: No.
+- Committed: No (gitignored, explicitly called out with a comment in `.gitignore`: "Working originals, backups and quarantine — never committed, never deployed").
+
+**`.wrangler/`:**
+- Purpose: Cloudflare Wrangler's local dev/build cache.
+- Generated: Yes.
+- Committed: No (gitignored).
 
 ---
 
-*Structure analysis: 2026-09-21*
+*Structure analysis: 2026-09-27*
