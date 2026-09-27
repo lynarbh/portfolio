@@ -1,0 +1,5 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "ignore": ["public/**", "media-src/**", "src/routeTree.gen.ts"],
+  "ignoreDependencies": ["tailwindcss", "tw-animate-css", "@tanstack/router-plugin"]
+}
