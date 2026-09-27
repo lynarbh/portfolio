@@ -44,7 +44,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 01-02-PLAN.md — Version lite : décor et mousemove retirés, portrait sur /media, src/assets supprimé, références cassées corrigées (0 × 404)
+- [x] 01-02-PLAN.md — Version lite : décor et mousemove retirés, portrait sur /media, src/assets supprimé, références cassées corrigées (0 × 404)
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
@@ -157,7 +157,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Nettoyage & filet de sécurité | 1/4 | In Progress|  |
+| 1. Nettoyage & filet de sécurité | 2/4 | In Progress|  |
 | 2. Médias légers & hero qui joue partout | 0/TBD | Not started | - |
 | 3. Hero & Qui suis-je en scène | 0/TBD | Not started | - |
 | 4. Projets mis en scène | 0/TBD | Not started | - |

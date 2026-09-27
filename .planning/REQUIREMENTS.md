@@ -10,12 +10,12 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Nettoyage (CLEAN)
 
 - [ ] **CLEAN-01**: Le code mort est supprimé (`ProjectModal.tsx`, `Skills()` vide, `Petals.tsx`, kit `src/components/ui/` non utilisé par les pages) et `tsc --noEmit && vite build` passe
-- [ ] **CLEAN-02**: Tous les effets déco sont retirés pour la version lite : pétales, curseur rose personnalisé, badge flottant « 20 ans », ornements de coins, particules sur le portrait (`PORTRAIT_EFFECT_SETTINGS` / classe `Point`)
+- [x] **CLEAN-02**: Tous les effets déco sont retirés pour la version lite : pétales, curseur rose personnalisé, badge flottant « 20 ans », ornements de coins, particules sur le portrait (`PORTRAIT_EFFECT_SETTINGS` / classe `Point`)
 - [ ] **CLEAN-03**: Les dépendances inutilisées sont retirées après passage de `knip` (`@tanstack/react-query`, `zod`, `react-hook-form`, `@hookform/resolvers`, `date-fns`, paquets `@radix-ui/*` orphelins) ; la validation du formulaire reste en HTML natif
-- [ ] **CLEAN-04**: `src/assets/` est supprimé après migration de `portrait.jpg` (import Vite vivant dans `index.tsx:8`) ; un seul emplacement canonique pour les médias : `public/media/**`
+- [x] **CLEAN-04**: `src/assets/` est supprimé après migration de `portrait.jpg` (import Vite vivant dans `index.tsx:8`) ; un seul emplacement canonique pour les médias : `public/media/**`
 - [x] **CLEAN-05**: `public/animate/` est nettoyé (`.fla`, `.ai`, `~ai-*.tmp`, `RECOVER_*`, `illustrations/`, `3_CLEMENT.*`, les 8 vidéos à la racine) et la chaîne complète des 6 scènes (`1_MOHAMED → 1_LYNA → 2_IMAD → 2_CLEMENT → 2_SOPHIA → 3_ALBERTIN`) se parcourt jusqu'au bout
 - [ ] **CLEAN-06**: Les fichiers de `public/assets/` non référencés sont retirés après un inventaire qui décode les URL (`%20`, `ø`, `é`, normalisation NFD/NFC) et une étape de quarantaine avant suppression
-- [ ] **CLEAN-07**: Les références cassées sont corrigées (`extraitpubSAE1.mp4` gitignoré/absent dans `$projectId.tsx`, `festival-flyer.jpg` / `festival-goodies.jpg` dans `projects.ts`)
+- [x] **CLEAN-07**: Les références cassées sont corrigées (`extraitpubSAE1.mp4` gitignoré/absent dans `$projectId.tsx`, `festival-flyer.jpg` / `festival-goodies.jpg` dans `projects.ts`)
 - [ ] **CLEAN-08**: Cloudflare est la seule cible de déploiement : `vercel.json`, `server.js`, `bun.lockb` et `bunfig.toml` sont supprimés ; npm (déjà utilisé pour `node_modules`) reste le gestionnaire de paquets avec `package-lock.json`
 - [x] **CLEAN-09**: `charte_graphique.pdf` (22,5 Mio) n'est jamais commité (`.gitignore`) et tous les originaux sont sauvegardés hors repo dans `media-src/` (gitignoré) avant tout réencodage
 
@@ -72,7 +72,7 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Performance & accessibilité (PERF)
 
 - [ ] **PERF-01**: `prefers-reduced-motion` est respecté globalement via un hook SSR-safe et une règle CSS
-- [ ] **PERF-02**: Aucun listener `mousemove` global ni re-render React lié au curseur ne subsiste
+- [x] **PERF-02**: Aucun listener `mousemove` global ni re-render React lié au curseur ne subsiste
 - [ ] **PERF-03**: Une QA mobile réelle (iOS Safari + Android) sur l'URL Cloudflare déployée valide : hero qui joue, scroll fluide, Animate navigable, aucune image > 2400 px décodée
 
 ## v2 Requirements
@@ -122,12 +122,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | CLEAN-01 | Phase 1 | Pending |
-| CLEAN-02 | Phase 1 | Pending |
+| CLEAN-02 | Phase 1 | Complete |
 | CLEAN-03 | Phase 1 | Pending |
-| CLEAN-04 | Phase 1 | Pending |
+| CLEAN-04 | Phase 1 | Complete |
 | CLEAN-05 | Phase 1 | Complete |
 | CLEAN-06 | Phase 1 | Pending |
-| CLEAN-07 | Phase 1 | Pending |
+| CLEAN-07 | Phase 1 | Complete |
 | CLEAN-08 | Phase 1 | Pending |
 | CLEAN-09 | Phase 1 | Complete |
 | SIZE-01 | Phase 2 | Pending |
@@ -163,7 +163,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TEXT-01 | Phase 3 | Pending |
 | TEXT-02 | Phase 3 | Pending |
 | PERF-01 | Phase 3 | Pending |
-| PERF-02 | Phase 1 | Pending |
+| PERF-02 | Phase 1 | Complete |
 | PERF-03 | Phase 5 | Pending |
 
 **Coverage:**
