@@ -23,17 +23,17 @@ Un recruteur qui ouvre le site comprend en 3 secondes que Lyna vit l'audiovisuel
 - ✓ Identité visuelle : Cormorant Garamond + DM Sans, palette sakura / crème / prune / menthe (tokens CSS dans `src/styles.css`) — existing
 - ✓ Déploiement Cloudflare Workers via `wrangler.jsonc` — existing
 
+<!-- Validated in Phase 1: Nettoyage & filet de sécurité (2026-09-27) -->
+
+- ✓ Code mort supprimé : `ProjectModal`, `Skills()`, `Petals`, `CornerOrnament`, kit `src/components/ui/` (46 fichiers), `src/lib/utils.ts`, `use-mobile` ; dépendances 54 → 11 — Phase 1
+- ✓ Version lite : pétales, curseur rose, badge « 20 ans », ornements de coins, particules du portrait et listener `mousemove` global retirés (0 occurrence dans `src/` ; contrôle visuel humain encore dû, voir `01-HUMAN-UAT.md`) — Phase 1
+- ✓ Doublons et sources de travail hors de `public/` (`.fla`, `.ai`, `~ai-*.tmp`, `RECOVER_*`, `illustrations/`, `3_CLEMENT.*`, 8 vidéos racine) : `public/` 525 → 215 Mo ; chaîne Animate des 6 scènes intacte ; `src/assets/` supprimé, portrait servi depuis `public/media/portrait.jpg` — Phase 1
+- ✓ Assets non référencés de `public/assets/` mis en quarantaine dans `media-src/` (gitignoré) après inventaire décodant les URL et normalisant NFC (`scripts/inventory-assets.mjs` : REF=62, MISSING=0) — Phase 1
+- ✓ Références cassées corrigées (`extraitpubSAE1.mp4`, `festival-flyer.jpg`, `festival-goodies.jpg`) : 0 × 404 sur les 76 URL sondées de l'accueil et des 9 pages projet — Phase 1
+- ✓ Cloudflare seule cible : `vercel.json`, `server.js`, `bun.lockb`, `bunfig.toml` et le script `start` supprimés ; npm seul gestionnaire (`engines.node >= 20.11`, `.nvmrc`) — Phase 1
+- ✓ Garde-fou de poids en continu : `npm run check` = `tsc --noEmit && vite build && node scripts/check-assets.mjs && wrangler deploy --dry-run` ; échoue sur un fichier > 20 Mio, une vidéo non `yuv420p` ou sans faststart, une extension interdite ; `npm run deploy` passe par `check` ; 3 exceptions héritées listées dans `scripts/check-assets.exceptions.json` que la phase 2 doit vider — Phase 1
+
 ### Active
-
-**Audit & nettoyage**
-
-- [ ] Supprimer le code mort : `ProjectModal.tsx` (importé, jamais rendu), `Skills()` (retourne null), `Petals.tsx`, kit `src/components/ui/` non utilisé par les pages, dépendances inutilisées (`@tanstack/react-query`, `zod`, `react-hook-form`, Radix non utilisés — décision : la validation du formulaire de contact reste en HTML natif, pas de zod)
-- [ ] Retirer tous les effets déco pour une version lite : pétales, curseur rose personnalisé, badge flottant « 20 ans », ornements de coins, particules sur le portrait (`PORTRAIT_EFFECT_SETTINGS` / classe `Point`)
-- [ ] Dédupliquer les assets : `src/assets/` duplique 63 fichiers de `public/assets/` (141 Mo) — sauf `portrait.jpg`, import Vite vivant dans `index.tsx:8`, à migrer avant de supprimer le dossier ; les 8 vidéos à la racine de `public/animate/` (82 Mo) sont des doublons morts — l'animation `1_MOHAMED.js` référence uniquement `public/animate/videos/`, `images/` et `components/`
-- [ ] Retirer du dossier public les sources de travail : `.fla`, `.ai`, `~ai-*.tmp`, `RECOVER_*`, `illustrations/` (25 Mo) et l'export orphelin `3_CLEMENT.*` — ATTENTION : l'animation est une chaîne de 6 scènes (`1_MOHAMED → 1_LYNA → 2_IMAD → 2_CLEMENT → 2_SOPHIA → 3_ALBERTIN`, navigation par `window.open` dans le JS minifié) qui dépend de `components/`, `images/`, `imagesImad/`, `imagesframe2/` et `videos/` ; parcourir la chaîne complète après nettoyage
-- [ ] Supprimer les fichiers de `public/assets/` non référencés (capture d'écran, `mockup.jpg` 9,8 Mo, `site.jpg` 3,7 Mo, etc.) après vérification
-- [ ] Corriger les références cassées : `public/videos/extraitpubSAE1.mp4` (gitignoré, absent) dans `$projectId.tsx:589`, `festival-flyer.jpg` / `festival-goodies.jpg` dans `projects.ts`
-- [ ] Ne garder qu'une cible de déploiement (Cloudflare) : supprimer `vercel.json`, `server.js`, `bun.lockb`, `bunfig.toml` (npm est le gestionnaire réellement utilisé ; bun n'est pas installé)
 
 **Poids**
 
@@ -52,8 +52,7 @@ Un recruteur qui ouvre le site comprend en 3 secondes que Lyna vit l'audiovisuel
 - [ ] Compétences : grille de logos des logiciels maîtrisés — Premiere Pro, After Effects, DaVinci Resolve, CapCut, Photoshop, Illustrator, InDesign, Lightroom, Adobe Animate, Figma, Canva, HTML/CSS, VS Code — avec emplacement placeholder nommé pour chaque logo introuvable (Lyna fournit l'image)
 - [ ] Projets : les projets vidéo passent en premier ; chaque fiche projet affiche les logos des logiciels utilisés (à la place des tags texte) ; médias disposés en galerie soignée (vidéo en tête, images en grille/mosaïque)
 - [ ] Textes : tous les blocs de texte (hero, qui suis-je, descriptions) reçoivent un emplacement clairement identifié avec une consigne courte (longueur, angle) — Lyna rédige elle-même
-- [ ] Performance : plus de re-render React sur `mousemove`, lazy loading des médias hors écran, `poster` sur les vidéos, préchargement limité à la vidéo hero
-- [ ] Gate de taille dès la première phase et en continu : `tsc --noEmit && vite build`, puis `find dist -type f -size +20M` vide et `wrangler deploy --dry-run` OK (`vite build` copie `public/` tel quel et ne vérifie rien ; la limite de 25 Mio s'applique à l'upload)
+- [ ] Performance : lazy loading des médias hors écran, `poster` sur les vidéos, préchargement limité à la vidéo hero (le re-render sur `mousemove` est déjà supprimé en phase 1)
 
 ### Out of Scope
 
@@ -80,6 +79,8 @@ Un recruteur qui ouvre le site comprend en 3 secondes que Lyna vit l'audiovisuel
 - Aucun test, aucune CI, ESLint laxiste sur le code mort (`no-unused-vars` désactivé)
 - Inspiration visuelle : GIF Behance (serif rouge calligraphiée, grain VHS, cadre écran bombé, métadonnées de contact en coins)
 
+**État courant (2026-09-27)** : Phase 1 terminée (4 plans, 11 findings de code review corrigés en 3 itérations, vérification 5/5 sur preuves reproduites). `public/` pèse 215 Mo (animate 90, assets 82, videos 40) ; la production reste la version du 2026-09-01. Prochaine étape : Phase 2 « Médias légers & hero qui joue partout » (réencodage, hero SDR 8 bits, vider les exceptions du garde-fou, premier déploiement réel). La cartographie `.planning/codebase/` décrit l'état d'avant nettoyage : à rafraîchir avant la planification de la phase 2.
+
 ## Constraints
 
 - **Timeline** : présentable à un recruteur cette semaine — prioriser nettoyage + poids + hero/qui suis-je/projets, le reste après
@@ -97,8 +98,12 @@ Un recruteur qui ouvre le site comprend en 3 secondes que Lyna vit l'audiovisuel
 | Direction « hybride » plutôt que refonte totale cinéma | Garder l'identité déjà construite (sakura/crème/prune) tout en injectant les codes audiovisuels | — Pending |
 | Vidéo en tête, polyvalence visible | Cible alternance chargée de com' (MMI polyvalent) mais spécialisation réalisation/montage à afficher | — Pending |
 | Réencodage visuellement sans perte | Le poids vient de 3 PNG géants et de doublons, pas de la qualité utile ; ÷10 à ÷40 sans différence visible | — Pending |
-| Version lite : tous les effets déco retirés | Lyna préfère repartir propre et réintégrer ce qui manque plutôt que trier maintenant | — Pending |
-| Cloudflare seule cible de déploiement | Une seule config à maintenir ; supprime vercel.json / server.js / bun.lockb / bunfig.toml | — Pending |
+| Version lite : tous les effets déco retirés | Lyna préfère repartir propre et réintégrer ce qui manque plutôt que trier maintenant | ✓ Phase 1 (contrôle visuel humain en attente) |
+| Cloudflare seule cible de déploiement | Une seule config à maintenir ; supprime vercel.json / server.js / bun.lockb / bunfig.toml | ✓ Phase 1 |
+| npm seul gestionnaire de paquets | bun n'est pas installé ; un seul lockfile, scripts en `.mjs` | ✓ Phase 1 |
+| Pas de déploiement réel avant la phase 2 | Le build de phase 1 est plus lourd que la prod du 2026-09-01 (déployée hors git, version `0b1ccd2a-…`, rollback possible) ; `wrangler deploy --dry-run` seulement | ✓ Phase 1 (prod inchangée) |
+| Garde-fou avec exceptions explicites | Les 3 vidéos héritées non conformes (hero 10 bits HDR, CV sans faststart, empattage > 20 Mio) sont tolérées par une liste nominative que la phase 2 vide ; le plafond 25 Mio et les extensions interdites ne sont jamais dérogeables | ✓ Phase 1 |
+| Validation visuelle humaine différée | Lyna ne peut pas tester maintenant ; la phase se clôt sur preuves automatisées, l'UAT partiel (`01-HUMAN-UAT.md`) reste suivi | — Pending |
 | Textes rédigés par Lyna | Éviter le ton « IA générique » ; le code fournit emplacements + consignes | — Pending |
 | Charte Tafsut extraite en images | Illustre le projet festival (2 images manquantes) et sort 23 Mo de PDF du dossier public | — Pending |
 
@@ -120,4 +125,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-09-21 after initialization*
+*Last updated: 2026-09-27 after Phase 1 completion*
