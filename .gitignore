@@ -34,3 +34,6 @@ public/videos/extraitpubSAE1.mp4
 
 # Brand guide source PDF (22.5 MiB) — pages are extracted to images, never commit the PDF
 public/assets/charte_graphique.pdf
+
+# Working originals, backups and quarantine — never committed, never deployed
+media-src/

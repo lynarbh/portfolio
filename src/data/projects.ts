@@ -15,18 +15,7 @@ export type Project = {
 
 export const projects: Project[] = [
   // --- SITE WEB ---
-  {
-    id: "page-web-perso",
-    title: "Page web personnelle",
-    category: "Site Web",
-    thumbnail: "/assets/portfolio-thumbnail-03-web.png",
-    media: ["/assets/site.jpg"],
-    shortDescription: "Conception et développement d'une page web personnelle.",
-    description: "Réalisée dans le cadre du cours d'intégration web, cette page web personnelle a été l'occasion d'aller de la maquette Figma jusqu'à l'intégration en HTML et CSS. L'exercice avait également pour but de découvrir la mise en ligne d'un site : c'est mon tout premier site hébergé, déployé via AlwaysData.",
-    url: "https://oukhtyauxjouesroses.alwaysdata.net/TP_WEB/",
-    tools: ["Figma", "HTML", "CSS"],
-    role: "Designer & développeuse front-end",
-  },
+
 
   // --- PROTOTYPE SITE WEB ACCESSIBLE ---
   {
@@ -115,17 +104,6 @@ export const projects: Project[] = [
     shortDescription: "Clip vidéo — Blue, Yung Kai (en cours de réalisation).",
     description: "Clip vidéo sur le morceau Blue de Yung Kai, actuellement fini. Ce projet traduit en images l'ambiance du clip original, avec un montage en lien avec le rythme et les paroles de la musique. J'ai voulu exploré une mise en scène narrative et anecdotique.",
     tools: ["Photoshop", "Premiere Pro"],
-    role: "Réalisatrice & monteuse",
-  },
-  {
-    id: "mashup",
-    title: "Mashup vidéo — Hier encore",
-    category: "Vidéo",
-    thumbnail: "/assets/portfolio-thumbnail-04-video.png",
-    video: "https://www.youtube.com/embed/vp8o1bCENnw",
-    shortDescription: "Mashup vidéo sur la chanson « Hier encore » de Charles Aznavour.",
-    description: "Ce mashup vidéo recompose un récit intime à partir des rushes fournis par le professeur. Bien que la majorité des extraits proposés se concentrait sur des scènes de danse dynamiques, j'ai cherché à mettre en évidence des moments plus isolés et personnels — des fragments d'intimité et de mélancolie qui s'alignent avec la tonalité nostalgique d'« Hier encore » de Charles Aznavour. Le montage, sans voix off ni commentaire, s'appuie uniquement sur cette bande sonore pour générer une atmosphère émotionnelle. Les plans ont été réarrangés pour créer une nouvelle narration visuelle, où l'absence de mouvement frénétique laisse place à la contemplation et au souvenir. Le résultat final dure 3 minutes 15 et utilise entre 60% et 70% des rushes originaux, soigneusement sélectionnés pour leur capacité à évoquer une forme de solitude douce et d'introspection.",
-    tools: ["Premiere Pro"],
     role: "Réalisatrice & monteuse",
   },
 
