@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "check": "tsc --noEmit && vite build && node scripts/check-assets.mjs && wrangler deploy --dry-run"
+    "check": "tsc --noEmit && vite build && node scripts/check-assets.mjs && wrangler deploy --dry-run",
+    "deploy": "npm run check && wrangler deploy"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.25.5",
