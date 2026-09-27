@@ -1,0 +1,77 @@
+# Project State
+
+## Project Reference
+
+See: .planning/PROJECT.md (updated 2026-09-21)
+
+**Core value:** Un recruteur qui ouvre le site comprend en 3 secondes que Lyna vit l'audiovisuel — la vidéo domine, les médias sont mis en scène — et le site se charge vite malgré des visuels de qualité.
+**Current focus:** Phase 1 — Nettoyage & filet de sécurité
+
+## Current Position
+
+Phase: 1 of 5 (Nettoyage & filet de sécurité)
+Plan: 0 of TBD in current phase
+Status: Ready to plan
+Last activity: 2026-09-27 — Roadmap créée (5 phases, 44/44 exigences v1 mappées)
+
+Progress: [░░░░░░░░░░] 0%
+
+## Performance Metrics
+
+**Velocity:**
+- Total plans completed: 0
+- Average duration: -
+- Total execution time: 0 hours
+
+**By Phase:**
+
+| Phase | Plans | Total | Avg/Plan |
+|-------|-------|-------|----------|
+| - | - | - | - |
+
+**Recent Trend:**
+- Last 5 plans: -
+- Trend: -
+
+*Updated after each plan completion*
+
+## Accumulated Context
+
+### Decisions
+
+Decisions are logged in PROJECT.md Key Decisions table.
+Recent decisions affecting current work:
+
+- [Roadmap]: Structure MVP verticale en 5 phases ; nettoyage (1) et poids (2) déployés en production avant toute mise en scène (3-5)
+- [Roadmap]: Garde-fou `bun run check` introduit en phase 1 avec une liste d'exceptions explicite pour les vidéos héritées non conformes (hero 10 bits HDR, CV sans faststart), vidée en phase 2
+- [Roadmap]: HERO-01 (hero qui joue sur iPhone + pause) livré en phase 2 avec le réencodage, pour un gain visible immédiat
+- [Roadmap]: PROJ-06 / PROJ-07 livrés en phase 2 (consommateurs directs du pipeline média) ; les branches `project.id === "…"` restent, refactor `ProjectBlock[]` en v2
+- [Roadmap]: `src/data/tools.ts` créé en phase 3 (grille de compétences) et réutilisé en phase 4 (logos par projet)
+- [Roadmap]: Ghostscript `gs` pour la charte Tafsut (pas `pdftoppm`, poppler absent)
+
+### Pending Todos
+
+None yet.
+
+### Blockers/Concerns
+
+- Entrées attendues de Lyna (non bloquantes, placeholders prévus) : choix du projet pour `affichepromo` / `prévention` (SIZE-09, phase 4), logos Adobe, médias process stop motion / clip Blue, URL LinkedIn, CV PDF, date de disponibilité, textes définitifs
+- `affichepromo.png` et `prévention.png` n'existent que dans `src/assets/` : ils doivent être sauvegardés dans `media-src/` avant la suppression du dossier (phase 1)
+- `charte_graphique.pdf` (22,5 Mio) ne doit jamais être commité ; `.git` pèse déjà 333 Mo
+- Conversion HDR HLG → SDR du hero via le filtre `colorspace` : validation visuelle obligatoire, pas de repli `zscale` dans ce build ffmpeg (research flag phase 2)
+- `wrangler deploy --dry-run` n'applique peut-être pas le plafond de 25 Mio : `scripts/check-assets.ts` reste le garde-fou principal
+- Rendu de l'export Adobe Animate sur iOS réel non vérifié (phase 4 / QA phase 5)
+
+## Deferred Items
+
+Items acknowledged and carried forward from previous milestone close:
+
+| Category | Item | Status | Deferred At |
+|----------|------|--------|-------------|
+| *(none)* | | | |
+
+## Session Continuity
+
+Last session: 2026-09-27
+Stopped at: Roadmap et STATE initialisés, en attente d'approbation
+Resume file: None

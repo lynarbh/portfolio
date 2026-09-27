@@ -121,13 +121,56 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| (à remplir par le roadmapper) | | |
+| CLEAN-01 | Phase 1 | Pending |
+| CLEAN-02 | Phase 1 | Pending |
+| CLEAN-03 | Phase 1 | Pending |
+| CLEAN-04 | Phase 1 | Pending |
+| CLEAN-05 | Phase 1 | Pending |
+| CLEAN-06 | Phase 1 | Pending |
+| CLEAN-07 | Phase 1 | Pending |
+| CLEAN-08 | Phase 1 | Pending |
+| CLEAN-09 | Phase 1 | Pending |
+| SIZE-01 | Phase 2 | Pending |
+| SIZE-02 | Phase 2 | Pending |
+| SIZE-03 | Phase 2 | Pending |
+| SIZE-04 | Phase 2 | Pending |
+| SIZE-05 | Phase 2 | Pending |
+| SIZE-06 | Phase 2 | Pending |
+| SIZE-07 | Phase 1 | Pending |
+| SIZE-08 | Phase 2 | Pending |
+| SIZE-09 | Phase 4 | Pending |
+| HERO-01 | Phase 2 | Pending |
+| HERO-02 | Phase 3 | Pending |
+| HERO-03 | Phase 3 | Pending |
+| HERO-04 | Phase 3 | Pending |
+| ABOUT-01 | Phase 3 | Pending |
+| ABOUT-02 | Phase 3 | Pending |
+| ABOUT-03 | Phase 3 | Pending |
+| ABOUT-04 | Phase 3 | Pending |
+| PROJ-01 | Phase 4 | Pending |
+| PROJ-02 | Phase 4 | Pending |
+| PROJ-03 | Phase 4 | Pending |
+| PROJ-04 | Phase 4 | Pending |
+| PROJ-05 | Phase 4 | Pending |
+| PROJ-06 | Phase 2 | Pending |
+| PROJ-07 | Phase 2 | Pending |
+| PROJ-08 | Phase 4 | Pending |
+| PROJ-09 | Phase 4 | Pending |
+| PROJ-10 | Phase 4 | Pending |
+| CONTACT-01 | Phase 5 | Pending |
+| CONTACT-02 | Phase 5 | Pending |
+| CONTACT-03 | Phase 5 | Pending |
+| TEXT-01 | Phase 3 | Pending |
+| TEXT-02 | Phase 3 | Pending |
+| PERF-01 | Phase 3 | Pending |
+| PERF-02 | Phase 1 | Pending |
+| PERF-03 | Phase 5 | Pending |
 
 **Coverage:**
 - v1 requirements: 44 total
-- Mapped to phases: 0
-- Unmapped: 44 ⚠️
+- Mapped to phases: 44
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-09-27*
-*Last updated: 2026-09-27 after initial definition*
+*Last updated: 2026-09-27 after roadmap creation (traceability)*
