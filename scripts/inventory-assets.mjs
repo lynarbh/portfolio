@@ -66,14 +66,25 @@ for (const f of publicFiles) {
 const existing = new Set(walk(PUBLIC).map((f) => nfc(toUrl(f))));
 const missing = new Set();
 // Scanned on the raw (still percent-encoded) text so that "%20" is not turned into a space
-// that would cut the match short; each match is decoded afterwards. Stops at whitespace,
-// quotes, backticks, brackets and commas; skips external URLs (a path preceded by a host
-// or path character, e.g. https://cdn.example.com/assets/x.png).
-const URL_RE = /(?<![\w.:/-])\/(?:assets|videos|animate|media)\/[^\s"'`()<>,]+/g;
+// that would cut the match short; each match is decoded afterwards. Two passes:
+// - quoted literals ("...", '...', `...`) that start with the prefix: the whole literal is the
+//   path, so spaces, parentheses and commas inside it are kept;
+// - bare text (quoted literals blanked out): stops at whitespace, quotes, brackets and commas,
+//   drops trailing sentence punctuation, and skips external URLs and template pieces (a path
+//   preceded by a host, path or "}" character, e.g. https://cdn.example.com/assets/x.png or
+//   ${BASE}/assets/x.png).
+const QUOTED_RE = /(["'`])(\/(?:assets|videos|animate|media)\/[^"'`\n]+?)\1/g;
+const BARE_RE = /(?<![\w.:/}-])\/(?:assets|videos|animate|media)\/[^\s"'`()<>,]+/g;
+const candidates = (text) => [
+  ...[...text.matchAll(QUOTED_RE)].map((m) => m[2]),
+  ...[...text.replace(QUOTED_RE, " ").matchAll(BARE_RE)].map((m) =>
+    m[0].replace(/[.,;:!?)>\]]+$/, ""),
+  ),
+];
 for (const text of srcRaw.map(nfc)) {
-  for (const match of text.matchAll(URL_RE)) {
-    const url = nfc(decodePercent(match[0]).replace(/[?#].*$/, ""));
-    if (url.includes("${")) continue; // template expression, not a literal path
+  for (const raw of candidates(text)) {
+    if (raw.includes("${")) continue; // template expression, not a literal path
+    const url = nfc(decodePercent(raw).replace(/[?#].*$/, ""));
     if (!existing.has(url)) missing.add(url);
   }
 }
