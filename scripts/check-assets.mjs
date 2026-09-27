@@ -74,7 +74,9 @@ function topLevelBoxes(file) {
   return boxes;
 }
 
-// null = ffprobe unavailable (graceful skip)
+// null = ffprobe unavailable (graceful skip unless strict mode)
+// { error } = ffprobe ran but could not read a video stream (corrupt file, audio-only...)
+// { pixFmt } = pixel format of the first video stream
 function pixFmt(file) {
   const r = spawnSync(
     "ffprobe",
@@ -92,8 +94,13 @@ function pixFmt(file) {
     { encoding: "utf8" },
   );
   if (r.error) return null;
+  if (r.status !== 0) {
+    const firstLine = (r.stderr || "").trim().split("\n")[0].trim();
+    return { error: firstLine || `exit ${r.status}` };
+  }
   // csv output can carry trailing fields/lines (e.g. "yuv420p10le,"): keep the first value
-  return r.stdout.trim().split(/[\n,]/)[0].trim();
+  const value = r.stdout.trim().split(/[\n,]/)[0].trim();
+  return value ? { pixFmt: value } : { error: "no video stream" };
 }
 
 const errors = [];
@@ -128,7 +135,9 @@ for (const abs of walk(DIST)) {
     if (!faststart) report(rel, "faststart", `${rel} not faststart (${boxes.join(",")})`);
     const pf = pixFmt(abs);
     if (pf === null) ffprobeMissing = true;
-    else if (pf !== "yuv420p") report(rel, "pix_fmt", `${rel} pix_fmt=${pf}`);
+    // A file ffprobe cannot read is a hard failure, never waivable under "pix_fmt".
+    else if (pf.error) errors.push(`${rel} ffprobe failed: ${pf.error}`);
+    else if (pf.pixFmt !== "yuv420p") report(rel, "pix_fmt", `${rel} pix_fmt=${pf.pixFmt}`);
   }
 }
 
