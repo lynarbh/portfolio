@@ -125,3 +125,7 @@ None. Mitigations T-02-06 à T-02-11 appliquées comme prévu ; le correctif de 
 
 - FOUND: scripts/media.mjs, scripts/media/util.mjs, scripts/media/video.mjs, scripts/verify-media.mjs, src/data/media.generated.ts, public/media/video/hero.mp4, public/media/video/hero-poster.webp
 - FOUND: commits 09c67ca, e9d778f
+
+## Checkpoint Task 3 — résolu
+
+**Réponse de Lyna (2026-09-28, via l'orchestrateur) : « approved ».** Hero CRF 32 (3 781 191 octets, SSIM 0,916, poster 104 234 octets) validé visuellement sur `http://localhost:8787/`. Le contrôle ne passe plus dans l'UAT de fin de phase ; il reste le test sur iPhone réel (HERO-01) au plan 07.
