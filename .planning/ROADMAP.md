@@ -48,7 +48,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 01-03-PLAN.md — Élagage : kit ui, dépendances knip, lint opérationnel, Cloudflare seule cible (vercel.json, server.js, bun.lockb, bunfig.toml)
+- [x] 01-03-PLAN.md — Élagage : kit ui, dépendances knip, lint opérationnel, Cloudflare seule cible (vercel.json, server.js, bun.lockb, bunfig.toml)
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
@@ -157,7 +157,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Nettoyage & filet de sécurité | 2/4 | In Progress|  |
+| 1. Nettoyage & filet de sécurité | 3/4 | In Progress|  |
 | 2. Médias légers & hero qui joue partout | 0/TBD | Not started | - |
 | 3. Hero & Qui suis-je en scène | 0/TBD | Not started | - |
 | 4. Projets mis en scène | 0/TBD | Not started | - |

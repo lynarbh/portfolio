@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Roadmap et STATE initialisés, en attente d'approbation
-last_updated: "2026-09-27T20:22:06.742Z"
+stopped_at: Completed 01-03-PLAN.md
+last_updated: "2026-09-27T20:27:29.835Z"
 last_activity: 2026-09-27
 progress:
   total_phases: 5
   completed_phases: 0
   total_plans: 4
-  completed_plans: 2
+  completed_plans: 3
   percent: 0
 ---
 
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-09-21)
 ## Current Position
 
 Phase: 1 (Nettoyage & filet de sécurité) — EXECUTING
-Plan: 3 of 4
+Plan: 4 of 4
 Status: Ready to execute
 Last activity: 2026-09-27
 
-Progress: [█████░░░░░] 50%
+Progress: [████████░░] 75%
 
 ## Performance Metrics
 
@@ -54,6 +54,7 @@ Progress: [█████░░░░░] 50%
 *Updated after each plan completion*
 | Phase 01 P01 | 5 min | 3 tasks | 27 files |
 | Phase 01 P02 | 12 min | 2 tasks | 72 files |
+| Phase 01 P03 | 5 min | 3 tasks | 60 files |
 
 ## Accumulated Context
 
@@ -71,6 +72,8 @@ Recent decisions affecting current work:
 - [01-01]: check-assets.mjs garde seulement le 1er champ CSV de ffprobe (sortie 'yuv420p10le,')
 - [01-01]: plafond 25 Mio et extensions interdites non dérogeables ; dérogations par fichier et par règle (size, pix_fmt, faststart)
 - [Phase 01]: 01-02: portrait servi par URL absolue /media/portrait.jpg (constante PORTRAIT), src/assets supprimé
+- [Phase 01]: 01-03: @tanstack/react-query retiré malgré resolve.dedupe du wrapper Lovable — build vert (A1 réfutée)
+- [Phase 01]: 01-03: knip.json garde @tanstack/router-plugin, tailwindcss, tw-animate-css en ignoreDependencies ; knip lancé via npx knip@6.38.0, jamais installé
 
 ### Pending Todos
 
@@ -97,6 +100,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-09-27T20:22:01.554Z
-Stopped at: Roadmap et STATE initialisés, en attente d'approbation
+Last session: 2026-09-27T20:27:23.743Z
+Stopped at: Completed 01-03-PLAN.md
 Resume file: None
