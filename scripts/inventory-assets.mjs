@@ -41,12 +41,10 @@ const animateFiles = existsSync(ANIMATE)
       .filter((f) => ANIMATE_EXT.has(extname(f)))
   : [];
 
-const readNfc = (f) => {
-  const raw = readFileSync(f, "utf8");
-  return nfc(raw + "\n" + decodePercent(raw));
-};
-const srcTexts = srcFiles.map(readNfc);
-const corpus = [...srcTexts, ...animateFiles.map(readNfc)].join("\n");
+const withDecoded = (raw) => nfc(raw + "\n" + decodePercent(raw));
+const srcRaw = srcFiles.map((f) => readFileSync(f, "utf8"));
+const animateRaw = animateFiles.map((f) => readFileSync(f, "utf8"));
+const corpus = [...srcRaw, ...animateRaw].map(withDecoded).join("\n");
 
 // 1. Classify public files (outside public/animate/).
 const publicFiles = walk(PUBLIC)
@@ -67,8 +65,12 @@ for (const f of publicFiles) {
 // 2. Reverse scan: URL literals in src/ that do not resolve to a file in public/.
 const existing = new Set(walk(PUBLIC).map((f) => nfc(toUrl(f))));
 const missing = new Set();
-const URL_RE = /\/(?:assets|videos|animate|media)\/[^"'`\n]+/g;
-for (const text of srcTexts) {
+// Scanned on the raw (still percent-encoded) text so that "%20" is not turned into a space
+// that would cut the match short; each match is decoded afterwards. Stops at whitespace,
+// quotes, backticks, brackets and commas; skips external URLs (a path preceded by a host
+// or path character, e.g. https://cdn.example.com/assets/x.png).
+const URL_RE = /(?<![\w.:/-])\/(?:assets|videos|animate|media)\/[^\s"'`()<>,]+/g;
+for (const text of srcRaw.map(nfc)) {
   for (const match of text.matchAll(URL_RE)) {
     const url = nfc(decodePercent(match[0]).replace(/[?#].*$/, ""));
     if (url.includes("${")) continue; // template expression, not a literal path
