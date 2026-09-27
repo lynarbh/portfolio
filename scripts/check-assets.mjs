@@ -74,15 +74,53 @@ const exceptions = loadExceptions();
 const waived = (rel, rule) =>
   exceptions.some((e) => e.path.normalize("NFC") === rel && e.waive.includes(rule));
 
+// .assetsignore uses gitignore syntax on Cloudflare. Supported subset: "#" comments,
+// "!" negation (last match wins), leading "/" anchor, trailing "/" directory, "*", "?",
+// "**". A pattern without an inner "/" matches at any depth. Not supported: "[...]"
+// classes and "\" escapes (matched literally). Unlike git, "!" here can re-include a file
+// whose parent directory is excluded: avoid negations under an excluded directory.
+function globToRegExp(pattern) {
+  let p = pattern;
+  const dirOnly = p.endsWith("/");
+  if (dirOnly) p = p.slice(0, -1);
+  const anchored = p.includes("/");
+  if (p.startsWith("/")) p = p.slice(1);
+  let body = "";
+  for (let i = 0; i < p.length; i++) {
+    const c = p[i];
+    if (c === "*" && p[i + 1] === "*") {
+      if (p[i + 2] === "/") {
+        body += "(?:.*/)?";
+        i += 2;
+      } else {
+        body += ".*";
+        i += 1;
+      }
+    } else if (c === "*") body += "[^/]*";
+    else if (c === "?") body += "[^/]";
+    else body += c.replace(/[.+^${}()|[\]\\]/g, "\\$&");
+  }
+  const prefix = anchored ? "^" : "^(?:.*/)?";
+  const suffix = dirOnly ? "/.*$" : "(?:/.*)?$";
+  return new RegExp(prefix + body + suffix);
+}
+
 const assetsIgnorePath = join(DIST, ".assetsignore");
-const ignored = existsSync(assetsIgnorePath)
-  ? new Set(
-      readFileSync(assetsIgnorePath, "utf8")
-        .split("\n")
-        .map((s) => s.trim())
-        .filter(Boolean),
-    )
-  : new Set();
+const ignoreRules = existsSync(assetsIgnorePath)
+  ? readFileSync(assetsIgnorePath, "utf8")
+      .split("\n")
+      .map((s) => s.trim().normalize("NFC"))
+      .filter((s) => s && !s.startsWith("#"))
+      .map((s) => {
+        const negate = s.startsWith("!");
+        return { negate, re: globToRegExp(negate ? s.slice(1) : s) };
+      })
+  : [];
+const isIgnored = (rel) => {
+  let result = false;
+  for (const { negate, re } of ignoreRules) if (re.test(rel)) result = !negate;
+  return result;
+};
 
 const walk = (dir) =>
   readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
@@ -157,7 +195,7 @@ let ffprobeMissing = false;
 
 for (const abs of walk(DIST)) {
   const rel = relative(DIST, abs).split("\\").join("/").normalize("NFC");
-  if (rel === ".assetsignore" || ignored.has(rel)) continue;
+  if (rel === ".assetsignore" || isIgnored(rel)) continue;
   const size = statSync(abs).size;
   total += size;
   const mib = (size / MiB).toFixed(2);
