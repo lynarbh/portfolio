@@ -2,14 +2,24 @@ import { createFileRoute, Link } from "@tanstack/react-router"; // Ajoute Link i
 import { useEffect, useMemo, useRef, useState } from "react";
 import { projects, type Project } from "@/data/projects";
 import { Reveal } from "@/components/Reveal";
+import { videos } from "@/data/media.generated";
 import emailjs from "@emailjs/browser";
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    links: [
+      {
+        rel: "preload",
+        as: "image",
+        type: "image/webp",
+        href: videos.hero.poster,
+        fetchPriority: "high",
+      },
+    ],
+  }),
   component: Index,
 });
 
-const HERO_VIDEO = "/videos/hero.mp4";
-const HERO_FALLBACK = "/assets/hero.png";
 const PORTRAIT = "/media/portrait.jpg";
 
 const CATEGORIES = [
@@ -121,8 +131,8 @@ function Hero() {
         <video
           ref={videoRef}
           className="h-full w-full object-cover"
-          src={HERO_VIDEO}
-          poster={HERO_FALLBACK}
+          src={videos.hero.src}
+          poster={videos.hero.poster}
           muted
           loop
           playsInline

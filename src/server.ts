@@ -8,6 +8,9 @@ import { env } from "cloudflare:workers";
 // "?v=1" cannot create parallel entries (cache poisoning), and only 200 origin responses are
 // cached.
 const VIDEO = /^\/(?:media\/video|animate\/videos)\/[^/]+\.mp4$/;
+// Every path run_worker_first sends here. Non-MP4 files under these prefixes (the hero
+// poster lives in /media/video/) go straight back to Static Assets, never to the SSR handler.
+const WORKER_FIRST = /^\/(?:media\/video|animate\/videos)\//;
 
 async function serveVideo(request: Request): Promise<Response> {
   const url = new URL(request.url);
@@ -37,6 +40,7 @@ export default createServerEntry({
       if (request.method === "GET") return serveVideo(request);
       return env.ASSETS.fetch(request);
     }
+    if (WORKER_FIRST.test(pathname)) return env.ASSETS.fetch(request);
     return handler.fetch(request);
   },
 });
