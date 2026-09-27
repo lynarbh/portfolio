@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 02-02-PLAN.md (Task 3 checkpoint pending)
-last_updated: "2026-09-27T23:44:44.399Z"
-last_activity: 2026-09-28 -- Plan 02-02 complete (hero CRF 32 visual UAT pending)
+stopped_at: Completed 02-03-PLAN.md
+last_updated: "2026-09-27T23:52:19.255Z"
+last_activity: 2026-09-28 -- Plan 02-03 complete (home images via <Picture>)
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 11
-  completed_plans: 6
-  percent: 55
+  completed_plans: 7
+  percent: 64
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-09-21)
 ## Current Position
 
 Phase: 2 (Médias légers & hero qui joue partout) — EXECUTING
-Plan: 3 of 7
+Plan: 4 of 7
 Status: Ready to execute
-Last activity: 2026-09-28 -- Plan 02-02 complete (hero CRF 32 visual UAT pending)
+Last activity: 2026-09-28 -- Plan 02-03 complete (home images via <Picture>)
 
-Progress: [██████░░░░] 55%
+Progress: [██████░░░░] 64%
 
 ## Performance Metrics
 
@@ -58,6 +58,7 @@ Progress: [██████░░░░] 55%
 | Phase 01 P04 | 12 min | 3 tasks | 6 files |
 | Phase 02 P01 | 4 min | 3 tasks | 4 files |
 | Phase 02 P02 | 10 min | 2 tasks | 18 files |
+| Phase 02 P03 | 8 min | 2 tasks | 44 files |
 
 ## Accumulated Context
 
@@ -84,6 +85,7 @@ Recent decisions affecting current work:
 - [Phase 02]: 02-01: sharp@0.35.4 approuvé par Lyna le 2026-09-28, dist.integrity inchangée ; plan 02 installe en --save-dev --save-exact
 - [Phase 02]: 02-02: SSIM vidéo mesuré avec settb=1/fps,setpts=N (setpts=N/fps/TB décale d'une image sur une référence MKV 1/1000)
 - [Phase 02]: 02-02: src/server.ts renvoie à Static Assets les fichiers non-MP4 sous /media/video/ et /animate/videos/ (poster hero en 404 sinon)
+- [Phase 02]: 02-03: 4:4:4 des AVIF graphic vérifié par ffprobe pix_fmt (sharp n'expose pas chromaSubsampling pour HEIF)
 
 ### Pending Todos
 
@@ -111,6 +113,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-09-27T23:44:38.563Z
-Stopped at: Completed 02-02-PLAN.md (Task 3 checkpoint pending)
+Last session: 2026-09-27T23:52:06.425Z
+Stopped at: Completed 02-03-PLAN.md
 Resume file: None
