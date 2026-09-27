@@ -83,7 +83,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 02-02-PLAN.md — Squelette du pipeline `scripts/media.mjs` (manifeste, cache, `media.generated.ts`, verify-media) + hero SDR CRF 32 ≤ 4 Mo et poster préchargé, validation visuelle de Lyna
+- [x] 02-02-PLAN.md — Squelette du pipeline `scripts/media.mjs` (manifeste, cache, `media.generated.ts`, verify-media) + hero SDR CRF 32 ≤ 4 Mo et poster préchargé, validation visuelle de Lyna
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
@@ -188,7 +188,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Nettoyage & filet de sécurité | 4/4 | Complete    | 2026-09-27 |
-| 2. Médias légers & hero qui joue partout | 1/7 | In Progress|  |
+| 2. Médias légers & hero qui joue partout | 2/7 | In Progress|  |
 | 3. Hero & Qui suis-je en scène | 0/TBD | Not started | - |
 | 4. Projets mis en scène | 0/TBD | Not started | - |
 | 5. Contact, candidature & QA mobile réelle | 0/TBD | Not started | - |

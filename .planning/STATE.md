@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 02-01-PLAN.md
-last_updated: "2026-09-27T23:36:24.034Z"
-last_activity: 2026-09-28 -- Plan 02-01 complete
+stopped_at: Completed 02-02-PLAN.md (Task 3 checkpoint pending)
+last_updated: "2026-09-27T23:44:44.399Z"
+last_activity: 2026-09-28 -- Plan 02-02 complete (hero CRF 32 visual UAT pending)
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 11
-  completed_plans: 5
-  percent: 45
+  completed_plans: 6
+  percent: 55
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-09-21)
 ## Current Position
 
 Phase: 2 (Médias légers & hero qui joue partout) — EXECUTING
-Plan: 2 of 7
-Status: Executing Phase 2
-Last activity: 2026-09-28 -- Plan 02-01 complete
+Plan: 3 of 7
+Status: Ready to execute
+Last activity: 2026-09-28 -- Plan 02-02 complete (hero CRF 32 visual UAT pending)
 
-Progress: [█████░░░░░] 45%
+Progress: [██████░░░░] 55%
 
 ## Performance Metrics
 
@@ -57,6 +57,7 @@ Progress: [█████░░░░░] 45%
 | Phase 01 P03 | 5 min | 3 tasks | 60 files |
 | Phase 01 P04 | 12 min | 3 tasks | 6 files |
 | Phase 02 P01 | 4 min | 3 tasks | 4 files |
+| Phase 02 P02 | 10 min | 2 tasks | 18 files |
 
 ## Accumulated Context
 
@@ -81,6 +82,8 @@ Recent decisions affecting current work:
 - [Phase 02]: 02-01: src/server.ts sert les MP4 de /media/video/ et /animate/videos/ en 206 via caches.default ; clé et lookup sans query string, HEAD transmis à env.ASSETS, préfixe /videos/ non routé
 - [Phase 02]: 02-01: scrim du bouton hero = rgba(61,31,58,0.85) (8,62:1) au lieu de plum 70 % (1,95:1), aucun nouveau token
 - [Phase 02]: 02-01: sharp@0.35.4 approuvé par Lyna le 2026-09-28, dist.integrity inchangée ; plan 02 installe en --save-dev --save-exact
+- [Phase 02]: 02-02: SSIM vidéo mesuré avec settb=1/fps,setpts=N (setpts=N/fps/TB décale d'une image sur une référence MKV 1/1000)
+- [Phase 02]: 02-02: src/server.ts renvoie à Static Assets les fichiers non-MP4 sous /media/video/ et /animate/videos/ (poster hero en 404 sinon)
 
 ### Pending Todos
 
@@ -108,6 +111,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-09-27T23:36:09.375Z
-Stopped at: Completed 02-01-PLAN.md
+Last session: 2026-09-27T23:44:38.563Z
+Stopped at: Completed 02-02-PLAN.md (Task 3 checkpoint pending)
 Resume file: None
