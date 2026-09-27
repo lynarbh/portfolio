@@ -1,5 +1,11 @@
 // Asset guard: run after `vite build`. Fails on oversize files, forbidden source files,
 // non-yuv420p videos and non-faststart MP4s in dist/client (what Cloudflare will serve).
+//
+// Requires ffprobe (FFmpeg) on PATH for the pix_fmt rule. Without it, the rule is skipped
+// with a WARN by default. Strict mode turns "ffprobe not found" into a failure; use it on
+// CI or any machine where the pix_fmt check must be enforced:
+//   node scripts/check-assets.mjs --strict      (or CHECK_ASSETS_STRICT=1)
+// Strict mode is deliberately not wired into `npm run check`.
 import {
   readdirSync,
   statSync,
@@ -20,6 +26,7 @@ const HARD = 25 * MiB; // Cloudflare per-asset limit, never waivable
 const FAIL = 20 * MiB; // waivable with rule "size"
 const WARN = 10 * MiB;
 const FORBIDDEN = new Set([".fla", ".ai", ".tmp", ".pdf", ".psd", ".xd", ".aep", ".prproj"]);
+const STRICT = process.argv.includes("--strict") || process.env.CHECK_ASSETS_STRICT === "1";
 
 if (!existsSync(DIST)) {
   console.error("dist/client missing: run vite build first");
@@ -224,7 +231,11 @@ for (const abs of walk(DIST)) {
 for (const e of exceptions) {
   if (!existsSync(join(DIST, e.path))) warns.push(`stale exception (file gone): ${e.path}`);
 }
-if (ffprobeMissing) warns.push("ffprobe not found: pix_fmt NOT checked");
+if (ffprobeMissing) {
+  const msg = "ffprobe not found: pix_fmt NOT checked";
+  if (STRICT) errors.push(`${msg} (strict mode)`);
+  else warns.push(msg);
+}
 
 console.log(
   `check-assets: ${(total / MiB).toFixed(1)} MiB in dist/client, ${exceptions.length} exception(s):`,
