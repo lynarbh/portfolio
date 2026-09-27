@@ -2,7 +2,7 @@
 
 ## Overview
 
-Ce milestone sauve un portfolio existant (~525 Mo, vidéo hero illisible sur iPhone, doublons, code mort) puis le met en scène pour qu'un recruteur comprenne en 3 secondes que Lyna vit l'audiovisuel. L'enchaînement suit la règle de la recherche : **nettoyer avant de mesurer, mesurer avant d'encoder, encoder avant de mettre en scène**. Chaque phase est une tranche MVP verticale : elle se déploie seule sur Cloudflare Workers et laisse le site visiblement meilleur. Les phases 1 et 2 (nettoyage + poids) sont déployées en production avant que la moindre mise en scène ne commence ; à la fin de la phase 3, le site est déjà présentable à un recruteur. Le garde-fou de taille (`bun run check`) naît en phase 1 et tourne à chaque commit jusqu'à la fin.
+Ce milestone sauve un portfolio existant (~525 Mo, vidéo hero illisible sur iPhone, doublons, code mort) puis le met en scène pour qu'un recruteur comprenne en 3 secondes que Lyna vit l'audiovisuel. L'enchaînement suit la règle de la recherche : **nettoyer avant de mesurer, mesurer avant d'encoder, encoder avant de mettre en scène**. Chaque phase est une tranche MVP verticale : elle se déploie seule sur Cloudflare Workers et laisse le site visiblement meilleur. Les phases 1 et 2 (nettoyage + poids) sont déployées en production avant que la moindre mise en scène ne commence ; à la fin de la phase 3, le site est déjà présentable à un recruteur. Le garde-fou de taille (`npm run check`) naît en phase 1 et tourne à chaque commit jusqu'à la fin.
 
 ## Phases
 
@@ -21,15 +21,15 @@ Decimal phases appear between their surrounding integers in numeric order.
 ## Phase Details
 
 ### Phase 1: Nettoyage & filet de sécurité
-**Goal**: Le site déployé ne contient plus ni code mort, ni effet décoratif, ni doublon, ni source de travail — et aucun commit ne peut plus faire dépasser la limite Cloudflare de 25 Mio sans que `bun run check` échoue.
+**Goal**: Le site déployé ne contient plus ni code mort, ni effet décoratif, ni doublon, ni source de travail — et aucun commit ne peut plus faire dépasser la limite Cloudflare de 25 Mio sans que `npm run check` échoue.
 **Mode:** mvp
 **Depends on**: Nothing (first phase)
 **Requirements**: CLEAN-01, CLEAN-02, CLEAN-03, CLEAN-04, CLEAN-05, CLEAN-06, CLEAN-07, CLEAN-08, CLEAN-09, SIZE-07, PERF-02
 **Success Criteria** (what must be TRUE):
-  1. `bun run check` (`tsc --noEmit && vite build && scripts/check-assets.ts`) passe sur le code nettoyé et échoue réellement sur un fichier factice de plus de 20 Mio ou une vidéo non `yuv420p` / sans faststart ; les vidéos héritées non conformes (hero 10 bits, CV sans faststart) figurent dans une liste d'exceptions explicite que la phase 2 doit vider ; `wrangler deploy --dry-run` passe et le site est redéployé sur Cloudflare
+  1. `npm run check` (`tsc --noEmit && vite build && scripts/check-assets.mjs`) passe sur le code nettoyé et échoue réellement sur un fichier factice de plus de 20 Mio ou une vidéo non `yuv420p` / sans faststart ; les vidéos héritées non conformes (hero 10 bits, CV sans faststart) figurent dans une liste d'exceptions explicite que la phase 2 doit vider ; `wrangler deploy --dry-run` passe — le déploiement réel est reporté à la phase 2 (la production actuelle, déployée hors git le 2026-09-01, est plus légère que le build de phase 1)
   2. Un visiteur sur la page d'accueil et sur les 9 pages projet ne voit plus ni pétales, ni curseur rose, ni badge « 20 ans », ni ornements de coins, ni particules sur le portrait ; aucun listener `mousemove` global ne subsiste ; l'onglet Réseau ne montre aucun 404 (références `extraitpubSAE1.mp4`, `festival-flyer.jpg`, `festival-goodies.jpg` corrigées)
   3. Dans l'iframe SkøllRub, la chaîne complète des 6 scènes (`1_MOHAMED → 1_LYNA → 2_IMAD → 2_CLEMENT → 2_SOPHIA → 3_ALBERTIN`) se parcourt jusqu'au bout après le nettoyage de `public/animate/` (`.fla`, `.ai`, `~ai-*.tmp`, `RECOVER_*`, `illustrations/`, `3_CLEMENT.*`, 8 vidéos racine retirés ; `images/`, `imagesImad/`, `imagesframe2/`, `components/`, `videos/` intacts)
-  4. `src/assets/` n'existe plus et le portrait s'affiche depuis `public/media/` ; les fichiers non référencés de `public/assets/` sont passés par une quarantaine après un inventaire qui décode les URL (NFD/NFC, `%20`) ; `vercel.json`, `server.js`, `package-lock.json` et les dépendances signalées par `knip` ont disparu
+  4. `src/assets/` n'existe plus et le portrait s'affiche depuis `public/media/` ; les fichiers non référencés de `public/assets/` sont passés par une quarantaine après un inventaire qui décode les URL (NFD/NFC, `%20`) ; `vercel.json`, `server.js`, `bun.lockb`, `bunfig.toml` et les dépendances signalées par `knip` ont disparu
   5. Tous les originaux (dont `affichepromo.png`, `prévention.png` et `charte_graphique.pdf`) sont sauvegardés dans `media-src/` gitignoré ; `git log --stat` du milestone ne montre aucun binaire de plusieurs Mo ajouté et le PDF n'a jamais été commité
 **Plans**: TBD
 **Notes**:
@@ -46,7 +46,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   1. La vidéo hero démarre automatiquement sur iPhone (Safari), Android (Chrome) et desktop, avec des couleurs non délavées (conversion HLG bt2020 → SDR bt709), un poster léger identique à la première image, et un bouton pause accessible au clavier et au lecteur d'écran ; le fichier fait ≤ 4 Mo
   2. `public/` pèse moins de 60 Mo ; chaque vidéo livrée passe `ffprobe` (profil High, `yuv420p`, `moov` avant `mdat`) — vidéo CV ≤ 12 Mo, vidéos process SkøllRub ≤ 12 Mo chacune et toujours lues dans l'animation ; la liste d'exceptions du garde-fou est vide
   3. Aucune image livrée ne dépasse 2400 px de grand côté ; les images sont servies en `<picture>` + `srcset` (AVIF/WebP + repli), chargées en lazy hors écran, seul le hero est préchargé ; une comparaison A/B à 100 % ne montre aucune dégradation visible (affiches et logos sans bavure de chroma)
-  4. `bun scripts/media.ts` régénère `public/media/**` et `src/data/media.generated.ts` depuis `media-src/` de façon reproductible (deux exécutions → mêmes fichiers), sans jamais tourner dans le build Cloudflare
+  4. `node scripts/media.mjs` régénère `public/media/**` et `src/data/media.generated.ts` depuis `media-src/` de façon reproductible (deux exécutions → mêmes fichiers), sans jamais tourner dans le build Cloudflare
   5. La page « Identité d'un festival » affiche la galerie des ~10 planches Tafsut extraites (logo, palette, typos, affiche, billets, goodies, signalétique) et n'est plus marquée « en cours » ; le PDF n'est plus dans `public/` ; les branches `project.id === "…"` de `$projectId.tsx` sont conservées et pointent vers `public/media/**`
 **Plans**: TBD
 **UI hint**: yes
@@ -103,7 +103,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   1. La section Contact affiche l'email en clair (lien `mailto:` qui ouvre le client mail) et un lien LinkedIn, en plus du formulaire
   2. Un bouton télécharge `CV_Lyna_Rebahi_Alternance_Communication.pdf` (placeholder clairement identifié tant que Lyna ne l'a pas fourni)
   3. Le formulaire EmailJS envoie un message de test effectivement reçu ; la validation HTML native bloque un email invalide ou un champ vide ; un envoi avec le honeypot rempli n'arrive jamais
-  4. Sur l'URL Cloudflare déployée, une QA sur un vrai iPhone (Safari) et un vrai Android valide : hero qui joue, scroll fluide, 6 scènes Animate navigables au doigt, aucune image de plus de 2400 px décodée ; `bun run check` et `wrangler deploy --dry-run` sont verts
+  4. Sur l'URL Cloudflare déployée, une QA sur un vrai iPhone (Safari) et un vrai Android valide : hero qui joue, scroll fluide, 6 scènes Animate navigables au doigt, aucune image de plus de 2400 px décodée ; `npm run check` et `wrangler deploy --dry-run` sont verts
 **Plans**: TBD
 **UI hint**: yes
 **Notes**:

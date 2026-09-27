@@ -33,7 +33,7 @@ Un recruteur qui ouvre le site comprend en 3 secondes que Lyna vit l'audiovisuel
 - [ ] Retirer du dossier public les sources de travail : `.fla`, `.ai`, `~ai-*.tmp`, `RECOVER_*`, `illustrations/` (25 Mo) et l'export orphelin `3_CLEMENT.*` — ATTENTION : l'animation est une chaîne de 6 scènes (`1_MOHAMED → 1_LYNA → 2_IMAD → 2_CLEMENT → 2_SOPHIA → 3_ALBERTIN`, navigation par `window.open` dans le JS minifié) qui dépend de `components/`, `images/`, `imagesImad/`, `imagesframe2/` et `videos/` ; parcourir la chaîne complète après nettoyage
 - [ ] Supprimer les fichiers de `public/assets/` non référencés (capture d'écran, `mockup.jpg` 9,8 Mo, `site.jpg` 3,7 Mo, etc.) après vérification
 - [ ] Corriger les références cassées : `public/videos/extraitpubSAE1.mp4` (gitignoré, absent) dans `$projectId.tsx:589`, `festival-flyer.jpg` / `festival-goodies.jpg` dans `projects.ts`
-- [ ] Ne garder qu'une cible de déploiement (Cloudflare) : supprimer `vercel.json`, `server.js`, `package-lock.json` (bun est le gestionnaire primaire)
+- [ ] Ne garder qu'une cible de déploiement (Cloudflare) : supprimer `vercel.json`, `server.js`, `bun.lockb`, `bunfig.toml` (npm est le gestionnaire réellement utilisé ; bun n'est pas installé)
 
 **Poids**
 
@@ -87,7 +87,7 @@ Un recruteur qui ouvre le site comprend en 3 secondes que Lyna vit l'audiovisuel
 - **Médias** : rien n'est supprimé ni visiblement dégradé ; réencodage visuellement sans perte uniquement
 - **Textes** : fournis par Lyna — le code livre des emplacements et des consignes, pas de copy générée définitive
 - **Logos** : marques Adobe indisponibles librement — placeholders nommés, Lyna fournit les images
-- **Stack** : TanStack Start + Tailwind v4 + config Lovable conservés, bun comme gestionnaire de paquets
+- **Stack** : TanStack Start + Tailwind v4 + config Lovable conservés, npm comme gestionnaire de paquets (bun non installé)
 - **Identité** : palette et typos existantes conservées (direction hybride)
 
 ## Key Decisions
@@ -98,7 +98,7 @@ Un recruteur qui ouvre le site comprend en 3 secondes que Lyna vit l'audiovisuel
 | Vidéo en tête, polyvalence visible | Cible alternance chargée de com' (MMI polyvalent) mais spécialisation réalisation/montage à afficher | — Pending |
 | Réencodage visuellement sans perte | Le poids vient de 3 PNG géants et de doublons, pas de la qualité utile ; ÷10 à ÷40 sans différence visible | — Pending |
 | Version lite : tous les effets déco retirés | Lyna préfère repartir propre et réintégrer ce qui manque plutôt que trier maintenant | — Pending |
-| Cloudflare seule cible de déploiement | Une seule config à maintenir ; supprime vercel.json / server.js / package-lock | — Pending |
+| Cloudflare seule cible de déploiement | Une seule config à maintenir ; supprime vercel.json / server.js / bun.lockb / bunfig.toml | — Pending |
 | Textes rédigés par Lyna | Éviter le ton « IA générique » ; le code fournit emplacements + consignes | — Pending |
 | Charte Tafsut extraite en images | Illustre le projet festival (2 images manquantes) et sort 23 Mo de PDF du dossier public | — Pending |
 

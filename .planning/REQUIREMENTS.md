@@ -16,18 +16,18 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **CLEAN-05**: `public/animate/` est nettoyé (`.fla`, `.ai`, `~ai-*.tmp`, `RECOVER_*`, `illustrations/`, `3_CLEMENT.*`, les 8 vidéos à la racine) et la chaîne complète des 6 scènes (`1_MOHAMED → 1_LYNA → 2_IMAD → 2_CLEMENT → 2_SOPHIA → 3_ALBERTIN`) se parcourt jusqu'au bout
 - [ ] **CLEAN-06**: Les fichiers de `public/assets/` non référencés sont retirés après un inventaire qui décode les URL (`%20`, `ø`, `é`, normalisation NFD/NFC) et une étape de quarantaine avant suppression
 - [ ] **CLEAN-07**: Les références cassées sont corrigées (`extraitpubSAE1.mp4` gitignoré/absent dans `$projectId.tsx`, `festival-flyer.jpg` / `festival-goodies.jpg` dans `projects.ts`)
-- [ ] **CLEAN-08**: Cloudflare est la seule cible de déploiement : `vercel.json`, `server.js` et `package-lock.json` sont supprimés, bun reste le gestionnaire de paquets
+- [ ] **CLEAN-08**: Cloudflare est la seule cible de déploiement : `vercel.json`, `server.js`, `bun.lockb` et `bunfig.toml` sont supprimés ; npm (déjà utilisé pour `node_modules`) reste le gestionnaire de paquets avec `package-lock.json`
 - [ ] **CLEAN-09**: `charte_graphique.pdf` (22,5 Mio) n'est jamais commité (`.gitignore`) et tous les originaux sont sauvegardés hors repo dans `media-src/` (gitignoré) avant tout réencodage
 
 ### Poids & pipeline média (SIZE)
 
-- [ ] **SIZE-01**: Un script hors-ligne `scripts/media.ts` (sharp + ffmpeg + Ghostscript) régénère de façon reproductible `public/media/**` et le manifeste `src/data/media.generated.ts` depuis `media-src/`
+- [ ] **SIZE-01**: Un script hors-ligne `scripts/media.mjs` (sharp + ffmpeg + Ghostscript) régénère de façon reproductible `public/media/**` et le manifeste `src/data/media.generated.ts` depuis `media-src/`
 - [ ] **SIZE-02**: Chaque image est redimensionnée d'abord (≤ 2400 px grand côté), convertie en sRGB puis débarrassée de son ICC, encodée selon deux presets — photos : AVIF/WebP 4:2:0 + JPEG de repli ; affiches, logos, typo : AVIF 4:4:4 ou PNG quantifié — renommée en kebab-case ASCII et servie via `<picture>` + `srcset`
 - [ ] **SIZE-03**: `hero.mp4` est converti HDR HLG bt2020 → SDR bt709 (filtre `colorspace`), H.264 8 bits `yuv420p`, 30 fps, muet, `+faststart`, ≤ 4 Mo, avec un poster léger extrait de la sortie convertie
 - [ ] **SIZE-04**: La vidéo CV est réencodée ≤ 12 Mo, `yuv420p`, `+faststart`, audio AAC, sans dégradation visible
 - [ ] **SIZE-05**: Les vidéos du process SkøllRub sont réencodées à 25 fps, `yuv420p`, `+faststart`, ≤ 12 Mo chacune, en conservant les chemins relatifs `videos/*.mp4` attendus par `1_MOHAMED.js`
 - [ ] **SIZE-06**: ~10 pages clés de la charte Tafsut (logo, palette, typos, affiche, billets, goodies, signalétique) sont extraites via `gs` à 300 dpi puis passées au preset graphic ; le PDF sort de `public/`
-- [ ] **SIZE-07**: Un garde-fou `bun run check` (`tsc --noEmit && vite build && scripts/check-assets.ts`) échoue si un fichier destiné à `dist/` dépasse 20 Mio ou si une vidéo n'est pas `yuv420p` / faststart ; `wrangler deploy --dry-run` passe ; le garde-fou existe dès la première phase
+- [ ] **SIZE-07**: Un garde-fou `npm run check` (`tsc --noEmit && vite build && scripts/check-assets.mjs`) échoue si un fichier destiné à `dist/` dépasse 20 Mio ou si une vidéo n'est pas `yuv420p` / faststart ; `wrangler deploy --dry-run` passe ; le garde-fou existe dès la première phase
 - [ ] **SIZE-08**: `public/` pèse moins de 60 Mo au total ; les médias hors écran sont chargés en lazy ; seul le hero est préchargé
 - [ ] **SIZE-09**: `affichepromo.png` et `prévention.png` sont réencodées et intégrées à un projet existant choisi par Lyna (projet à préciser)
 
@@ -108,7 +108,7 @@ Explicitly excluded. Documented to prevent scope creep.
 | CMS / backend / base de données | Contenu statique dans `projects.ts` suffisant |
 | Nouveaux projets | Hors périmètre du milestone ; structure prête à en accueillir |
 | Version anglaise | Cible recruteurs francophones |
-| Suite de tests complète | `bun run check` + QA visuelle suffisent sur ce délai |
+| Suite de tests complète | `npm run check` + QA visuelle suffisent sur ce délai |
 | Changement de palette / typos | Direction hybride retenue, identité conservée |
 | Effets déco (curseur, badge, ornements, pétales, particules) | Retirés pour la version lite ; réintégrés plus tard si Lyna le souhaite |
 | Barres de niveau de compétences | Signal négatif confirmé côté recruteurs |

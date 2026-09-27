@@ -16,7 +16,7 @@ Ce milestone est une refonte « version lite » : audit complet, suppression du 
 - **Médias** : rien n'est supprimé ni visiblement dégradé ; réencodage visuellement sans perte uniquement
 - **Textes** : fournis par Lyna — le code livre des emplacements et des consignes, pas de copy générée définitive
 - **Logos** : marques Adobe indisponibles librement — placeholders nommés, Lyna fournit les images
-- **Stack** : TanStack Start + Tailwind v4 + config Lovable conservés, bun comme gestionnaire de paquets
+- **Stack** : TanStack Start + Tailwind v4 + config Lovable conservés, npm comme gestionnaire de paquets (bun non installé)
 - **Identité** : palette et typos existantes conservées (direction hybride)
 <!-- GSD:project-end -->
 

@@ -43,7 +43,7 @@ Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
 - [Roadmap]: Structure MVP verticale en 5 phases ; nettoyage (1) et poids (2) déployés en production avant toute mise en scène (3-5)
-- [Roadmap]: Garde-fou `bun run check` introduit en phase 1 avec une liste d'exceptions explicite pour les vidéos héritées non conformes (hero 10 bits HDR, CV sans faststart), vidée en phase 2
+- [Roadmap]: Garde-fou `npm run check` introduit en phase 1 avec une liste d'exceptions explicite pour les vidéos héritées non conformes (hero 10 bits HDR, CV sans faststart), vidée en phase 2
 - [Roadmap]: HERO-01 (hero qui joue sur iPhone + pause) livré en phase 2 avec le réencodage, pour un gain visible immédiat
 - [Roadmap]: PROJ-06 / PROJ-07 livrés en phase 2 (consommateurs directs du pipeline média) ; les branches `project.id === "…"` restent, refactor `ProjectBlock[]` en v2
 - [Roadmap]: `src/data/tools.ts` créé en phase 3 (grille de compétences) et réutilisé en phase 4 (logos par projet)
@@ -59,7 +59,9 @@ None yet.
 - `affichepromo.png` et `prévention.png` n'existent que dans `src/assets/` : ils doivent être sauvegardés dans `media-src/` avant la suppression du dossier (phase 1)
 - `charte_graphique.pdf` (22,5 Mio) ne doit jamais être commité ; `.git` pèse déjà 333 Mo
 - Conversion HDR HLG → SDR du hero via le filtre `colorspace` : validation visuelle obligatoire, pas de repli `zscale` dans ce build ffmpeg (research flag phase 2)
-- `wrangler deploy --dry-run` n'applique peut-être pas le plafond de 25 Mio : `scripts/check-assets.ts` reste le garde-fou principal
+- `wrangler deploy --dry-run` applique le plafond de 25 Mio (vérifié en phase 1) mais seulement après `vite build` ; `scripts/check-assets.mjs` reste le garde-fou principal (seuil 20 Mio, pix_fmt, faststart)
+- Production `lynarebahi.fr` déployée hors git le 2026-09-01 (version `0b1ccd2a-db8e-4136-b65c-55615d6787b4`, WebP + hero 10,8 Mo, mais PDF et `.fla` publics) : aucun déploiement réel avant la phase 2 ; rollback = `wrangler rollback 0b1ccd2a-db8e-4136-b65c-55615d6787b4`
+- Gestionnaire de paquets : npm (bun non installé) ; scripts en `.mjs`
 - Rendu de l'export Adobe Animate sur iOS réel non vérifié (phase 4 / QA phase 5)
 
 ## Deferred Items
