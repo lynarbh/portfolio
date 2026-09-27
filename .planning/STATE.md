@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 2 UI-SPEC approved
-last_updated: "2026-09-27T23:31:27.528Z"
-last_activity: 2026-09-27 -- Phase 2 planning complete
+stopped_at: Completed 02-01-PLAN.md
+last_updated: "2026-09-27T23:36:24.034Z"
+last_activity: 2026-09-28 -- Plan 02-01 complete
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 11
-  completed_plans: 4
-  percent: 20
+  completed_plans: 5
+  percent: 45
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-09-21)
 
 **Core value:** Un recruteur qui ouvre le site comprend en 3 secondes que Lyna vit l'audiovisuel — la vidéo domine, les médias sont mis en scène — et le site se charge vite malgré des visuels de qualité.
-**Current focus:** Phase 2 — médias légers & hero qui joue partout
+**Current focus:** Phase 2 — Médias légers & hero qui joue partout
 
 ## Current Position
 
-Phase: 2
-Plan: Not started
-Status: Ready to execute
-Last activity: 2026-09-27 -- Phase 2 planning complete
+Phase: 2 (Médias légers & hero qui joue partout) — EXECUTING
+Plan: 2 of 7
+Status: Executing Phase 2
+Last activity: 2026-09-28 -- Plan 02-01 complete
 
-Progress: [██████████] 100%
+Progress: [█████░░░░░] 45%
 
 ## Performance Metrics
 
@@ -56,6 +56,7 @@ Progress: [██████████] 100%
 | Phase 01 P02 | 12 min | 2 tasks | 72 files |
 | Phase 01 P03 | 5 min | 3 tasks | 60 files |
 | Phase 01 P04 | 12 min | 3 tasks | 6 files |
+| Phase 02 P01 | 4 min | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -77,6 +78,9 @@ Recent decisions affecting current work:
 - [Phase 01]: 01-03: knip.json garde @tanstack/router-plugin, tailwindcss, tw-animate-css en ignoreDependencies ; knip lancé via npx knip@6.38.0, jamais installé
 - [Phase 01]: 01-04: push de main ne déclenche aucun build Cloudflare (0b1ccd2a toujours dernière 154 s après push)
 - [Phase 01]: 01-04: 5 assets non référencés de public/assets en quarantaine media-src/quarantine/ (inventaire REF=62 UNREF=0 MISSING=0)
+- [Phase 02]: 02-01: src/server.ts sert les MP4 de /media/video/ et /animate/videos/ en 206 via caches.default ; clé et lookup sans query string, HEAD transmis à env.ASSETS, préfixe /videos/ non routé
+- [Phase 02]: 02-01: scrim du bouton hero = rgba(61,31,58,0.85) (8,62:1) au lieu de plum 70 % (1,95:1), aucun nouveau token
+- [Phase 02]: 02-01: sharp@0.35.4 approuvé par Lyna le 2026-09-28, dist.integrity inchangée ; plan 02 installe en --save-dev --save-exact
 
 ### Pending Todos
 
@@ -104,6 +108,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-09-27T22:09:13.889Z
-Stopped at: Phase 2 UI-SPEC approved
-Resume file: .planning/phases/02-m-dias-l-gers-hero-qui-joue-partout/02-UI-SPEC.md
+Last session: 2026-09-27T23:36:09.375Z
+Stopped at: Completed 02-01-PLAN.md
+Resume file: None
