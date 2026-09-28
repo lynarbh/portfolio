@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 02-03-PLAN.md
-last_updated: "2026-09-28T00:11:16.891Z"
+stopped_at: "02-06 Task 2 checkpoint (empattage 720p, awaiting Lyna)"
+last_updated: "2026-09-28T00:18:36.414Z"
 last_activity: 2026-09-28
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 11
-  completed_plans: 9
+  completed_plans: 10
   percent: 20
 ---
 
@@ -118,6 +118,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-09-28T00:11:11.638Z
-Stopped at: Completed 02-03-PLAN.md
-Resume file: None
+Last session: 2026-09-28T00:18:36.408Z
+Stopped at: 02-06 Task 2 checkpoint (empattage 720p, awaiting Lyna)
+Resume file: .planning/phases/02-m-dias-l-gers-hero-qui-joue-partout/02-06-SUMMARY.md
