@@ -1,5 +1,6 @@
-// Read-only checks on the pipeline outputs (`npm run verify-media`). Imports the generated
-// src/data/media.generated.ts (Node type stripping) and checks every video it lists:
+// Read-only checks on the pipeline outputs (`npm run verify-media`). Reads the generated
+// src/data/media.generated.ts (its object literals, see readGenerated) and checks every
+// video it lists:
 // file under public/, faststart, yuv420p, ≤ 12,000,000 B; for the hero, the exact SDR
 // signature, no audio, ≤ 4,000,000 B, 1080×574 and a WebP poster ≤ 110,000 B at 1080 px;
 // for the CV, profile High and an AAC track.
@@ -16,7 +17,7 @@
 // Never writes anything. Exit codes: 2 = generated module missing, 1 = any FAIL, 0 = OK.
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
-import { pathToFileURL } from "node:url";
+import { runInNewContext } from "node:vm";
 import sharp from "sharp";
 import { GENERATED, MEDIA_SRC, PUBLIC, run, topLevelBoxes } from "./media/util.mjs";
 
@@ -36,7 +37,23 @@ if (!existsSync(GENERATED)) {
   console.error("verify-media: src/data/media.generated.ts missing: run `npm run media` first");
   process.exit(2);
 }
-const { images, videos, galleries } = await import(pathToFileURL(GENERATED).href);
+// The module is TypeScript, but scripts/media.mjs emits each export as a plain object
+// literal followed by "as const satisfies ...". Evaluating those literals (in an empty
+// context) avoids importing a .ts file, which needs Node type stripping (>= 22.18).
+function readGenerated(name) {
+  const text = readFileSync(GENERATED, "utf8");
+  const m = new RegExp(`^export const ${name} = (\\{[\\s\\S]*?\\}) as const satisfies `, "m").exec(
+    text,
+  );
+  if (!m) {
+    console.error(`verify-media: no "export const ${name}" literal in ${GENERATED}`);
+    process.exit(2);
+  }
+  return runInNewContext(`(${m[1]})`, Object.create(null));
+}
+const images = readGenerated("images");
+const videos = readGenerated("videos");
+const galleries = readGenerated("galleries");
 
 const errors = [];
 const warns = [];
