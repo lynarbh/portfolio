@@ -620,7 +620,8 @@ html.cur-down .cur-ring { scale: 0.8; }
 .tool-logo--cluster svg { width: 100%; height: 100%; }
 .tool-logo--mono { font-family: var(--font-body); font-weight: 600; font-size: 0.95rem; letter-spacing: -0.02em; }
 .tool-logo--serif { font-family: var(--font-cine); font-style: italic; font-weight: 400; font-size: 1.4rem; border-radius: 50%; }
-.tool-logo--file img { width: 100%; height: 100%; object-fit: contain; }
+.tool-logo--file { background: #fff; }
+.tool-logo--file img { display: block; width: 100%; height: 100%; object-fit: contain; }
 
 /* CV vidéo : moniteur */
 .monitor {
@@ -967,6 +968,7 @@ html.cur-down .cur-ring { scale: 0.8; }
 .cs-swatch__note { font-family: var(--font-body); font-size: 0.85rem; line-height: 1.55; color: color-mix(in oklab, var(--encre) 80%, transparent); }
 .cs-video__frame { position: relative; width: 100%; padding-top: 56.25%; }
 .cs-video .monitor-label { display: none; } /* YouTube affiche déjà son titre */
+.cs-video__local { display: block; width: 100%; height: auto; background: #000; }
 .cs-video--vertical { max-width: 24rem; margin: 0 auto; }
 .cs-video--vertical .cs-video__frame { padding-top: 177.78%; }
 .cs-video__frame iframe, .cs-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }

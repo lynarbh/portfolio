@@ -1,4 +1,4 @@
-// ffmpeg encoders per video class: "hero" (silent SDR loop + poster), "cv" (original
+// ffmpeg encoders per video class: "hero" (silent SDR loop + poster), "clip" (720p 30 fps, AAC 96k), "cv" (original
 // resolution, AAC 128k) and "process" (SkøllRub Animate clips, 1280×720 25 fps, AAC 64k,
 // written in place under public/animate/videos/). Single-pass CRF with bitexact flags:
 // byte-identical across runs (two-pass is not deterministic, RESEARCH Pitfall 4).
@@ -103,9 +103,13 @@ const withAudioArgs = (src, out, crf, { vf, maxrate, bufsize, audio }) => [
 // Process clips: the Animate player shows them well under 1280 px wide (CONTEXT addendum).
 const PROCESS_FILTER = "fps=25,scale=1280:720:flags=lanczos";
 const PROCESS_FPS = 25;
+// Clip class: standalone clips shown in a <video> on the site (720p, 30 fps, stereo AAC).
+const CLIP_FILTER = "fps=30,scale=1280:-2:flags=lanczos";
+const CLIP_FPS = 30;
 const CLASS_ARGS = {
   cv: { maxrate: "3000k", bufsize: "6000k", audio: "128k" },
   process: { vf: PROCESS_FILTER, maxrate: "1500k", bufsize: "3000k", audio: "64k" },
+  clip: { vf: CLIP_FILTER, maxrate: "2500k", bufsize: "5000k", audio: "96k" },
 };
 
 // Poster = frame 0 of the SDR output, native width, no resize.
@@ -156,7 +160,7 @@ function probeFps(file) {
 }
 
 // cv: SSIM against the source itself (same resolution and frame rate).
-// process: reference = the source through the same fps/scale chain, lossless, so SSIM
+// process / clip: reference = the source through the same fps/scale chain, lossless, so SSIM
 // measures the CRF only.
 async function encodeWithAudio(entry, srcAbs, outAbs, tmpDir) {
   mkdirSync(dirname(outAbs), { recursive: true });
@@ -167,6 +171,7 @@ async function encodeWithAudio(entry, srcAbs, outAbs, tmpDir) {
     score = ssim(srcAbs, outAbs, `(${probeFps(srcAbs)})`);
   } else {
     const refAbs = join(tmpDir, `${entry.id}-ref.mkv`);
+    const refFilter = entry.class === "clip" ? CLIP_FILTER : PROCESS_FILTER;
     run("ffmpeg", [
       "-v",
       "error",
@@ -174,7 +179,7 @@ async function encodeWithAudio(entry, srcAbs, outAbs, tmpDir) {
       "-i",
       srcAbs,
       "-vf",
-      PROCESS_FILTER,
+      refFilter,
       "-c:v",
       "libx264",
       "-qp",
@@ -184,7 +189,7 @@ async function encodeWithAudio(entry, srcAbs, outAbs, tmpDir) {
       "-an",
       refAbs,
     ]);
-    score = ssim(refAbs, outAbs, PROCESS_FPS);
+    score = ssim(refAbs, outAbs, entry.class === "clip" ? CLIP_FPS : PROCESS_FPS);
   }
   const { width, height } = probeSize(outAbs);
   return { outputs: [outAbs], meta: { width, height, ssim: score } };
@@ -210,7 +215,7 @@ function probeSize(file) {
 // outRoot: where the poster path (entry.poster.out, relative to public/) is written. The
 // pipeline passes a staging directory and moves the files into public/ only on success.
 export async function encodeVideo(entry, srcAbs, outAbs, tmpDir, outRoot = PUBLIC) {
-  if (entry.class === "cv" || entry.class === "process") {
+  if (entry.class === "cv" || entry.class === "process" || entry.class === "clip") {
     return encodeWithAudio(entry, srcAbs, outAbs, tmpDir);
   }
   if (entry.class !== "hero") throw new Error(`class not implemented: ${entry.class}`);

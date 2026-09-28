@@ -54,8 +54,8 @@ import {
 const PIPELINE_VERSION = "4";
 const MiB = 1024 * 1024;
 const BUDGET_MIB = 60;
-const SSIM_WARN = { hero: 0.9, cv: 0.98, process: 0.95 };
-const CLASSES = new Set(["hero", "cv", "process"]);
+const SSIM_WARN = { hero: 0.9, cv: 0.98, process: 0.95, clip: 0.95 };
+const CLASSES = new Set(["hero", "cv", "process", "clip"]);
 const PRESET_NAMES = new Set(["photo", "graphic"]);
 const IMAGE_SSIM_WARN = { photo: 0.93, graphic: 0.96 };
 const OUT_PREFIXES = ["media/", "animate/videos/"];
@@ -578,7 +578,11 @@ if (errors.length === 0) writeFileSync(GENERATED, renderGenerated());
 else warns.push("src/data/media.generated.ts not rewritten (the run had failures)");
 
 // Files under public/media that are copied by hand (master in media-src/), not produced here.
-const STATIC_EXTRAS = new Set(["public/media/cv-lyna-rebahi.pdf", "public/media/grain.webp"]);
+const STATIC_EXTRAS = new Set([
+  "public/media/cv-lyna-rebahi.pdf",
+  "public/media/grain.webp",
+  ...["capcut", "canva", "vs-code", "davinci-resolve"].map((n) => `public/media/logos/${n}.png`),
+]);
 // f) Report: orphans under public/media (never deleted), public/ budget.
 const walk = (dir) =>
   readdirSync(dir, { withFileTypes: true }).flatMap((e) =>

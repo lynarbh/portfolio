@@ -6,6 +6,7 @@ import { SplitText } from "@/components/SplitText";
 import { ToolChips } from "@/components/ToolChips";
 import { projects, type Project } from "@/data/projects";
 import type { CaseStudyData, CsBlock, CsImage } from "@/data/case-studies";
+import { videos, type VideoEntry } from "@/data/media.generated";
 
 // Moteur des études de cas : en-tête, sommaire, chapitres composés de blocs (voir
 // src/data/case-studies.ts), fond vivant, visionneuse. Les images sont des carrés cliquables.
@@ -180,15 +181,27 @@ function Block({ block, onOpen }: { block: CsBlock; onOpen: Open }) {
             <span className="monitor-label">
               <span className="rec-dot" /> {block.label ?? "Vidéo"}
             </span>
-            <div className="cs-video__frame">
-              <iframe
-                src={block.youtube}
-                title={block.label ?? "Vidéo"}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                loading="lazy"
-              />
-            </div>
+            {block.local ? (
+              <video
+                controls
+                playsInline
+                preload="metadata"
+                poster={(videos[block.local] as VideoEntry).poster}
+                className="cs-video__local"
+              >
+                <source src={videos[block.local].src} type="video/mp4" />
+              </video>
+            ) : (
+              <div className="cs-video__frame">
+                <iframe
+                  src={block.youtube}
+                  title={block.label ?? "Vidéo"}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  loading="lazy"
+                />
+              </div>
+            )}
           </div>
           {block.text ? (
             <div className="cs-after">

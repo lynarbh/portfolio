@@ -1,7 +1,7 @@
 // Registre des outils affichés dans « Qui suis-je » (13 outils, liste de Lyna + Lightroom, Animate, VS Code).
-// Les icônes officielles Adobe, Canva, CapCut et VS Code ne sont pas librement redistribuables : elles sont
-// rendues en monogrammes aux couleurs de la marque. Pour utiliser un fichier fourni par Lyna, déposer
-// `public/media/logos/<id>.png` (ou .svg) et remplacer l'entrée `icon` par `{ kind: "file", src: "/media/logos/<id>.png" }`.
+// Les icônes Adobe sont rendues en monogrammes aux couleurs de la marque (pas librement redistribuables).
+// CapCut, Canva, VS Code et DaVinci Resolve utilisent les fichiers fournis par Lyna (`public/media/logos/<id>.png`).
+// Pour en changer un : déposer le PNG et pointer `icon: { kind: "file", src: "/media/logos/<id>.png" }`.
 import { simpleIcons, type SimpleIconSlug } from "@/data/tool-icons";
 
 export type ToolGroup = "video" | "design" | "web";
@@ -48,15 +48,15 @@ export const tools: readonly Tool[] = [
     id: "davinci-resolve",
     name: "DaVinci Resolve",
     group: "video",
-    color: simpleIcons.davinciresolve.color,
-    icon: { kind: "si", slug: "davinciresolve" },
+    color: "#2E8BC0",
+    icon: { kind: "file", src: "/media/logos/davinci-resolve.png" },
   },
   {
     id: "capcut",
     name: "CapCut",
     group: "video",
     color: "#111111",
-    icon: { kind: "mono", text: "Cc", bg: "#111111", fg: "#FFFFFF" },
+    icon: { kind: "file", src: "/media/logos/capcut.png" },
   },
   // --- DESIGN ---
   {
@@ -99,13 +99,7 @@ export const tools: readonly Tool[] = [
     name: "Canva",
     group: "design",
     color: "#00C4CC",
-    icon: {
-      kind: "mono",
-      text: "C",
-      bg: "linear-gradient(135deg, #00C4CC, #7D2AE8)",
-      fg: "#FFFFFF",
-      serif: true,
-    },
+    icon: { kind: "file", src: "/media/logos/canva.png" },
   },
   // --- WEB ---
   {
@@ -127,6 +121,6 @@ export const tools: readonly Tool[] = [
     name: "VS Code",
     group: "web",
     color: "#23A9F2",
-    icon: { kind: "mono", text: "VS", bg: "#0066B8", fg: "#FFFFFF" },
+    icon: { kind: "file", src: "/media/logos/vs-code.png" },
   },
 ];

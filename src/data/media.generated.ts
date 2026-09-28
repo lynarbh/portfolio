@@ -869,4 +869,9 @@ export const videos = {
     width: 1080,
     height: 574,
   },
+  "pub-foodfighters": {
+    src: "/media/video/pub-foodfighters.mp4",
+    width: 1280,
+    height: 720,
+  },
 } as const satisfies Record<string, VideoEntry>;

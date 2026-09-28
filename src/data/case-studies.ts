@@ -2,6 +2,9 @@
 // explique ; les textes sont ceux déjà présents sur le site (rédigés par Lyna) ou ceux de ses
 // chartes. Le rendu est assuré par src/components/CaseStudy.tsx.
 import type { MediaId } from "@/data/media.generated";
+import type { videos } from "@/data/media.generated";
+
+type VideoId = keyof typeof videos;
 
 export type CsImage = {
   id: MediaId;
@@ -38,7 +41,14 @@ export type CsBlock =
       kind: "series";
       items: { image: CsImage; title: string; sub?: string; color?: string; text: string[] }[];
     }
-  | { kind: "video"; youtube: string; label?: string; text?: string[]; vertical?: boolean }
+  | {
+      kind: "video";
+      youtube?: string;
+      local?: VideoId;
+      label?: string;
+      text?: string[];
+      vertical?: boolean;
+    }
   | { kind: "embed"; src: string; title: string; text?: string[] }
   | { kind: "link"; href: string; label: string; text?: string[] };
 
@@ -787,6 +797,18 @@ const SAE1: CaseStudyData = {
           text: [
             "Projet pluridisciplinaire réalisé en groupe dans le cadre d'une SAE (Situation d'Apprentissage et d'Évaluation). Une expérience qui m'a poussée à mobiliser un large éventail de compétences — design graphique, vidéo, prototypage, intégration — tout en apprenant à coordonner les rôles, à gérer un planning (Diagramme de GANTT, tableau de bord) et à défendre nos choix créatifs face à un commanditaire.",
           ],
+        },
+      ],
+    },
+    {
+      id: "pub",
+      title: "Extrait publicitaire",
+      blocks: [
+        {
+          kind: "video",
+          local: "pub-foodfighters",
+          label: "Food Fighters — extrait publicitaire",
+          text: ["Extrait de la vidéo publicitaire réalisée pour l'association."],
         },
       ],
     },
