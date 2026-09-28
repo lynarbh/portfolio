@@ -9,7 +9,10 @@
 //
 // Flags:
 //   --force             ignore the cache and re-encode every entry
-//   --manifest <path>   read another manifest (validator tests)
+//   --check             validate the manifest and exit (writes nothing, needs no binaries)
+//   --manifest <path>   read another manifest (validator tests). Implies --check: a test
+//                       manifest must never rewrite public/, media.generated.ts or the cache.
+//                       Add --write to really encode from it.
 //
 // Exit codes: 2 = environment or configuration, 1 = an entry failed, 0 = OK.
 import {
@@ -56,12 +59,10 @@ if (manifestArg !== -1 && !argv[manifestArg + 1]) {
 }
 const MANIFEST_FILE =
   manifestArg !== -1 ? resolve(argv[manifestArg + 1]) : join(MEDIA_SRC, "manifest.json");
+const CHECK_ONLY = argv.includes("--check") || (manifestArg !== -1 && !argv.includes("--write"));
 
 const errors = [];
 const warns = [];
-
-// a) Binaries (gs is checked once the manifest is known to have pdf entries)
-requireBins(["ffmpeg", "ffprobe"]);
 
 // b) Manifest: load and validate. Any problem is a configuration error (exit 2).
 function loadManifest() {
@@ -250,7 +251,13 @@ function loadManifest() {
 }
 
 const manifest = loadManifest();
-if (manifest.pdf.length) requireBins(["gs"]);
+if (CHECK_ONLY) {
+  console.log(`media: manifest OK (${MANIFEST_FILE}), nothing written`);
+  process.exit(0);
+}
+
+// a) Binaries, once the manifest is known (gs only when it has pdf entries).
+requireBins(["ffmpeg", "ffprobe", ...(manifest.pdf.length ? ["gs"] : [])]);
 
 // c) Cache: { [id]: { key, outputs: [{ path, sha256 }], meta } }, paths relative to ROOT.
 function loadCache() {
