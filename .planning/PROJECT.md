@@ -31,18 +31,19 @@ Un recruteur qui ouvre le site comprend en 3 secondes que Lyna vit l'audiovisuel
 - ✓ Assets non référencés de `public/assets/` mis en quarantaine dans `media-src/` (gitignoré) après inventaire décodant les URL et normalisant NFC (`scripts/inventory-assets.mjs` : REF=62, MISSING=0) — Phase 1
 - ✓ Références cassées corrigées (`extraitpubSAE1.mp4`, `festival-flyer.jpg`, `festival-goodies.jpg`) : 0 × 404 sur les 76 URL sondées de l'accueil et des 9 pages projet — Phase 1
 - ✓ Cloudflare seule cible : `vercel.json`, `server.js`, `bun.lockb`, `bunfig.toml` et le script `start` supprimés ; npm seul gestionnaire (`engines.node >= 20.11`, `.nvmrc`) — Phase 1
+- ✓ Pipeline média hors-ligne `scripts/media.mjs` (sharp 0.35.4, ffmpeg, Ghostscript) : manifeste `media-src/manifest.json`, cache par empreinte (arguments + versions d'outils), sorties déterministes byte-identiques, manifeste typé `src/data/media.generated.ts`, `verify-media` ; jamais dans le build Cloudflare — Phase 2
+- ✓ Images : 57 masters + 10 planches Tafsut → AVIF/WebP/repli ≤ 2400 px via `<Picture>` (lazy, dimensions intrinsèques), seul le poster hero est préchargé ; `public/assets/` supprimé après contrôle sha256 — Phase 2
+- ✓ Vidéos : hero SDR bt709 1080×574 CRF 32 (3,78 Mo, validé par Lyna), CV 10,6 Mo, 8 vidéos process 720p (85,5 → 12,9 Mo, validé par Lyna), toutes `yuv420p` + faststart ; liste d'exceptions du garde-fou vide ; règle 12 Mo par vidéo et budget 60 Mio non dérogeables — Phase 2
+- ✓ Worker Cloudflare `src/server.ts` : réponses 206 aux requêtes Range (Cache API + repli manuel), sans quoi Safari/iOS ne lisent aucune vidéo (la prod d'origine répondait 200) — Phase 2
+- ✓ Page « Identité d'un festival » terminée avec 10 planches Tafsut ; PDF hors de `public/` — Phase 2
+- ✓ `public/` = 55,4 Mio (< 60) ; production `lynarebahi.fr` redéployée (version `9b787c88`), test sur appareil réel en attente (`02-HUMAN-UAT.md`) — Phase 2
 - ✓ Garde-fou de poids en continu : `npm run check` = `tsc --noEmit && vite build && node scripts/check-assets.mjs && wrangler deploy --dry-run` ; échoue sur un fichier > 20 Mio, une vidéo non `yuv420p` ou sans faststart, une extension interdite ; `npm run deploy` passe par `check` ; 3 exceptions héritées listées dans `scripts/check-assets.exceptions.json` que la phase 2 doit vider — Phase 1
 
 ### Active
 
-**Poids**
+**Poids (reste)**
 
-- [ ] Réencoder les images en visuellement sans perte : redimensionner d'abord (≤ 2400 px grand côté — `chartegraphique_SkollRub.png` fait 9047×5032 soit ~173 Mio décodés pour 3 Mo sur disque, le poids disque n'est pas le bon critère), convertir en sRGB puis retirer l'ICC (certains PNG portent un profil moniteur « Color LCD »), deux presets : photos → AVIF/WebP 4:2:0 ; affiches, logos, typo → AVIF 4:4:4 ou PNG quantifié (jamais WebP lossy) ; renommer en kebab-case ASCII au passage (`ø`, `é`, espaces cassent les audits et la normalisation NFD/NFC)
-- [ ] `src/assets/affichepromo.png` (23 Mo) et `src/assets/prévention.png` (19 Mo) n'existent que dans `src/assets/` et ne sont référencés nulle part : décision de contenu à prendre avec Lyna (les afficher dans un projet ou les retirer), pas une tâche de compression
-- [ ] Réencoder les vidéos à qualité constante : `hero.mp4` (17 Mo, 60 fps, 8,4 Mbit/s pour 17 s) → ~3 Mo ; vidéo CV (23,1 Mo) → confortablement sous les 25 Mio Cloudflare ; vidéos du process SkøllRub (`empattage.mp4` 22,4 Mio — second asset proche de la limite, mise en bouteille 16 Mo, filtration 14 Mo…) allégées ; sortie obligatoire en H.264 8 bits `-pix_fmt yuv420p` + `-movflags +faststart`, vérifiée par `ffprobe` (le hero actuel est en High 10 / `yuv420p10le` et ne se lit pas sur iPhone ; la vidéo CV n'a pas de faststart et se télécharge entièrement avant la première image)
-- [ ] Aucun média existant supprimé : tous les visuels de projets, le portrait et la vidéo de fond restent, uniquement réencodés
-- [ ] Extraire les pages clés de `charte_graphique.pdf` (Tafsut Festival : logo, palette, typos, affiche, billets, goodies, signalétique) en images légères pour illustrer le projet « Identité d'un festival », et passer le projet en terminé ; retirer le PDF de 23 Mo du dossier public
-- [ ] Objectif global : `public/` + `src/assets` passent de ~525 Mo à moins de 60 Mo
+- [ ] `src/assets/affichepromo.png` (23 Mo) et `src/assets/prévention.png` (19 Mo) n'existent plus que dans `media-src/` (masters) et ne sont référencés nulle part : décision de contenu à prendre avec Lyna (les afficher dans un projet ou les retirer), pas une tâche de compression
 
 **Refonte « hybride cinéma »**
 
@@ -52,7 +53,7 @@ Un recruteur qui ouvre le site comprend en 3 secondes que Lyna vit l'audiovisuel
 - [ ] Compétences : grille de logos des logiciels maîtrisés — Premiere Pro, After Effects, DaVinci Resolve, CapCut, Photoshop, Illustrator, InDesign, Lightroom, Adobe Animate, Figma, Canva, HTML/CSS, VS Code — avec emplacement placeholder nommé pour chaque logo introuvable (Lyna fournit l'image)
 - [ ] Projets : les projets vidéo passent en premier ; chaque fiche projet affiche les logos des logiciels utilisés (à la place des tags texte) ; médias disposés en galerie soignée (vidéo en tête, images en grille/mosaïque)
 - [ ] Textes : tous les blocs de texte (hero, qui suis-je, descriptions) reçoivent un emplacement clairement identifié avec une consigne courte (longueur, angle) — Lyna rédige elle-même
-- [ ] Performance : lazy loading des médias hors écran, `poster` sur les vidéos, préchargement limité à la vidéo hero (le re-render sur `mousemove` est déjà supprimé en phase 1)
+- [ ] Performance : `prefers-reduced-motion` global (Reveal, hover), `youtube-nocookie` + `loading="lazy"` sur les iframes, en-têtes `_headers` (cache immutable `public/media/**`) — lazy loading images, poster et préchargement hero sont faits en phase 2
 
 ### Out of Scope
 
@@ -79,7 +80,7 @@ Un recruteur qui ouvre le site comprend en 3 secondes que Lyna vit l'audiovisuel
 - Aucun test, aucune CI, ESLint laxiste sur le code mort (`no-unused-vars` désactivé)
 - Inspiration visuelle : GIF Behance (serif rouge calligraphiée, grain VHS, cadre écran bombé, métadonnées de contact en coins)
 
-**État courant (2026-09-27)** : Phase 1 terminée (4 plans, 11 findings de code review corrigés en 3 itérations, vérification 5/5 sur preuves reproduites). `public/` pèse 215 Mo (animate 90, assets 82, videos 40) ; la production reste la version du 2026-09-01. Prochaine étape : Phase 2 « Médias légers & hero qui joue partout » (réencodage, hero SDR 8 bits, vider les exceptions du garde-fou, premier déploiement réel). La cartographie `.planning/codebase/` décrit l'état d'avant nettoyage : à rafraîchir avant la planification de la phase 2.
+**État courant (2026-09-28)** : Phases 1 et 2 terminées. `public/` = 55,4 Mio ; production `lynarebahi.fr` = version `9b787c88` (hero SDR, vidéos en 206, images AVIF/WebP, page festival terminée). Revue de code phase 2 : 11 findings corrigés, revue finale clean ; audit sécurité 42/42. En attente : UAT appareil réel (5 items). Prochaine étape : Phase 3 « Hero & Qui suis-je en scène » (positionnement, portrait animé, grille de logos, CV vidéo relabellisée, emplacements de textes).
 
 ## Constraints
 
@@ -97,7 +98,7 @@ Un recruteur qui ouvre le site comprend en 3 secondes que Lyna vit l'audiovisuel
 |----------|-----------|---------|
 | Direction « hybride » plutôt que refonte totale cinéma | Garder l'identité déjà construite (sakura/crème/prune) tout en injectant les codes audiovisuels | — Pending |
 | Vidéo en tête, polyvalence visible | Cible alternance chargée de com' (MMI polyvalent) mais spécialisation réalisation/montage à afficher | — Pending |
-| Réencodage visuellement sans perte | Le poids vient de 3 PNG géants et de doublons, pas de la qualité utile ; ÷10 à ÷40 sans différence visible | — Pending |
+| Réencodage visuellement sans perte | Le poids vient de 3 PNG géants et de doublons, pas de la qualité utile ; ÷10 à ÷40 sans différence visible | ✓ Phase 2 (SSIM 0,93–0,999 ; hero CRF 32 et process 720p validés visuellement par Lyna) |
 | Version lite : tous les effets déco retirés | Lyna préfère repartir propre et réintégrer ce qui manque plutôt que trier maintenant | ✓ Phase 1 (contrôle visuel humain en attente) |
 | Cloudflare seule cible de déploiement | Une seule config à maintenir ; supprime vercel.json / server.js / bun.lockb / bunfig.toml | ✓ Phase 1 |
 | npm seul gestionnaire de paquets | bun n'est pas installé ; un seul lockfile, scripts en `.mjs` | ✓ Phase 1 |
@@ -105,7 +106,11 @@ Un recruteur qui ouvre le site comprend en 3 secondes que Lyna vit l'audiovisuel
 | Garde-fou avec exceptions explicites | Les 3 vidéos héritées non conformes (hero 10 bits HDR, CV sans faststart, empattage > 20 Mio) sont tolérées par une liste nominative que la phase 2 vide ; le plafond 25 Mio et les extensions interdites ne sont jamais dérogeables | ✓ Phase 1 |
 | Validation visuelle humaine différée | Lyna ne peut pas tester maintenant ; la phase se clôt sur preuves automatisées, l'UAT partiel (`01-HUMAN-UAT.md`) reste suivi | — Pending |
 | Textes rédigés par Lyna | Éviter le ton « IA générique » ; le code fournit emplacements + consignes | — Pending |
-| Charte Tafsut extraite en images | Illustre le projet festival (2 images manquantes) et sort 23 Mo de PDF du dossier public | — Pending |
+| Charte Tafsut extraite en images | Illustre le projet festival (2 images manquantes) et sort 23 Mo de PDF du dossier public | ✓ Phase 2 (pages 1, 9, 16, 21, 24, 23, 25, 27, 28, 32) |
+| Worker Range/206 pour les vidéos | Cloudflare Workers Static Assets ignore `Range` (200 + fichier entier) ; Safari/iOS exigent 206 | ✓ Phase 2 (`src/server.ts`, Cache API + repli `sliceRange`, ETag dans la clé, `workers_dev: false`) |
+| Process SkøllRub en 720p, hero natif 1080×574 CRF 32 | Seuls réglages compatibles avec < 60 Mio et ≤ 4 Mo ; SSIM ≥ 0,965 à la taille d'affichage | ✓ Phase 2 (validés par Lyna) |
+| Déploiement réel en fin de phase 2, puis redéploiement après revue | Prod `9b787c88` ; rollbacks documentés (`30a0c129` phase 2 initiale, `0b1ccd2a` d'avant milestone) | ✓ Phase 2 |
+| UAT appareil réel différée | Lyna a répondu « defer » ; 5 items suivis dans `02-HUMAN-UAT.md` (couvrent aussi le contrôle visuel de la phase 1) | — Pending |
 
 ## Evolution
 
@@ -125,4 +130,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-09-27 after Phase 1 completion*
+*Last updated: 2026-09-28 after Phase 2 completion*
