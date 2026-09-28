@@ -4,5 +4,8 @@
   "compatibility_date": "2025-09-24",
   "compatibility_flags": ["nodejs_compat"],
   "main": "src/server.ts",
+  // No *.workers.dev hostname: it has no zone cache, so video Range requests would only get
+  // the Worker's hand-made fallback. The site is served from its custom domain only.
+  "workers_dev": false,
   "assets": { "binding": "ASSETS", "run_worker_first": ["/media/video/*", "/animate/videos/*"] },
 }
