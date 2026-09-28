@@ -9,6 +9,26 @@ import { MEDIA_SRC, run } from "./util.mjs";
 
 const TMP_DIR = join(MEDIA_SRC, ".tmp");
 
+const gsArgs = (pdfAbs, page, dpi, outPng) => [
+  "-q",
+  "-dSAFER",
+  "-dBATCH",
+  "-dNOPAUSE",
+  "-sDEVICE=png16m",
+  `-r${dpi}`,
+  "-dTextAlphaBits=4",
+  "-dGraphicsAlphaBits=4",
+  "-dUseCropBox",
+  `-dFirstPage=${page}`,
+  `-dLastPage=${page}`,
+  "-o",
+  outPng,
+  pdfAbs,
+];
+
+// The gs arguments with per-page values as placeholders, hashed into the cache key.
+export const PDF_SIGNATURE = gsArgs("<pdf>", "<page>", "<dpi>", "<out>");
+
 export function renderPdfPage(pdfAbs, page, dpi, outPng) {
   if (!Number.isInteger(page) || page < 1) throw new Error(`pdf page must be an integer ≥ 1`);
   if (!Number.isInteger(dpi) || dpi < 72 || dpi > 600) {
@@ -17,21 +37,6 @@ export function renderPdfPage(pdfAbs, page, dpi, outPng) {
   if (!resolve(outPng).startsWith(TMP_DIR + sep)) {
     throw new Error(`pdf output must stay inside media-src/.tmp/: ${outPng}`);
   }
-  run("gs", [
-    "-q",
-    "-dSAFER",
-    "-dBATCH",
-    "-dNOPAUSE",
-    "-sDEVICE=png16m",
-    `-r${dpi}`,
-    "-dTextAlphaBits=4",
-    "-dGraphicsAlphaBits=4",
-    "-dUseCropBox",
-    `-dFirstPage=${page}`,
-    `-dLastPage=${page}`,
-    "-o",
-    outPng,
-    pdfAbs,
-  ]);
+  run("gs", gsArgs(pdfAbs, page, dpi, outPng));
   return outPng;
 }

@@ -108,6 +108,36 @@ const CLASS_ARGS = {
   process: { vf: PROCESS_FILTER, maxrate: "1500k", bufsize: "3000k", audio: "64k" },
 };
 
+// Poster = frame 0 of the SDR output, native width, no resize.
+const posterFrameArgs = (video, png) => [
+  "-v",
+  "error",
+  "-y",
+  "-i",
+  video,
+  "-frames:v",
+  "1",
+  "-update",
+  "1",
+  png,
+];
+const POSTER_WEBP = { effort: 6 };
+
+// Every encoder setting that shapes the output bytes, with the per-entry values (paths, crf,
+// poster quality: already in the entry options) as placeholders. media.mjs hashes it into
+// the cache key, so changing an argument re-encodes without a hand-bumped version.
+export const VIDEO_SIGNATURE = {
+  hero: heroArgs("<src>", "<out>", "<crf>"),
+  withAudio: Object.fromEntries(
+    Object.entries(CLASS_ARGS).map(([name, a]) => [
+      name,
+      withAudioArgs("<src>", "<out>", "<crf>", a),
+    ]),
+  ),
+  posterFrame: posterFrameArgs("<out>", "<png>"),
+  posterWebp: POSTER_WEBP,
+};
+
 function probeFps(file) {
   const { stdout } = run("ffprobe", [
     "-v",
@@ -188,12 +218,13 @@ export async function encodeVideo(entry, srcAbs, outAbs, tmpDir, outRoot = PUBLI
   mkdirSync(dirname(outAbs), { recursive: true });
   run("ffmpeg", heroArgs(srcAbs, outAbs, entry.crf));
 
-  // Poster = frame 0 of the SDR output, native width, no resize.
   const posterPng = join(tmpDir, `${entry.id}-poster.png`);
-  run("ffmpeg", ["-v", "error", "-y", "-i", outAbs, "-frames:v", "1", "-update", "1", posterPng]);
+  run("ffmpeg", posterFrameArgs(outAbs, posterPng));
   const posterAbs = insideDir(outRoot, entry.poster.out);
   mkdirSync(dirname(posterAbs), { recursive: true });
-  await sharp(posterPng).webp({ quality: entry.poster.quality, effort: 6 }).toFile(posterAbs);
+  await sharp(posterPng)
+    .webp({ ...POSTER_WEBP, quality: entry.poster.quality })
+    .toFile(posterAbs);
 
   // Reference = lossless encode of the same filter chain, so SSIM measures the CRF only.
   const refAbs = join(tmpDir, `${entry.id}-ref.mkv`);

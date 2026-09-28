@@ -33,12 +33,27 @@ export const PRESETS = {
 
 export const SSIM_WARN = { photo: 0.93, graphic: 0.96 };
 
+const RESIZE = { fit: "inside", withoutEnlargement: true, kernel: "lanczos3" };
+const COLOURSPACE = "srgb";
+
+// Every setting that shapes the output bytes, hashed into the cache key by media.mjs
+// together with SHARP_VERSIONS (libvips, libaom, libwebp, mozjpeg, libimagequant...).
+export const IMAGE_SIGNATURE = {
+  PRESETS,
+  LADDER,
+  MAX_EDGE,
+  FALLBACK_EDGE,
+  RESIZE,
+  COLOURSPACE,
+};
+export const SHARP_VERSIONS = sharp.versions;
+
 // Resize to fit a t×t box, sRGB, alpha dropped only when the source is fully opaque.
 const base = (file, t, opaque) => {
   const p = sharp(file, { failOn: "none" })
     .rotate()
-    .resize({ width: t, height: t, fit: "inside", withoutEnlargement: true, kernel: "lanczos3" })
-    .toColourspace("srgb");
+    .resize({ width: t, height: t, ...RESIZE })
+    .toColourspace(COLOURSPACE);
   return opaque ? p.removeAlpha() : p;
 };
 

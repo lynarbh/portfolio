@@ -39,12 +39,18 @@ import {
   byKey,
   insideDir,
   requireBins,
+  run,
   sha256,
   sha256File,
   toKebab,
 } from "./media/util.mjs";
 
-// Bump on any encoder change (arguments, filters, poster settings) to invalidate the cache.
+// Cache keys hash the source, the entry options, PIPELINE_VERSION and an encoder
+// fingerprint: the exported encoder arguments and presets (VIDEO_SIGNATURE,
+// IMAGE_SIGNATURE, PDF_SIGNATURE) plus the ffmpeg, x264, sharp/libvips and gs versions. An
+// argument change or a tool upgrade therefore re-encodes on its own. Bump PIPELINE_VERSION
+// only for logic changes the fingerprint cannot see (how media.mjs names or post-processes
+// outputs, the SSIM reference...).
 const PIPELINE_VERSION = "4";
 const MiB = 1024 * 1024;
 const BUDGET_MIB = 60;
@@ -372,11 +378,37 @@ try {
       console.error(`media: cannot load encoders (is sharp installed?): ${err.message}`);
       process.exit(2);
     });
-  const { encodeVideo } = await loadEncoders("./media/video.mjs");
-  const { encodeImage } = await loadEncoders("./media/images.mjs");
-  const { renderPdfPage } = await loadEncoders("./media/pdf.mjs");
+  const { encodeVideo, VIDEO_SIGNATURE } = await loadEncoders("./media/video.mjs");
+  const { encodeImage, IMAGE_SIGNATURE, SHARP_VERSIONS } = await loadEncoders("./media/images.mjs");
+  const { renderPdfPage, PDF_SIGNATURE } = await loadEncoders("./media/pdf.mjs");
+
+  // Encoder fingerprints (see PIPELINE_VERSION). x264 is linked dynamically: its version
+  // comes from the SEI string of a 1-frame test encode, not from `ffmpeg -version`.
+  const ffmpegVersion = run("ffmpeg", ["-version"]).stdout;
+  const x264Version = /x264 - core [0-9]+(?: r[0-9]+ [0-9a-f]+)?/.exec(
+    run("ffmpeg", [
+      ...["-v", "error", "-f", "lavfi", "-i", "color=s=16x16:d=0.04", "-frames:v", "1"],
+      ...["-c:v", "libx264", "-f", "h264", "-"],
+    ]).stdout,
+  )?.[0];
+  if (!x264Version) {
+    console.error("media: cannot read the libx264 version from a test encode");
+    process.exit(2);
+  }
+  const gsVersion = manifest.pdf.length ? run("gs", ["--version"]).stdout.trim() : null;
+  const fingerprint = (value) => sha256(JSON.stringify(value));
+  const VIDEO_FP = fingerprint({
+    VIDEO_SIGNATURE,
+    ffmpegVersion,
+    x264Version,
+    SHARP_VERSIONS, // hero poster
+  });
+  const IMAGE_FP = fingerprint({ IMAGE_SIGNATURE, SHARP_VERSIONS });
+  const PAGE_FP = fingerprint({ IMAGE_FP, PDF_SIGNATURE, gsVersion });
   for (const v of manifest.videos) {
-    const key = sha256(sha256File(v.srcAbs) + JSON.stringify(videoOptions(v)) + PIPELINE_VERSION);
+    const key = sha256(
+      sha256File(v.srcAbs) + JSON.stringify(videoOptions(v)) + PIPELINE_VERSION + VIDEO_FP,
+    );
     try {
       const { status, meta } = await processEntry(v.id, key, (stage) =>
         encodeVideo(v, v.srcAbs, insideDir(stage, v.out), TMP_DIR, stage),
@@ -393,7 +425,7 @@ try {
   }
   for (const img of [...manifest.images].sort((a, b) => byKey(a.id, b.id))) {
     const key = sha256(
-      sha256File(img.srcAbs) + JSON.stringify(imageOptions(img)) + PIPELINE_VERSION,
+      sha256File(img.srcAbs) + JSON.stringify(imageOptions(img)) + PIPELINE_VERSION + IMAGE_FP,
     );
     try {
       const { status, outputs, meta } = await processEntry(img.id, key, (stage) =>
@@ -416,7 +448,7 @@ try {
   for (const pg of [...manifest.pages].sort((a, b) => byKey(a.id, b.id))) {
     if (!pdfHashes.has(pg.pdfAbs)) pdfHashes.set(pg.pdfAbs, sha256File(pg.pdfAbs));
     const key = sha256(
-      pdfHashes.get(pg.pdfAbs) + JSON.stringify(pageOptions(pg)) + PIPELINE_VERSION,
+      pdfHashes.get(pg.pdfAbs) + JSON.stringify(pageOptions(pg)) + PIPELINE_VERSION + PAGE_FP,
     );
     try {
       const { status, outputs, meta } = await processEntry(pg.id, key, async (stage) => {
