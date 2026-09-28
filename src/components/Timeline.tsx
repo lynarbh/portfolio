@@ -38,39 +38,47 @@ export function Timeline() {
       aria-label="Parcours : formations, expériences et engagements"
     >
       <span className="tl-line" aria-hidden="true" />
-      {timeline.map((e, i) => (
-        <li key={e.id} className={`tl-item ${i % 2 === 0 ? "tl-item--l" : "tl-item--r"}`}>
-          <span
-            className={`tl-dot ${e.current ? "tl-dot--now" : ""}`}
-            style={{ transitionDelay: `${i * 90 + 250}ms` }}
-            aria-hidden="true"
-          />
-          <Reveal delay={i * 90}>
-            <article className="tl-card">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className={`hud-tag ${KIND_CLASS[e.kind]}`}>
-                  {TIMELINE_KIND_LABEL[e.kind]}
-                </span>
-                <span className="tl-period">{e.period}</span>
-              </div>
-              <h3 className="mt-3 font-display text-2xl leading-tight text-[var(--plum)]">
-                {e.title}
-              </h3>
-              <p className="mt-1 font-body text-sm text-[var(--plum)]/80">
-                {e.org}
-                {e.place ? ` · ${e.place}` : ""}
-              </p>
-              <ul className="mt-3 space-y-1 font-body text-sm leading-relaxed text-[var(--plum)]/85">
-                {e.details.map((d) => (
-                  <li key={d} className="tl-detail">
-                    {d}
-                  </li>
-                ))}
-              </ul>
-            </article>
-          </Reveal>
-        </li>
-      ))}
+      {timeline.map((e, i) => {
+        const side =
+          e.kind === "objectif"
+            ? "tl-item--objectif"
+            : (i - 1) % 2 === 0
+              ? "tl-item--l"
+              : "tl-item--r";
+        return (
+          <li key={e.id} className={`tl-item ${side}`}>
+            <span
+              className={`tl-dot ${e.current ? "tl-dot--now" : ""}`}
+              style={{ transitionDelay: `${i * 90 + 250}ms` }}
+              aria-hidden="true"
+            />
+            <Reveal delay={i * 90}>
+              <article className="tl-card">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className={`hud-tag ${KIND_CLASS[e.kind]}`}>
+                    {TIMELINE_KIND_LABEL[e.kind]}
+                  </span>
+                  <span className="tl-period">{e.period}</span>
+                </div>
+                <h3 className="mt-3 font-display text-2xl leading-tight text-[var(--plum-ink)]">
+                  {e.title}
+                </h3>
+                <p className="mt-1 font-body text-sm text-[var(--plum-ink)]/80">
+                  {e.org}
+                  {e.place ? ` · ${e.place}` : ""}
+                </p>
+                <ul className="mt-3 space-y-1 font-body text-sm leading-relaxed text-[var(--plum-ink)]/85">
+                  {e.details.map((d) => (
+                    <li key={d} className="tl-detail">
+                      {d}
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            </Reveal>
+          </li>
+        );
+      })}
     </ol>
   );
 }

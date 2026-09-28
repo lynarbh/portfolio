@@ -61,6 +61,8 @@ export const getRouter = () => {
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
     defaultErrorComponent: DefaultErrorComponent,
+    // Coupe cinéma entre les pages (CSS ::view-transition-* dans styles.css) ; sans effet si l'API manque.
+    defaultViewTransition: true,
   });
 
   return router;

@@ -99,6 +99,7 @@ function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [state, setState] = useState<"playing" | "paused">("paused");
   const [failed, setFailed] = useState(false);
+  const [timecode, setTimecode] = useState("00:00:00");
   const userPaused = useRef(false);
 
   useEffect(() => {
@@ -108,6 +109,12 @@ function Hero() {
     const onPlay = () => setState("playing");
     const onPause = () => setState("paused");
     const onError = () => setFailed(true);
+    const onTime = () => {
+      const t = Math.floor(v.currentTime);
+      const mm = String(Math.floor(t / 60)).padStart(2, "0");
+      const ss = String(t % 60).padStart(2, "0");
+      setTimecode(`00:${mm}:${ss}`);
+    };
     const onVisibility = () => {
       if (document.hidden) v.pause();
       else if (!userPaused.current && !reduce) v.play().catch(() => {});
@@ -115,6 +122,7 @@ function Hero() {
     v.addEventListener("play", onPlay);
     v.addEventListener("pause", onPause);
     v.addEventListener("error", onError);
+    v.addEventListener("timeupdate", onTime);
     document.addEventListener("visibilitychange", onVisibility);
     v.muted = true;
     if (!reduce) v.play().catch(() => {});
@@ -122,6 +130,7 @@ function Hero() {
       v.removeEventListener("play", onPlay);
       v.removeEventListener("pause", onPause);
       v.removeEventListener("error", onError);
+      v.removeEventListener("timeupdate", onTime);
       document.removeEventListener("visibilitychange", onVisibility);
     };
   }, []);
@@ -163,6 +172,17 @@ function Hero() {
         />
       </div>
 
+      <div className={`film-grain ${state === "playing" ? "" : "is-paused"}`} aria-hidden="true" />
+      <div className="screen-frame" aria-hidden="true" />
+      <div className="hud-corners" aria-hidden="true">
+        <span className="hud-corner hud-corner--tl">Lyna Rebahi · Portfolio</span>
+        <span className="hud-corner hud-corner--tr">
+          <span className="rec-dot" /> REC {timecode}
+        </span>
+        <span className="hud-corner hud-corner--bl">Alternance · Communication · 2026</span>
+        <span className="hud-corner hud-corner--br">SC. 01 · Accueil</span>
+      </div>
+
       <button
         type="button"
         aria-pressed={state === "paused"}
@@ -176,16 +196,17 @@ function Hero() {
         </svg>
       </button>
 
-      <div className="relative z-10 grain h-full flex flex-col items-center justify-center px-6 text-center text-[var(--cream)]">
+      <div className="relative z-10 h-full flex flex-col items-center justify-center px-6 text-center text-[var(--cream)]">
         <Reveal delay={150}>
-          <h1 className="mt-6 font-display text-6xl sm:text-8xl md:text-9xl leading-[0.95]">
+          <h1 className="cine-title mt-6 font-display text-6xl sm:text-8xl md:text-9xl leading-[0.95]">
             Lyna <em className="text-[var(--sakura)] not-italic">Rebahi</em>
           </h1>
         </Reveal>
         <Reveal delay={280}>
-          <p className="mt-5 max-w-xl font-display italic text-xl sm:text-2xl text-[var(--cream)]/85">
-            Designer Multimédia & Créatrice de Contenu
+          <p className="title-card mt-7">
+            Alternance chargée de communication · Réalisation &amp; montage
           </p>
+          <p className="title-card title-card--soft mt-3">Disponible à partir de septembre 2026</p>
         </Reveal>
         <Reveal delay={420}>
           <a href="#projects" className="quest-btn mt-10">
@@ -222,7 +243,7 @@ function About() {
             <h2 className="mt-4 font-display text-4xl sm:text-5xl">
               Qui <em className="text-[var(--sakura)]">suis-je ?</em>
             </h2>
-            <p className="mt-5 font-body leading-relaxed text-[var(--plum)]/85">
+            <p className="mt-5 font-body leading-relaxed text-[var(--plum-ink)]">
               Faites connaissance avec Lyna REBAHI, jeune femme de 20 ans, étudiante en BUT MMI, en
               recherche d'une alternance en communication digitale. Ok ça c'était la partie
               formelle, si je devais me décrire avec mes mots :<br></br>
@@ -307,7 +328,7 @@ function CvCard() {
           <a href={CV_PDF} download="Lyna_REBAHI_CV.pdf" className="quest-btn justify-center">
             {CV_PDF_LABEL}
           </a>
-          <p className="text-center font-body text-xs tracking-wide text-[var(--plum)]/70">
+          <p className="text-center font-body text-xs tracking-wide text-[var(--plum-ink)]/80">
             Disponible en alternance à partir de 2026
           </p>
         </div>
@@ -332,7 +353,7 @@ function Parcours() {
           <h2 className="mt-4 font-display text-4xl sm:text-5xl">
             Mon <em className="text-[var(--sakura)]">parcours</em>
           </h2>
-          <p className="mt-4 max-w-2xl font-body leading-relaxed text-[var(--plum)]/85">
+          <p className="mt-4 max-w-2xl font-body text-lg leading-relaxed text-[var(--plum-ink)]">
             Formations, expériences et engagements, du plus récent au plus ancien. Le CV complet est
             consultable et téléchargeable à côté.
           </p>
@@ -438,7 +459,7 @@ function Projects() {
           </div>
         </Reveal>
 
-        <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div key={filter} className="grid-switch mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((p, i) => (
             <Reveal key={p.id} delay={i * 80}>
               <ProjectCard p={p} />

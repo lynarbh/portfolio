@@ -578,7 +578,7 @@ if (errors.length === 0) writeFileSync(GENERATED, renderGenerated());
 else warns.push("src/data/media.generated.ts not rewritten (the run had failures)");
 
 // Files under public/media that are copied by hand (master in media-src/), not produced here.
-const STATIC_EXTRAS = new Set(["public/media/cv-lyna-rebahi.pdf"]);
+const STATIC_EXTRAS = new Set(["public/media/cv-lyna-rebahi.pdf", "public/media/grain.webp"]);
 // f) Report: orphans under public/media (never deleted), public/ budget.
 const walk = (dir) =>
   readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
