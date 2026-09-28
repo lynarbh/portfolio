@@ -1,4 +1,4 @@
 {
-  "$comment": "Waivers for legacy media. Empty since the phase 2 re-encode. 25 MiB hard limit, forbidden extensions and the 60 MiB total budget are never waivable.",
+  "$comment": "Waivers for legacy media. Empty since the phase 2 re-encode. 25 MiB hard limit, the 12,000,000 B per-MP4 ceiling, forbidden extensions and the 60 MiB total budget are never waivable.",
   "exceptions": []
 }

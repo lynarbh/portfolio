@@ -6,8 +6,7 @@
 // for the CV, profile High and an AAC track.
 // Every public/animate/videos/*.mp4: faststart, yuv420p, ≤ 12,000,000 B; the ones that are
 // "process" outputs of media-src/manifest.json (read-only, skipped with a WARN when absent)
-// must also be 1280×720 at 25/1 with an AAC track. While the manifest lists only part of
-// the batch, the size ceiling on the clips not listed yet is a WARN.
+// must also be 1280×720 at 25/1 with an AAC track. The size ceiling always fails.
 // Every image: all files exist, long edge ≤ 2400 (≤ 1200 for thumbnails/*), no ICC
 // profile, w descriptors equal to the real widths, fallback ≤ 640 px, kebab-case names,
 // graphic = no WebP and AVIF in 4:4:4.
@@ -184,13 +183,7 @@ for (const name of animateClips.sort()) {
   const rel = `animate/videos/${name}`;
   const file = join(PUBLIC, rel);
   const size = statSync(file).size;
-  if (size > VIDEO_MAX) {
-    // A 1080p clip not yet listed as a process entry (batch in progress) only warns;
-    // without a manifest, or once listed, the ceiling is a failure.
-    const msg = `${rel}: ${size} B > ${VIDEO_MAX} B`;
-    if (processOuts && !processOuts.has(rel)) warns.push(`${msg} (not yet re-encoded)`);
-    else fail(msg);
-  }
+  if (size > VIDEO_MAX) fail(`${rel}: ${size} B > ${VIDEO_MAX} B`);
   const boxes = topLevelBoxes(file);
   const moov = boxes.indexOf("moov");
   const mdat = boxes.indexOf("mdat");

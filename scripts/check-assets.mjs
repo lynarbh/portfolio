@@ -1,7 +1,8 @@
 // Asset guard: run after `vite build`. Fails on oversize files, forbidden source files,
 // non-yuv420p videos and non-faststart MP4s in dist/client (what Cloudflare will serve).
 // The whole dist/client must also stay under a 60 MiB total budget (real byte sizes of the
-// files Cloudflare uploads); this rule is never waivable.
+// files Cloudflare uploads), and every MP4 under 12,000,000 B (the per-video contract of the
+// media pipeline); these two rules are never waivable.
 //
 // Requires ffprobe (FFmpeg) on PATH for the pix_fmt rule. Without it, the rule is skipped
 // with a WARN by default. Strict mode turns "ffprobe not found" into a failure; use it on
@@ -28,6 +29,7 @@ const HARD = 25 * MiB; // Cloudflare per-asset limit, never waivable
 const FAIL = 20 * MiB; // waivable with rule "size"
 const WARN = 10 * MiB;
 const BUDGET = 60 * MiB; // whole dist/client, never waivable
+const VIDEO_MAX = 12_000_000; // bytes per .mp4, never waivable
 const FORBIDDEN = new Set([".fla", ".ai", ".tmp", ".pdf", ".psd", ".xd", ".aep", ".prproj"]);
 const STRICT = process.argv.includes("--strict") || process.env.CHECK_ASSETS_STRICT === "1";
 
@@ -39,8 +41,9 @@ if (!existsSync(DIST)) {
 const errors = [];
 const warns = [];
 
-// Rules an exception may waive. The 25 MiB ceiling, the 60 MiB total budget, forbidden
-// extensions and ffprobe failures are deliberately absent: they can never be waived.
+// Rules an exception may waive. The 25 MiB ceiling, the 60 MiB total budget, the
+// 12,000,000 B per-MP4 ceiling, forbidden extensions and ffprobe failures are deliberately
+// absent: they can never be waived.
 const RULES = new Set(["size", "faststart", "pix_fmt"]);
 
 function loadExceptions() {
@@ -218,6 +221,9 @@ for (const abs of walk(DIST)) {
   else if (size > WARN) warns.push(`${rel} ${mib} MiB > 10 MiB`);
 
   if (ext === ".mp4") {
+    if (size > VIDEO_MAX) {
+      errors.push(`${rel} ${size} B > ${VIDEO_MAX} B per-video ceiling (not waivable)`);
+    }
     const boxes = topLevelBoxes(abs);
     const moov = boxes.indexOf("moov");
     const mdat = boxes.indexOf("mdat");
