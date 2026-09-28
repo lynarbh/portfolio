@@ -96,14 +96,14 @@ function Hero() {
     const onError = () => setFailed(true);
     const onVisibility = () => {
       if (document.hidden) v.pause();
-      else if (!userPaused.current && !reduce) v.play().catch(() => {});
+      else if (!userPaused.current && !reduce) v.play().catch(() => { });
     };
     v.addEventListener("play", onPlay);
     v.addEventListener("pause", onPause);
     v.addEventListener("error", onError);
     document.addEventListener("visibilitychange", onVisibility);
     v.muted = true;
-    if (!reduce) v.play().catch(() => {});
+    if (!reduce) v.play().catch(() => { });
     return () => {
       v.removeEventListener("play", onPlay);
       v.removeEventListener("pause", onPause);
@@ -120,7 +120,7 @@ function Hero() {
       v.pause();
     } else {
       userPaused.current = false;
-      v.play().catch(() => {});
+      v.play().catch(() => { });
     }
   };
 
@@ -179,7 +179,7 @@ function Hero() {
           </a>
         </Reveal>
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-xs tracking-[0.4em] uppercase text-[var(--cream)]/70">
-          ↓ Scroll
+          ↓ Scroll vers le bas
         </div>
       </div>
     </section>
@@ -209,9 +209,16 @@ function About() {
               Qui <em className="text-[var(--sakura)]">suis-je ?</em>
             </h2>
             <p className="mt-5 font-body leading-relaxed text-[var(--plum)]/85">
-              Une cinéphile accro à l'audiovisuel qui pense résoudre le monde avec des vidéos. J'ai
+
+              Faites connaissance avec Lyna REBAHI, jeune femme de 20 ans, étudiante en BUT MMI, en
+              recherche d'une alternance en communication digitale. Ok ça c'était la partie formelle, si je devais 
+              me décrire avec mes mots : 
+              <br></br>
+              <br></br>
+              Une cinéphile accro romantisme gothique et à l'audiovisuel qui pense résoudre le monde avec des vidéos. J'ai
               20 ans, je crée des contenus visuels (vidéos, affiches, identités) et je passe mes
-              journées à rêver de courts-métrages et mes soirées à faire du bénévolat. Pas mal, non
+              journées à rêver de courts-métrages et mes soirées à faire du bénévolat. Je filme ;
+              j'imagine ; je dessine ; je monte ; je crée des identités visuelles et bien sûr je RA.CON.TE.Pas mal, non
               ?
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
@@ -347,11 +354,10 @@ function Projects() {
               <button
                 key={c}
                 onClick={() => setFilter(c)}
-                className={`hud-tag transition ${
-                  filter === c
-                    ? "!bg-[var(--plum)] !text-[var(--cream)] !border-[var(--plum)]"
-                    : "hover:!bg-[var(--sakura)]/40"
-                }`}
+                className={`hud-tag transition ${filter === c
+                  ? "!bg-[var(--plum)] !text-[var(--cream)] !border-[var(--plum)]"
+                  : "hover:!bg-[var(--sakura)]/40"
+                  }`}
               >
                 {c}
               </button>
