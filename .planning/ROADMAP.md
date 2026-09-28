@@ -91,7 +91,7 @@ Plans:
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 02-04-PLAN.md — 50 images des pages projet via le pipeline, branches `project.id` re-pointées vers `<Picture>` (PROJ-07), suppression de `public/assets/`
+- [x] 02-04-PLAN.md — 50 images des pages projet via le pipeline, branches `project.id` re-pointées vers `<Picture>` (PROJ-07), suppression de `public/assets/`
 
 **Wave 5** *(blocked on Wave 4 completion)*
 
@@ -188,7 +188,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Nettoyage & filet de sécurité | 4/4 | Complete    | 2026-09-27 |
-| 2. Médias légers & hero qui joue partout | 3/7 | In Progress|  |
+| 2. Médias légers & hero qui joue partout | 4/7 | In Progress|  |
 | 3. Hero & Qui suis-je en scène | 0/TBD | Not started | - |
 | 4. Projets mis en scène | 0/TBD | Not started | - |
 | 5. Contact, candidature & QA mobile réelle | 0/TBD | Not started | - |

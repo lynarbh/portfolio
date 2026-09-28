@@ -21,14 +21,14 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Poids & pipeline média (SIZE)
 
-- [ ] **SIZE-01**: Un script hors-ligne `scripts/media.mjs` (sharp + ffmpeg + Ghostscript) régénère de façon reproductible `public/media/**` et le manifeste `src/data/media.generated.ts` depuis `media-src/`
-- [ ] **SIZE-02**: Chaque image est redimensionnée d'abord (≤ 2400 px grand côté), convertie en sRGB puis débarrassée de son ICC, encodée selon deux presets — photos : AVIF/WebP 4:2:0 + JPEG de repli ; affiches, logos, typo : AVIF 4:4:4 ou PNG quantifié — renommée en kebab-case ASCII et servie via `<picture>` + `srcset`
+- [x] **SIZE-01**: Un script hors-ligne `scripts/media.mjs` (sharp + ffmpeg + Ghostscript) régénère de façon reproductible `public/media/**` et le manifeste `src/data/media.generated.ts` depuis `media-src/`
+- [x] **SIZE-02**: Chaque image est redimensionnée d'abord (≤ 2400 px grand côté), convertie en sRGB puis débarrassée de son ICC, encodée selon deux presets — photos : AVIF/WebP 4:2:0 + JPEG de repli ; affiches, logos, typo : AVIF 4:4:4 ou PNG quantifié — renommée en kebab-case ASCII et servie via `<picture>` + `srcset`
 - [ ] **SIZE-03**: `hero.mp4` est converti HDR HLG bt2020 → SDR bt709 (filtre `colorspace`), H.264 8 bits `yuv420p`, 30 fps, muet, `+faststart`, ≤ 4 Mo, avec un poster léger extrait de la sortie convertie
 - [ ] **SIZE-04**: La vidéo CV est réencodée ≤ 12 Mo, `yuv420p`, `+faststart`, audio AAC, sans dégradation visible
 - [ ] **SIZE-05**: Les vidéos du process SkøllRub sont réencodées à 25 fps, `yuv420p`, `+faststart`, ≤ 12 Mo chacune, en conservant les chemins relatifs `videos/*.mp4` attendus par `1_MOHAMED.js`
 - [ ] **SIZE-06**: ~10 pages clés de la charte Tafsut (logo, palette, typos, affiche, billets, goodies, signalétique) sont extraites via `gs` à 300 dpi puis passées au preset graphic ; le PDF sort de `public/`
 - [x] **SIZE-07**: Un garde-fou `npm run check` (`tsc --noEmit && vite build && scripts/check-assets.mjs`) échoue si un fichier destiné à `dist/` dépasse 20 Mio ou si une vidéo n'est pas `yuv420p` / faststart ; `wrangler deploy --dry-run` passe ; le garde-fou existe dès la première phase
-- [ ] **SIZE-08**: `public/` pèse moins de 60 Mo au total ; les médias hors écran sont chargés en lazy ; seul le hero est préchargé
+- [x] **SIZE-08**: `public/` pèse moins de 60 Mo au total ; les médias hors écran sont chargés en lazy ; seul le hero est préchargé
 - [ ] **SIZE-09**: `affichepromo.png` et `prévention.png` sont réencodées et intégrées à un projet existant choisi par Lyna (projet à préciser)
 
 ### Hero (HERO)
@@ -53,7 +53,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **PROJ-04**: Chaque fiche affiche un bloc crédits type générique de film (rôle, année, format, durée, contexte/commanditaire) alimenté par des champs optionnels du type `Project` et rendu par un composant partagé au-dessus du contenu existant
 - [ ] **PROJ-05**: Les deux projets vidéo (stop motion, clip Blue) ont une bande process (storyboard → coulisses → final) alimentée par un champ optionnel `process[]`, avec placeholders nommés tant que Lyna n'a pas fourni les médias
 - [ ] **PROJ-06**: Le projet « Identité d'un festival » affiche la galerie des pages Tafsut extraites et passe en terminé (`inProgress` retiré)
-- [ ] **PROJ-07**: Les branches `project.id === "…"` de `$projectId.tsx` sont conservées ; seuls les médias cassés y sont corrigés et les chemins pointés vers `public/media/**`
+- [x] **PROJ-07**: Les branches `project.id === "…"` de `$projectId.tsx` sont conservées ; seuls les médias cassés y sont corrigés et les chemins pointés vers `public/media/**`
 - [ ] **PROJ-08**: Les embeds YouTube passent en `youtube-nocookie.com` avec `loading="lazy"`
 - [ ] **PROJ-09**: L'iframe Adobe Animate est chargée en lazy et la chaîne des 6 scènes fonctionne sur l'URL déployée
 - [ ] **PROJ-10**: Le rôle de chaque projet est un slot texte explicite (plus de « Membre du groupe ») que Lyna renseigne
@@ -130,14 +130,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CLEAN-07 | Phase 1 | Complete |
 | CLEAN-08 | Phase 1 | Complete |
 | CLEAN-09 | Phase 1 | Complete |
-| SIZE-01 | Phase 2 | Pending |
-| SIZE-02 | Phase 2 | Pending |
+| SIZE-01 | Phase 2 | Complete |
+| SIZE-02 | Phase 2 | Complete |
 | SIZE-03 | Phase 2 | Pending |
 | SIZE-04 | Phase 2 | Pending |
 | SIZE-05 | Phase 2 | Pending |
 | SIZE-06 | Phase 2 | Pending |
 | SIZE-07 | Phase 1 | Complete |
-| SIZE-08 | Phase 2 | Pending |
+| SIZE-08 | Phase 2 | Complete |
 | SIZE-09 | Phase 4 | Pending |
 | HERO-01 | Phase 2 | Pending |
 | HERO-02 | Phase 3 | Pending |
@@ -153,7 +153,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PROJ-04 | Phase 4 | Pending |
 | PROJ-05 | Phase 4 | Pending |
 | PROJ-06 | Phase 2 | Pending |
-| PROJ-07 | Phase 2 | Pending |
+| PROJ-07 | Phase 2 | Complete |
 | PROJ-08 | Phase 4 | Pending |
 | PROJ-09 | Phase 4 | Pending |
 | PROJ-10 | Phase 4 | Pending |

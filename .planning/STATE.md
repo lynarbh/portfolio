@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 02-03-PLAN.md
-last_updated: "2026-09-27T23:52:19.255Z"
-last_activity: 2026-09-28 -- Plan 02-03 complete (home images via <Picture>)
+stopped_at: Completed 02-04-PLAN.md
+last_updated: "2026-09-28T00:02:21.831Z"
+last_activity: 2026-09-28 -- Plan 02-04 complete (project pages via <Picture>, public/assets removed)
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 11
-  completed_plans: 7
-  percent: 64
+  completed_plans: 8
+  percent: 73
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-09-21)
 ## Current Position
 
 Phase: 2 (Médias légers & hero qui joue partout) — EXECUTING
-Plan: 4 of 7
+Plan: 5 of 7
 Status: Ready to execute
-Last activity: 2026-09-28 -- Plan 02-03 complete (home images via <Picture>)
+Last activity: 2026-09-28 -- Plan 02-04 complete (project pages via <Picture>, public/assets removed)
 
-Progress: [██████░░░░] 64%
+Progress: [███████░░░] 73%
 
 ## Performance Metrics
 
@@ -59,6 +59,7 @@ Progress: [██████░░░░] 64%
 | Phase 02 P01 | 4 min | 3 tasks | 4 files |
 | Phase 02 P02 | 10 min | 2 tasks | 18 files |
 | Phase 02 P03 | 8 min | 2 tasks | 44 files |
+| Phase 02 P04 | 9 min | 3 tasks | 339 files |
 
 ## Accumulated Context
 
@@ -86,6 +87,8 @@ Recent decisions affecting current work:
 - [Phase 02]: 02-02: SSIM vidéo mesuré avec settb=1/fps,setpts=N (setpts=N/fps/TB décale d'une image sur une référence MKV 1/1000)
 - [Phase 02]: 02-02: src/server.ts renvoie à Static Assets les fichiers non-MP4 sous /media/video/ et /animate/videos/ (poster hero en 404 sinon)
 - [Phase 02]: 02-03: 4:4:4 des AVIF graphic vérifié par ffprobe pix_fmt (sharp n'expose pas chromaSubsampling pour HEIF)
+- [Phase 02]: 02-04: $projectId.tsx non passé à prettier (déjà non conforme au HEAD), diff limité aux lignes migrées
+- [Phase 02]: 02-04: « 0 /assets/ dans le HTML » vaut pour les images ; seuls restent les bundles Vite /assets/*.js|css
 
 ### Pending Todos
 
@@ -113,6 +116,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-09-27T23:52:06.425Z
+Last session: 2026-09-28T00:02:15.071Z
 Stopped at: Completed 02-03-PLAN.md
 Resume file: None
