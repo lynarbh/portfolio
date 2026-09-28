@@ -106,6 +106,8 @@ None yet.
 
 ### Blockers/Concerns
 
+- 2026-09-28 (suite, demande de Lyna) — DA cinéma livrée hors phase, version prod `bc3e7ba6-5b02-45d5-9727-babb44eaad8f` (commit `99e22e6`) : cadre écran + grain pré-rendu (`scripts/gen-grain.mjs` → `public/media/grain.webp`) + métadonnées de coins (REC + timecode) + cartons de générique remplaçant le sous-titre, View Transitions (`defaultViewTransition: true`), balayage de grille, flash boutons, clap cartes ; frise : objectif à part, engagement associatif anonymisé, `--plum-ink`. Les plans de la phase 3 (HERO-02/03, PERF-01 partiellement) doivent repartir de cet état : copy.ts, viseur portrait, grille de logos, OG image, hook reduced-motion restent à faire.
+
 - 2026-09-28 — Livraison hors roadmap à la demande de Lyna (présentation imminente) : section « Parcours » (frise chronologique animée, 8 étapes, `src/data/timeline.ts` + `src/components/Timeline.tsx`) et CV consultable/téléchargeable (`public/media/cv-lyna-rebahi.pdf`, 430 Ko, aperçu `cv/apercu` via le pipeline). Gardes ajustées : un seul PDF autorisé (cap 3 Mo, non dérogeable). Déployé en production, version `0a1e3a15-9649-4d20-90f1-df56f26ed62d` (commits `a91037c`, `30689dd`). Couvre par anticipation le CV PDF de CONTACT-03 ; la phase 3 doit intégrer la section dans `copy.ts` (textes de la frise) et dans la garde reduced-motion globale.
 - Phase 3 : discuss, UI-SPEC, recherche et pattern map faits ; le planificateur a été interrompu par Lyna (7 fichiers `03-0N-PLAN.md` non commités, brouillons à ne pas exécuter) → relancer `/gsd-plan-phase 3` (les plans doivent tenir compte de la nouvelle section Parcours et de la commit `710f219` SKILL_TAGS)
 
