@@ -879,6 +879,11 @@ export const galleries = {
 } as const satisfies Record<string, readonly MediaId[]>;
 
 export const videos = {
+  "cv": {
+    src: "/media/video/cv-lyna-rebahi.mp4",
+    width: 1920,
+    height: 1080,
+  },
   "hero": {
     src: "/media/video/hero.mp4",
     poster: "/media/video/hero-poster.webp",

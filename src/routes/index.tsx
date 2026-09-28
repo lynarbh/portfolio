@@ -236,7 +236,7 @@ function About() {
               controls
               controlsList="nodownload"
             >
-              <source src="/videos/56_Lyna_REBAHI_CVvideo.mp4" type="video/mp4" />
+              <source src={videos.cv.src} type="video/mp4" />
             </video>
 
             <button

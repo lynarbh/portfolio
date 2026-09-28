@@ -1,7 +1,12 @@
 // Read-only checks on the pipeline outputs (`npm run verify-media`). Imports the generated
 // src/data/media.generated.ts (Node type stripping) and checks every video it lists:
 // file under public/, faststart, yuv420p, ≤ 12,000,000 B; for the hero, the exact SDR
-// signature, no audio, ≤ 4,000,000 B, 1080×574 and a WebP poster ≤ 110,000 B at 1080 px.
+// signature, no audio, ≤ 4,000,000 B, 1080×574 and a WebP poster ≤ 110,000 B at 1080 px;
+// for the CV, profile High and an AAC track.
+// Every public/animate/videos/*.mp4: faststart, yuv420p, ≤ 12,000,000 B; the ones that are
+// "process" outputs of media-src/manifest.json (read-only, skipped with a WARN when absent)
+// must also be 1280×720 at 25/1 with an AAC track. While the manifest lists only part of
+// the batch, the size ceiling on the clips not listed yet is a WARN.
 // Every image: all files exist, long edge ≤ 2400 (≤ 1200 for thumbnails/*), no ICC
 // profile, w descriptors equal to the real widths, fallback ≤ 640 px, kebab-case names,
 // graphic = no WebP and AVIF in 4:4:4.
@@ -13,7 +18,7 @@ import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import sharp from "sharp";
-import { GENERATED, PUBLIC, run, topLevelBoxes } from "./media/util.mjs";
+import { GENERATED, MEDIA_SRC, PUBLIC, run, topLevelBoxes } from "./media/util.mjs";
 
 const VIDEO_MAX = 12_000_000;
 const HERO_MAX = 4_000_000;
@@ -113,6 +118,77 @@ for (const [id, v] of Object.entries(videos)) {
     }
   } catch (err) {
     fail(`${id}: ${err.message}`);
+  }
+}
+
+// CV: original resolution kept, audio kept.
+if (videos.cv) {
+  const file = urlToPath(videos.cv.src);
+  if (existsSync(file)) {
+    try {
+      const s = probe(file, "v:0", "profile");
+      if (s.profile !== "High") fail(`cv: profile=${s.profile}`);
+      if (audioCodec(file) !== "aac") fail(`cv: audio=${audioCodec(file) || "none"} (want aac)`);
+    } catch (err) {
+      fail(`cv: ${err.message}`);
+    }
+  }
+}
+
+// Animate process clips, written in place under public/animate/videos/.
+function audioCodec(file) {
+  return run("ffprobe", [
+    "-v",
+    "error",
+    "-select_streams",
+    "a:0",
+    "-show_entries",
+    "stream=codec_name",
+    "-of",
+    "csv=p=0",
+    file,
+  ]).stdout.trim();
+}
+const ANIMATE_VIDEOS = join(PUBLIC, "animate/videos");
+const MANIFEST_FILE = join(MEDIA_SRC, "manifest.json");
+let processOuts = null;
+if (existsSync(MANIFEST_FILE)) {
+  const manifest = JSON.parse(readFileSync(MANIFEST_FILE, "utf8"));
+  processOuts = new Set(
+    (manifest.videos ?? []).filter((v) => v.class === "process").map((v) => v.out),
+  );
+} else {
+  warns.push("media-src/manifest.json absent: process clips checked without 720p/25 fps rules");
+}
+const animateClips = existsSync(ANIMATE_VIDEOS)
+  ? readdirSync(ANIMATE_VIDEOS).filter((n) => n.endsWith(".mp4"))
+  : [];
+for (const name of animateClips.sort()) {
+  const rel = `animate/videos/${name}`;
+  const file = join(PUBLIC, rel);
+  const size = statSync(file).size;
+  if (size > VIDEO_MAX) {
+    // A 1080p clip not yet listed as a process entry (batch in progress) only warns;
+    // without a manifest, or once listed, the ceiling is a failure.
+    const msg = `${rel}: ${size} B > ${VIDEO_MAX} B`;
+    if (processOuts && !processOuts.has(rel)) warns.push(`${msg} (not yet re-encoded)`);
+    else fail(msg);
+  }
+  const boxes = topLevelBoxes(file);
+  const moov = boxes.indexOf("moov");
+  const mdat = boxes.indexOf("mdat");
+  if (moov === -1 || (mdat !== -1 && moov > mdat)) fail(`${rel}: not faststart`);
+  try {
+    const s = probe(file, "v:0", "pix_fmt,width,height,r_frame_rate");
+    if (s.pix_fmt !== "yuv420p") fail(`${rel}: pix_fmt=${s.pix_fmt}`);
+    if (processOuts?.has(rel)) {
+      if (`${s.width},${s.height}` !== "1280,720") fail(`${rel}: ${s.width}x${s.height}`);
+      if (s.r_frame_rate !== "25/1") fail(`${rel}: r_frame_rate=${s.r_frame_rate}`);
+      const a = audioCodec(file);
+      if (a !== "aac") fail(`${rel}: audio=${a || "none"} (want aac)`);
+    }
+  } catch (err) {
+    fail(`${rel}: ${err.message}`);
   }
 }
 

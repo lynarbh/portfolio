@@ -1,15 +1,4 @@
 {
-  "$comment": "Legacy media tolerated until phase 2 re-encode. Empty this list in phase 2. 25 MiB hard limit and forbidden extensions are never waivable.",
-  "exceptions": [
-    {
-      "path": "videos/56_Lyna_REBAHI_CVvideo.mp4",
-      "waive": ["faststart", "size"],
-      "reason": "23.10 MiB, moov after mdat, re-encode phase 2"
-    },
-    {
-      "path": "animate/videos/empattage.mp4",
-      "waive": ["size"],
-      "reason": "22.37 MiB, re-encode phase 2"
-    }
-  ]
+  "$comment": "Waivers for legacy media. Empty since the phase 2 re-encode. 25 MiB hard limit, forbidden extensions and the 60 MiB total budget are never waivable.",
+  "exceptions": []
 }

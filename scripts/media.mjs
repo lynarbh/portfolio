@@ -36,11 +36,11 @@ import {
 } from "./media/util.mjs";
 
 // Bump on any encoder change (arguments, filters, poster settings) to invalidate the cache.
-const PIPELINE_VERSION = "3";
+const PIPELINE_VERSION = "4";
 const MiB = 1024 * 1024;
 const BUDGET_MIB = 60;
-const HERO_SSIM_WARN = 0.9;
-const CLASSES = new Set(["hero"]);
+const SSIM_WARN = { hero: 0.9, cv: 0.98, process: 0.95 };
+const CLASSES = new Set(["hero", "cv", "process"]);
 const PRESET_NAMES = new Set(["photo", "graphic"]);
 const IMAGE_SSIM_WARN = { photo: 0.93, graphic: 0.96 };
 const OUT_PREFIXES = ["media/", "animate/videos/"];
@@ -120,6 +120,14 @@ function loadManifest() {
     }
     if (!existsSync(srcAbs)) invalid(`${where}.src: media-src/${v.src} not found`);
     const outAbs = outPath(`${where}.out`, v.out);
+    // Process clips overwrite the file the Animate scene loads by relative path: the name
+    // must be the source basename, exactly. Other classes live under media/video/.
+    if (v.class === "process") {
+      const want = "animate/videos/" + v.src.split("/").at(-1);
+      if (v.out !== want) invalid(`${where}.out: process output must be "${want}"`);
+    } else if (!v.out.startsWith("media/video/")) {
+      invalid(`${where}.out: ${v.class} output must start with media/video/`);
+    }
     if (!Number.isInteger(v.crf) || v.crf < 0 || v.crf > 51) {
       invalid(`${where}: "crf" must be an integer in 0..51`);
     }
@@ -308,10 +316,11 @@ try {
         encodeVideo(v, v.srcAbs, v.outAbs, TMP_DIR),
       );
       const mib = (statSync(v.outAbs).size / MiB).toFixed(2);
-      lines.push(`media: ${v.id} ${status} ${mib} MiB SSIM ${meta.ssim.toFixed(4)}`);
-      if (v.class === "hero" && meta.ssim < HERO_SSIM_WARN) {
-        warns.push(`${v.id} SSIM ${meta.ssim.toFixed(4)} < ${HERO_SSIM_WARN}`);
-      }
+      const low = meta.ssim < SSIM_WARN[v.class];
+      lines.push(
+        `media: ${v.id} ${status} ${mib} MiB SSIM ${meta.ssim.toFixed(4)}${low ? " WARN" : ""}`,
+      );
+      if (low) warns.push(`${v.id} SSIM ${meta.ssim.toFixed(4)} < ${SSIM_WARN[v.class]}`);
     } catch (err) {
       errors.push(`${v.id}: ${err.message}`);
     }

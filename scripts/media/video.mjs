@@ -1,6 +1,7 @@
-// ffmpeg encoders per video class. Only "hero" exists for now; "cv" and "process" arrive
-// with plan 02-06. Single-pass CRF with bitexact flags: byte-identical across runs
-// (two-pass is not deterministic, RESEARCH Pitfall 4).
+// ffmpeg encoders per video class: "hero" (silent SDR loop + poster), "cv" (original
+// resolution, AAC 128k) and "process" (SkøllRub Animate clips, 1280×720 25 fps, AAC 64k,
+// written in place under public/animate/videos/). Single-pass CRF with bitexact flags:
+// byte-identical across runs (two-pass is not deterministic, RESEARCH Pitfall 4).
 import { mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import sharp from "sharp";
@@ -51,6 +52,111 @@ const heroArgs = (src, out, crf) => [
   out,
 ];
 
+// Shared tail for the classes that keep their audio track (cv, process).
+const withAudioArgs = (src, out, crf, { vf, maxrate, bufsize, audio }) => [
+  "-v",
+  "error",
+  "-y",
+  "-i",
+  src,
+  ...(vf ? ["-vf", vf] : []),
+  "-c:v",
+  "libx264",
+  "-preset",
+  "slow",
+  "-crf",
+  String(crf),
+  "-maxrate",
+  maxrate,
+  "-bufsize",
+  bufsize,
+  "-profile:v",
+  "high",
+  "-pix_fmt",
+  "yuv420p",
+  "-color_primaries",
+  "bt709",
+  "-color_trc",
+  "bt709",
+  "-colorspace",
+  "bt709",
+  "-c:a",
+  "aac",
+  "-b:a",
+  audio,
+  "-map_metadata",
+  "-1",
+  "-fflags",
+  "+bitexact",
+  "-flags:v",
+  "+bitexact",
+  "-flags:a",
+  "+bitexact",
+  "-movflags",
+  "+faststart",
+  out,
+];
+
+// Process clips: the Animate player shows them well under 1280 px wide (CONTEXT addendum).
+const PROCESS_FILTER = "fps=25,scale=1280:720:flags=lanczos";
+const PROCESS_FPS = 25;
+const CLASS_ARGS = {
+  cv: { maxrate: "3000k", bufsize: "6000k", audio: "128k" },
+  process: { vf: PROCESS_FILTER, maxrate: "1500k", bufsize: "3000k", audio: "64k" },
+};
+
+function probeFps(file) {
+  const { stdout } = run("ffprobe", [
+    "-v",
+    "error",
+    "-select_streams",
+    "v:0",
+    "-show_entries",
+    "stream=r_frame_rate",
+    "-of",
+    "csv=p=0",
+    file,
+  ]);
+  const rate = stdout.trim().split("\n")[0];
+  if (!/^[0-9]+\/[0-9]+$/.test(rate)) throw new Error(`ffprobe: bad r_frame_rate ${rate}`);
+  return rate;
+}
+
+// cv: SSIM against the source itself (same resolution and frame rate).
+// process: reference = the source through the same fps/scale chain, lossless, so SSIM
+// measures the CRF only.
+async function encodeWithAudio(entry, srcAbs, outAbs, tmpDir) {
+  mkdirSync(dirname(outAbs), { recursive: true });
+  run("ffmpeg", withAudioArgs(srcAbs, outAbs, entry.crf, CLASS_ARGS[entry.class]));
+
+  let score;
+  if (entry.class === "cv") {
+    score = ssim(srcAbs, outAbs, `(${probeFps(srcAbs)})`);
+  } else {
+    const refAbs = join(tmpDir, `${entry.id}-ref.mkv`);
+    run("ffmpeg", [
+      "-v",
+      "error",
+      "-y",
+      "-i",
+      srcAbs,
+      "-vf",
+      PROCESS_FILTER,
+      "-c:v",
+      "libx264",
+      "-qp",
+      "0",
+      "-preset",
+      "ultrafast",
+      "-an",
+      refAbs,
+    ]);
+    score = ssim(refAbs, outAbs, PROCESS_FPS);
+  }
+  const { width, height } = probeSize(outAbs);
+  return { outputs: [outAbs], meta: { width, height, ssim: score } };
+}
+
 function probeSize(file) {
   const { stdout } = run("ffprobe", [
     "-v",
@@ -69,6 +175,9 @@ function probeSize(file) {
 }
 
 export async function encodeVideo(entry, srcAbs, outAbs, tmpDir) {
+  if (entry.class === "cv" || entry.class === "process") {
+    return encodeWithAudio(entry, srcAbs, outAbs, tmpDir);
+  }
   if (entry.class !== "hero") throw new Error(`class not implemented: ${entry.class}`);
 
   mkdirSync(dirname(outAbs), { recursive: true });
