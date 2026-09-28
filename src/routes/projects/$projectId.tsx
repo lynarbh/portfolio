@@ -42,7 +42,8 @@ function ProjectPage() {
         <Reveal>
           <button
             onClick={() => navigate({ to: "/" })}
-            className="mb-10 text-sm uppercase tracking-widest text-[var(--plum)]/60 hover:text-[var(--sakura)] transition"
+            className="link-line mb-10"
+            data-cursor="Retour"
           >
             &larr; Retour aux projets
           </button>
@@ -50,10 +51,10 @@ function ProjectPage() {
 
         <Reveal delay={100}>
           <span className="hud-tag">{project.category}</span>
-          <h1 className="mt-4 font-display text-5xl sm:text-7xl text-[var(--plum)] leading-tight">
+          <h1 className="mt-4 font-cine text-5xl sm:text-7xl text-[var(--encre)] leading-[0.95] tracking-tight">
             {project.title}
           </h1>
-          <p className="mt-2 text-sm uppercase tracking-widest text-[var(--muted-foreground)]">
+          <p className="mt-3 text-xs font-semibold uppercase tracking-[0.22em] text-[var(--rouge)]">
             {project.role}
           </p>
         </Reveal>

@@ -1,9 +1,15 @@
-import { createFileRoute, Link } from "@tanstack/react-router"; // Ajoute Link ici
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { projects, type Project } from "@/data/projects";
 import { Reveal } from "@/components/Reveal";
 import { Picture } from "@/components/Picture";
 import { Timeline } from "@/components/Timeline";
+import { SplitText } from "@/components/SplitText";
+import { Marquee } from "@/components/Marquee";
+import { Magnetic } from "@/components/Magnetic";
+import { Tilt } from "@/components/Tilt";
+import { Tools } from "@/components/Tools";
+import { Viewfinder } from "@/components/Viewfinder";
 import { languages, CV_PDF, CV_PDF_LABEL } from "@/data/timeline";
 import { videos } from "@/data/media.generated";
 import emailjs from "@emailjs/browser";
@@ -33,65 +39,63 @@ const CATEGORIES = [
 ] as const;
 type Category = (typeof CATEGORIES)[number];
 
-const SKILL_TAGS = [
-  "Illustrator",
-  "Photoshop",
-  "Premiere Pro",
-  "AfterEffect",
-  "InDesign",
-  "Davinci resolve",
-  "Capcut",
-  "Figma",
-  "Canva",
-  "HTML / CSS / JS / PHP",
+// Les mots du bandeau sont ceux de Lyna (texte « Qui suis-je »).
+const MARQUEE_WORDS = [
+  "Je filme",
+  "J'imagine",
+  "Je dessine",
+  "Je monte",
+  "Je crée des identités visuelles",
+  "Je raconte",
+] as const;
+
+const NAV_LINKS = [
+  { href: "#about", label: "À propos", n: "02" },
+  { href: "#parcours", label: "Parcours", n: "03" },
+  { href: "#projects", label: "Créations", n: "04" },
+  { href: "#contact", label: "Contact", n: "05" },
 ];
 
 function Nav() {
   const [open, setOpen] = useState(false);
-  const links = [
-    { href: "#about", label: "À propos" },
-    { href: "#parcours", label: "Parcours" },
-    { href: "#projects", label: "Créations" },
-    { href: "#contact", label: "Contact" },
-  ];
   return (
-    <header className="fixed top-0 left-0 right-0 z-40">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
-        <a
-          href="#top"
-          className="font-display text-xl text-[var(--cream)] tracking-[0.2em]"
-          style={{ textShadow: "0 2px 8px rgba(0,0,0,0.6)" }}
-        >
-          PORTFOLIO
-        </a>
-        <nav
-          className="hidden md:flex items-center gap-8 text-sm tracking-widest text-[var(--cream)]/90 uppercase"
-          style={{ textShadow: "0 2px 8px rgba(0,0,0,0.6)" }}
-        >
-          {links.map((l) => (
-            <a key={l.href} href={l.href} className="hover:text-[var(--sakura)] transition">
-              {l.label}
+    <>
+      <header className="site-nav fixed top-0 left-0 right-0 z-40">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
+          <a href="#top" className="nav-brand" aria-label="Haut de page">
+            Lyna <em>Rebahi</em>
+          </a>
+          <nav className="hidden md:flex items-center gap-7" aria-label="Sections">
+            {NAV_LINKS.map((l) => (
+              <a key={l.href} href={l.href} className="nav-link">
+                {l.label}
+              </a>
+            ))}
+            <a href="#contact" className="nav-pill">
+              <span className="nav-pill__dot" aria-hidden="true" /> Dispo sept. 2026
+            </a>
+          </nav>
+          <button
+            type="button"
+            aria-label="Menu"
+            aria-expanded={open}
+            className="nav-burger md:hidden"
+            onClick={() => setOpen((v) => !v)}
+          >
+            {open ? "✕" : "☰"}
+          </button>
+        </div>
+      </header>
+      {open && (
+        <nav className="nav-sheet md:hidden" aria-label="Sections">
+          {NAV_LINKS.map((l) => (
+            <a key={l.href} href={l.href} onClick={() => setOpen(false)}>
+              {l.label} <small>SC. {l.n}</small>
             </a>
           ))}
         </nav>
-        <button
-          aria-label="Menu"
-          className="md:hidden text-[var(--cream)] text-2xl"
-          onClick={() => setOpen((v) => !v)}
-        >
-          {open ? "✕" : "☰"}
-        </button>
-      </div>
-      {open && (
-        <div className="md:hidden bg-[color-mix(in_oklab,var(--plum)_92%,transparent)] backdrop-blur px-6 pb-6 flex flex-col gap-4 text-[var(--cream)] uppercase tracking-widest text-sm">
-          {links.map((l) => (
-            <a key={l.href} href={l.href} onClick={() => setOpen(false)}>
-              {l.label}
-            </a>
-          ))}
-        </div>
       )}
-    </header>
+    </>
   );
 }
 
@@ -148,7 +152,7 @@ function Hero() {
   };
 
   return (
-    <section id="top" className="relative h-screen w-full overflow-hidden">
+    <section id="top" className="hero relative h-screen w-full overflow-hidden">
       <div className="fixed inset-0 -z-10">
         <video
           ref={videoRef}
@@ -163,24 +167,38 @@ function Hero() {
         >
           Votre navigateur ne supporte pas la vidéo HTML5.
         </video>
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(180deg, rgba(61,31,58,0.55) 0%, rgba(61,31,58,0.65) 60%, rgba(61,31,58,0.85) 100%)",
-          }}
-        />
+        <div className="hero-wash absolute inset-0" />
       </div>
 
+      <div className="scanlines" aria-hidden="true" />
       <div className={`film-grain ${state === "playing" ? "" : "is-paused"}`} aria-hidden="true" />
       <div className="screen-frame" aria-hidden="true" />
       <div className="hud-corners" aria-hidden="true">
-        <span className="hud-corner hud-corner--tl">Lyna Rebahi · Portfolio</span>
-        <span className="hud-corner hud-corner--tr">
-          <span className="rec-dot" /> REC {timecode}
+        <span className="hud-corner hud-corner--tl">
+          <b>Lyna Rebahi</b>
+          <br />
+          (Réalisation / Montage / Communication)
         </span>
-        <span className="hud-corner hud-corner--bl">Alternance · Communication · 2026</span>
-        <span className="hud-corner hud-corner--br">SC. 01 · Accueil</span>
+        <span className="hud-corner hud-corner--tc">
+          BUT MMI · Communication digitale
+          <br />
+          Instagram : @lynae.quiet
+        </span>
+        <span className="hud-corner hud-corner--tr">
+          <b>Dites bonjour</b>
+          <br />
+          lyna.rebahi@gmail.com
+        </span>
+        <span className="hud-corner hud-corner--bl">
+          <b>Portfolio</b>
+          <br />
+          2026 · Alternance
+        </span>
+        <span className="hud-corner hud-corner--br">
+          <span className="rec-dot" /> REC {timecode}
+          <br />
+          SC. 01 · Accueil
+        </span>
       </div>
 
       <button
@@ -188,100 +206,128 @@ function Hero() {
         aria-pressed={state === "paused"}
         hidden={failed}
         onClick={toggle}
-        className="fixed z-30 flex h-11 w-11 items-center justify-center rounded-[2px] border bottom-[calc(1rem+env(safe-area-inset-bottom))] right-[calc(1rem+env(safe-area-inset-right))] sm:bottom-[calc(1.5rem+env(safe-area-inset-bottom))] sm:right-[calc(1.5rem+env(safe-area-inset-right))] border-[color-mix(in_oklab,var(--gold)_70%,transparent)] bg-[rgba(61,31,58,0.85)] backdrop-blur-[6px] text-[var(--cream)] hover:bg-[color-mix(in_oklab,var(--sakura)_35%,rgb(61_31_58))] transition-colors duration-300 motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--sakura)]"
+        className="hero-pause"
+        data-cursor={state === "playing" ? "Pause" : "Lecture"}
       >
-        <span className="sr-only">Mettre en pause la vidéo</span>
-        <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <span className="sr-only">
+          {state === "playing" ? "Mettre en pause la vidéo" : "Lancer la vidéo"}
+        </span>
+        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path d={state === "playing" ? "M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" : "M8 5v14l11-7z"} />
         </svg>
       </button>
 
-      <div className="relative z-10 h-full flex flex-col items-center justify-center px-6 text-center text-[var(--cream)]">
-        <Reveal delay={150}>
-          <h1 className="cine-title mt-6 font-display text-6xl sm:text-8xl md:text-9xl leading-[0.95]">
-            Lyna <em className="text-[var(--sakura)] not-italic">Rebahi</em>
+      <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center">
+        <p className="hero-kicker">bienvenue dans le portfolio de</p>
+        <div className="hero-titlewrap">
+          <h1 className="hero-title">
+            <SplitText text="Lyna" accent="Rebahi" by="chars" trigger="load" step={45} />
+            <span className="hero-star" aria-hidden="true">
+              ✦
+            </span>
+            <svg
+              className="hero-swash"
+              viewBox="0 0 600 120"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              <path pathLength={1} d="M6 78 C 110 128, 250 20, 330 62 S 470 118, 594 26" />
+            </svg>
           </h1>
-        </Reveal>
-        <Reveal delay={280}>
-          <p className="title-card mt-7">
-            Alternance chargée de communication · Réalisation &amp; montage
-          </p>
-          <p className="title-card title-card--soft mt-3">Disponible à partir de septembre 2026</p>
-        </Reveal>
-        <Reveal delay={420}>
-          <a href="#projects" className="quest-btn mt-10">
-            Voir mes projets
+          <span className="hero-stamp" aria-hidden="true">
+            Réalisation ✦ Montage
+            <br />
+            Communication
+          </span>
+        </div>
+        <div className="hero-cards flex flex-col items-center gap-3">
+          <p className="title-card">Alternance chargée de communication</p>
+          <p className="title-card title-card--soft">Disponible à partir de septembre 2026</p>
+        </div>
+        <div className="hero-cta">
+          <Magnetic>
+            <a href="#projects" className="quest-btn" data-cursor="Voir">
+              Voir mes créations →
+            </a>
+          </Magnetic>
+          <a href="#parcours" className="link-line">
+            Mon parcours ↓
           </a>
-        </Reveal>
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-xs tracking-[0.4em] uppercase text-[var(--cream)]/70">
-          ↓ Scroll vers le bas
+        </div>
+        <div className="scroll-cue" aria-hidden="true">
+          Défiler
+          <span />
         </div>
       </div>
     </section>
   );
 }
 
+function Band() {
+  return (
+    <div className="marquee-band" aria-label="Ce que je fais">
+      <Marquee items={MARQUEE_WORDS} speed={40} />
+      <Marquee items={MARQUEE_WORDS} reverse outline speed={52} />
+    </div>
+  );
+}
+
 function About() {
   return (
-    <section id="about" className="relative py-28 px-6">
-      <div className="mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-[minmax(0,22rem)_1fr]">
-        <Reveal>
-          <div className="portrait-wrapper mx-auto">
-            {/* Circular portrait */}
-            <div className="portrait-image">
+    <section id="about" className="section-paper relative px-6 py-28">
+      <div className="mx-auto max-w-6xl">
+        <Reveal className="reveal--focus">
+          <p className="sec-kicker">Scène 02 · Portrait</p>
+          <h2 className="sec-title">
+            <SplitText by="words" text="Qui" accent="suis-je ?" step={90} />
+          </h2>
+        </Reveal>
+
+        <div className="mt-12 grid items-start gap-14 md:grid-cols-[minmax(0,22rem)_1fr] md:gap-16">
+          <Reveal delay={100}>
+            <Viewfinder>
               <Picture
                 id="home/portrait"
                 alt="Portrait de Lyna Rebahi"
-                sizes="(min-width: 640px) 350px, 280px"
+                sizes="(min-width: 640px) 352px, 90vw"
               />
-            </div>
-          </div>
-        </Reveal>
+            </Viewfinder>
+          </Reveal>
 
-        <Reveal delay={150}>
-          <div className="ornament-card relative bg-[var(--card)] p-8 sm:p-10">
-            <h2 className="mt-4 font-display text-4xl sm:text-5xl">
-              Qui <em className="text-[var(--sakura)]">suis-je ?</em>
-            </h2>
-            <p className="mt-5 font-body leading-relaxed text-[var(--plum-ink)]">
-              Faites connaissance avec Lyna REBAHI, jeune femme de 20 ans, étudiante en BUT MMI, en
-              recherche d'une alternance en communication digitale. Ok ça c'était la partie
-              formelle, si je devais me décrire avec mes mots :<br></br>
-              <br></br>
-              Une cinéphile accro romantisme gothique et à l'audiovisuel qui pense résoudre le monde
-              avec des vidéos. J'ai 20 ans, je crée des contenus visuels (vidéos, affiches,
-              identités) et je passe mes journées à rêver de courts-métrages et mes soirées à faire
-              du bénévolat. Je filme ; j'imagine ; je dessine ; je monte ; je crée des identités
-              visuelles et bien sûr je RA.CON.TE.Pas mal, non ?
-            </p>
-            <div className="mt-6 flex flex-wrap gap-2">
-              {SKILL_TAGS.map((t) => (
-                <span key={t} className="hud-tag">
-                  {t}
-                </span>
-              ))}
-            </div>
+          <div>
+            <Reveal delay={200}>
+              <div className="about-card">
+                <p className="about-text">
+                  Faites connaissance avec Lyna REBAHI, jeune femme de 20 ans, étudiante en BUT MMI,
+                  en recherche d'une alternance en communication digitale. Ok ça c'était la partie
+                  formelle, si je devais me décrire avec mes mots :<br></br>
+                  <br></br>
+                  Une cinéphile accro romantisme gothique et à l'audiovisuel qui pense résoudre le
+                  monde avec des vidéos. J'ai 20 ans, je crée des contenus visuels (vidéos,
+                  affiches, identités) et je passe mes journées à rêver de courts-métrages et mes
+                  soirées à faire du bénévolat. Je filme ; j'imagine ; je dessine ; je monte ; je
+                  crée des identités visuelles et bien sûr je RA.CON.TE.Pas mal, non ?
+                </p>
+              </div>
+            </Reveal>
+            <Tools />
           </div>
-        </Reveal>
-      </div>
+        </div>
 
-      <Reveal delay={300}>
-        <div className="mx-auto max-w-4xl mt-16">
-          <div className="group relative overflow-hidden rounded-md shadow-[var(--shadow-quest)] bg-black">
-            <video
-              id="cv-video"
-              playsInline
-              preload="metadata"
-              className="w-full object-cover"
-              controls
-              controlsList="nodownload"
-            >
+        <Reveal delay={200} className="mx-auto mt-20 max-w-4xl">
+          <div className="monitor group">
+            <span className="monitor-label">
+              <span className="rec-dot" /> CV vidéo · 1:25
+            </span>
+            <video id="cv-video" playsInline preload="metadata" controls controlsList="nodownload">
               <source src={videos.cv.src} type="video/mp4" />
             </video>
-
             <button
               id="play-btn"
-              className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/20 transition-all duration-300 group-hover:bg-black/25"
+              type="button"
+              className="monitor-play"
+              data-cursor="Lire"
+              aria-label="Lire le CV vidéo"
               onClick={(e) => {
                 const video = e.currentTarget.parentElement?.querySelector(
                   "video",
@@ -292,17 +338,23 @@ function About() {
                 }
               }}
             >
-              <svg
-                className="w-20 h-20 text-[var(--sakura)] drop-shadow-lg"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M8 5v14l11-7z" />
-              </svg>
+              <span className="flex flex-col items-center">
+                <span className="monitor-play__btn">
+                  <svg
+                    className="h-8 w-8 translate-x-0.5"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </span>
+                <span className="monitor-play__cap">Mon CV en vidéo</span>
+              </span>
             </button>
           </div>
-        </div>
-      </Reveal>
+        </Reveal>
+      </div>
     </section>
   );
 }
@@ -316,6 +368,7 @@ function CvCard() {
           target="_blank"
           rel="noopener"
           className="cv-card"
+          data-cursor="Ouvrir"
           aria-label="Ouvrir le CV (PDF) dans un nouvel onglet"
         >
           <Picture
@@ -325,10 +378,12 @@ function CvCard() {
           />
         </a>
         <div className="mt-5 flex flex-col gap-3">
-          <a href={CV_PDF} download="Lyna_REBAHI_CV.pdf" className="quest-btn justify-center">
-            {CV_PDF_LABEL}
-          </a>
-          <p className="text-center font-body text-xs tracking-wide text-[var(--plum-ink)]/80">
+          <Magnetic className="flex justify-center">
+            <a href={CV_PDF} download="Lyna_REBAHI_CV.pdf" className="quest-btn" data-cursor="PDF">
+              {CV_PDF_LABEL}
+            </a>
+          </Magnetic>
+          <p className="text-center font-body text-xs tracking-wide text-[var(--encre)]/80">
             Disponible en alternance à partir de 2026
           </p>
         </div>
@@ -346,14 +401,14 @@ function CvCard() {
 
 function Parcours() {
   return (
-    <section id="parcours" className="relative px-6 py-24">
+    <section id="parcours" className="section-paper section-paper--alt relative px-6 py-24">
       <div className="mx-auto max-w-6xl">
-        <Reveal>
-          <span className="hud-tag">Frise chronologique</span>
-          <h2 className="mt-4 font-display text-4xl sm:text-5xl">
-            Mon <em className="text-[var(--sakura)]">parcours</em>
+        <Reveal className="reveal--focus">
+          <p className="sec-kicker">Scène 03 · Frise chronologique</p>
+          <h2 className="sec-title">
+            <SplitText by="words" text="Mon" accent="parcours" step={90} />
           </h2>
-          <p className="mt-4 max-w-2xl font-body text-lg leading-relaxed text-[var(--plum-ink)]">
+          <p className="sec-lead mt-5">
             Formations, expériences et engagements, du plus récent au plus ancien. Le CV complet est
             consultable et téléchargeable à côté.
           </p>
@@ -367,53 +422,49 @@ function Parcours() {
   );
 }
 
-function ProjectCard({ p }: { p: Project }) {
+function ProjectCard({ p, index }: { p: Project; index: number }) {
   return (
-    <Link
-      to="/projects/$projectId"
-      params={{ projectId: p.id }}
-      className={`quest-card group block w-full text-left ${p.inProgress ? "pointer-events-none opacity-75 cursor-not-allowed" : ""}`}
-      aria-label={`Voir le projet ${p.title}`}
-    >
-      <div className="relative aspect-[4/5] overflow-visible">
-        <Picture
-          id={p.thumbnail}
-          alt={p.title}
-          sizes="(min-width: 1280px) 395px, (min-width: 1024px) 31vw, (min-width: 640px) 46vw, calc(100vw - 48px)"
-          className="h-full w-full object-cover transition duration-700 group-hover:scale-110"
-        />
-        <div className="absolute top-3 left-3">
-          <span className="hud-tag">{p.category}</span>
-        </div>
-        {p.inProgress && (
-          <div
-            className="pointer-events-none absolute -top-2 -right-2 w-24 h-24 bg-[#ffd966] rounded-sm shadow-lg flex items-center justify-center transition-transform group-hover:scale-110"
-            style={{
-              transform: "rotate(-12deg)",
-              fontFamily: '"Comic Sans MS", "Marker Felt", cursive',
-            }}
-          >
-            <div className="text-center text-[#d4a574] font-bold text-sm leading-tight">
+    <Tilt className="h-full">
+      <Link
+        to="/projects/$projectId"
+        params={{ projectId: p.id }}
+        className={`quest-card group ${p.inProgress ? "is-soon" : ""}`}
+        aria-label={`Voir le projet ${p.title}`}
+        data-cursor={p.inProgress ? "Bientôt" : "Voir"}
+      >
+        <div className="qc-media aspect-[4/5]">
+          <Picture
+            id={p.thumbnail}
+            alt={p.title}
+            sizes="(min-width: 1280px) 395px, (min-width: 1024px) 31vw, (min-width: 640px) 46vw, calc(100vw - 48px)"
+            className="h-full w-full object-cover"
+          />
+          <span className="hud-tag qc-cat">{p.category}</span>
+          <span className="qc-index" aria-hidden="true">
+            {String(index + 1).padStart(2, "0")}
+          </span>
+          {p.inProgress && (
+            <span className="stamp stamp--card">
               En cours
               <br />
               de dev
-            </div>
+            </span>
+          )}
+          <div className="overlay">
+            <p className="text-sm leading-snug text-[var(--cream)]/90">{p.shortDescription}</p>
+            <span className="mt-3 inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-[var(--cream)]">
+              Voir le projet &rarr;
+            </span>
           </div>
-        )}
-        <div className="overlay">
-          <p className="text-sm leading-snug text-[var(--cream)]/90">{p.shortDescription}</p>
-          <span className="mt-3 inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-[var(--sakura)]">
-            Voir le projet &rarr;
+        </div>
+        <div className="qc-foot">
+          <h3 className="qc-title">{p.title}</h3>
+          <span className="qc-arrow" aria-hidden="true">
+            →
           </span>
         </div>
-      </div>
-      <div className="flex items-center justify-between px-4 py-3">
-        <h3 className="font-display text-xl text-[var(--plum)]">{p.title}</h3>
-        <span className="text-xs uppercase tracking-widest text-[var(--muted-foreground)]">
-          0{projects.indexOf(p) + 1}
-        </span>
-      </div>
-    </Link>
+      </Link>
+    </Tilt>
   );
 }
 
@@ -427,31 +478,32 @@ function Projects() {
   return (
     <section
       id="projects"
-      className="relative py-28 px-6 bg-[color-mix(in_oklab,var(--cream)_95%,var(--sakura))]"
+      className="relative px-6 py-28 bg-[color-mix(in_oklab,var(--cream)_93%,var(--rose-vif))]"
     >
       <div className="mx-auto max-w-7xl">
-        <Reveal>
-          <div className="flex flex-col items-center text-center">
-            <h2 className="chapter-title mt-4 text-4xl sm:text-6xl"> Mes Créations </h2>
-            <div className="mt-4 flex items-center gap-4">
-              <span className="h-px w-16 bg-[var(--gold)]" />
-              <span className="text-[var(--gold)]">❀</span>
-              <span className="h-px w-16 bg-[var(--gold)]" />
+        <Reveal className="reveal--focus">
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <p className="sec-kicker">Scène 04 · Créations</p>
+              <h2 className="sec-title">
+                <SplitText by="words" text="Mes" accent="créations" step={90} />
+              </h2>
             </div>
+            <p className="font-body text-sm tracking-[0.2em] uppercase text-[var(--encre)]/70">
+              {String(filtered.length).padStart(2, "0")} projet{filtered.length > 1 ? "s" : ""}
+            </p>
           </div>
         </Reveal>
 
         <Reveal delay={120}>
-          <div className="mt-10 flex flex-wrap justify-center gap-2">
+          <div className="mt-10 flex flex-wrap gap-2" role="group" aria-label="Filtrer les projets">
             {CATEGORIES.map((c) => (
               <button
                 key={c}
+                type="button"
                 onClick={() => setFilter(c)}
-                className={`hud-tag transition ${
-                  filter === c
-                    ? "!bg-[var(--plum)] !text-[var(--cream)] !border-[var(--plum)]"
-                    : "hover:!bg-[var(--sakura)]/40"
-                }`}
+                aria-pressed={filter === c}
+                className="chip"
               >
                 {c}
               </button>
@@ -459,10 +511,10 @@ function Projects() {
           </div>
         </Reveal>
 
-        <div key={filter} className="grid-switch mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div key={filter} className="grid-switch mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((p, i) => (
             <Reveal key={p.id} delay={i * 80}>
-              <ProjectCard p={p} />
+              <ProjectCard p={p} index={projects.indexOf(p)} />
             </Reveal>
           ))}
         </div>
@@ -509,84 +561,98 @@ function Contact() {
   };
 
   return (
-    <section
-      id="contact"
-      className="relative py-28 px-6 bg-[color-mix(in_oklab,var(--plum)_92%,black)] text-[var(--cream)]"
-    >
-      <div className="mx-auto max-w-3xl">
-        <Reveal>
-          <div className="flex flex-col items-center text-center">
-            <h2 className="chapter-title mt-4 text-4xl sm:text-6xl text-[var(--cream)]">
-              Prenons contact
+    <section id="contact" className="contact px-6 py-28">
+      <div className="aurora" aria-hidden="true">
+        <span />
+        <span />
+        <span />
+      </div>
+      <div className="relative mx-auto max-w-6xl">
+        <div className="grid gap-14 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-20">
+          <Reveal className="reveal--focus">
+            <p className="sec-kicker sec-kicker--light">Scène 05 · Contact</p>
+            <h2 className="sec-title sec-title--light">
+              <SplitText by="words" text="Prenons" accent="contact" step={90} />
             </h2>
-            <div className="mt-4 flex items-center gap-4">
-              <span className="h-px w-16 bg-[var(--gold)]" />
-              <span className="text-[var(--gold)]">❀</span>
-              <span className="h-px w-16 bg-[var(--gold)]" />
-            </div>
-            <p className="mt-4 font-body text-[var(--cream)]/80">
+            <p className="mt-6 max-w-md font-body text-lg leading-relaxed text-[var(--cream)]/80">
               Envie d'échanger autour d'une alternance ? Écrivez-moi.
             </p>
-          </div>
-        </Reveal>
-
-        <Reveal delay={150}>
-          <form ref={formRef} onSubmit={handleSubmit} className="mt-12 grid gap-5">
-            <input
-              required
-              name="name"
-              placeholder="Votre nom"
-              className="bg-transparent border border-[color-mix(in_oklab,var(--cream)_25%,transparent)] rounded-sm px-4 py-3 outline-none focus:border-[var(--sakura)] transition"
-            />
-            <input
-              required
-              name="email"
-              type="email"
-              placeholder="Votre email"
-              className="bg-transparent border border-[color-mix(in_oklab,var(--cream)_25%,transparent)] rounded-sm px-4 py-3 outline-none focus:border-[var(--sakura)] transition"
-            />
-            <textarea
-              required
-              name="message"
-              rows={5}
-              placeholder="Votre message"
-              className="bg-transparent border border-[color-mix(in_oklab,var(--cream)_25%,transparent)] rounded-sm px-4 py-3 outline-none focus:border-[var(--sakura)] transition resize-none"
-            />
-            {error && <p className="text-[var(--sakura)]">{error}</p>}
-            <button
-              type="submit"
-              disabled={loading}
-              className="quest-btn justify-center disabled:opacity-50"
+            <a
+              href="mailto:lyna.rebahi@gmail.com"
+              className="contact-mail mt-10"
+              data-cursor="Écrire"
             >
-              {sent ? "❀ Message envoyé" : loading ? "Envoi en cours..." : "Envoyer le message"}
-            </button>
-          </form>
-        </Reveal>
+              lyna.rebahi@gmail.com
+            </a>
+            <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3">
+              <a
+                href="https://www.linkedin.com/in/lyna-rebahi/"
+                className="link-line link-line--light"
+                target="_blank"
+                rel="noopener"
+              >
+                LinkedIn ↗
+              </a>
+              <a
+                href="https://www.instagram.com/lynae.quiet/"
+                className="link-line link-line--light"
+                target="_blank"
+                rel="noopener"
+              >
+                Instagram ↗
+              </a>
+            </div>
+          </Reveal>
 
-        <div className="mt-14 flex flex-wrap items-center justify-center gap-6 text-sm tracking-widest">
-          <a href="mailto:lyna.rebahi@gmail.com" className="hover:text-[var(--sakura)] transition">
-            lyna.rebahi@gmail.com
-          </a>
-          <span className="text-[var(--gold)]">·</span>
-          <a
-            href="https://www.linkedin.com/in/lyna-rebahi/"
-            className="hover:text-[var(--sakura)] transition"
-          >
-            LinkedIn
-          </a>
-          <span className="text-[var(--gold)]">·</span>
-          <a
-            href="https://www.instagram.com/lynae.quiet/"
-            className="hover:text-[var(--sakura)] transition"
-          >
-            Instagram
-          </a>
+          <Reveal delay={150}>
+            <form ref={formRef} onSubmit={handleSubmit} className="grid gap-4">
+              <div className="field-wrap">
+                <input required name="name" placeholder="Votre nom" className="field" />
+              </div>
+              <div className="field-wrap">
+                <input
+                  required
+                  name="email"
+                  type="email"
+                  placeholder="Votre email"
+                  className="field"
+                />
+              </div>
+              <div className="field-wrap">
+                <textarea
+                  required
+                  name="message"
+                  rows={5}
+                  placeholder="Votre message"
+                  className="field"
+                />
+              </div>
+              {error && <p className="text-[var(--rose-vif)]">{error}</p>}
+              <Magnetic className="mt-4 flex">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="quest-btn quest-btn--light disabled:opacity-50"
+                  data-cursor="Envoyer"
+                >
+                  {sent
+                    ? "✦ Message envoyé"
+                    : loading
+                      ? "Envoi en cours..."
+                      : "Envoyer le message →"}
+                </button>
+              </Magnetic>
+            </form>
+          </Reveal>
         </div>
-      </div>
 
-      <footer className="mt-20 text-center text-xs tracking-widest text-[var(--cream)]/50">
-        Lyna Rebahi Portfolio {new Date().getFullYear()}
-      </footer>
+        <footer className="mt-24 flex flex-wrap items-center justify-between gap-4 border-t border-[color-mix(in_oklab,var(--cream)_18%,transparent)] pt-8 text-xs tracking-[0.2em] uppercase text-[var(--cream)]/55">
+          <span>Lyna Rebahi · Portfolio {new Date().getFullYear()}</span>
+          <a href="#top" className="hover:text-[var(--rose-vif)] transition">
+            Haut de page ↑
+          </a>
+        </footer>
+      </div>
     </section>
   );
 }
@@ -596,6 +662,7 @@ function Index() {
     <main className="relative">
       <Nav />
       <Hero />
+      <Band />
       <About />
       <Parcours />
       <Projects />
