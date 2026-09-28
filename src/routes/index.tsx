@@ -31,7 +31,7 @@ const CATEGORIES = [
 ] as const;
 type Category = (typeof CATEGORIES)[number];
 
-const SKILL_TAGS = ["Illustrator", "Photoshop", "Premiere Pro", "Figma", "Canva", "HTML / CSS"];
+const SKILL_TAGS = ["Illustrator", "Photoshop", "Premiere Pro", "AfterEffect", "InDesign", "Davinci resolve", "Capcut", "Figma", "Canva", "HTML / CSS / JS / PHP"];
 
 function Nav() {
   const [open, setOpen] = useState(false);
