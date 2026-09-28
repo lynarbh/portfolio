@@ -240,7 +240,7 @@ function Hero() {
       <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center">
         <p className="hero-kicker">bienvenue dans le portfolio de</p>
         <div className="hero-titlewrap">
-          <h1 className="hero-title">
+          <h1 className="hero-title" data-cursor-fx="blend">
             <SplitText text="Lyna" accent="Rebahi" by="chars" trigger="load" step={45} />
             <span className="hero-star" aria-hidden="true">
               ✦
@@ -298,7 +298,7 @@ function About() {
       <div className="mx-auto max-w-6xl">
         <Reveal className="reveal--focus">
           <p className="sec-kicker">Scène 02 · Portrait</p>
-          <h2 className="sec-title">
+          <h2 className="sec-title" data-cursor-fx="blend">
             <SplitText by="words" text="Qui" accent="suis-je ?" step={90} />
           </h2>
         </Reveal>
@@ -425,7 +425,7 @@ function Parcours() {
       <div className="mx-auto max-w-6xl">
         <Reveal className="reveal--focus">
           <p className="sec-kicker">Scène 03 · Frise chronologique</p>
-          <h2 className="sec-title">
+          <h2 className="sec-title" data-cursor-fx="blend">
             <SplitText by="words" text="Mon" accent="parcours" step={90} />
           </h2>
           <p className="sec-lead mt-5">
@@ -459,7 +459,7 @@ function Projects() {
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
               <p className="sec-kicker">Scène 04 · Créations</p>
-              <h2 className="sec-title">
+              <h2 className="sec-title" data-cursor-fx="blend">
                 <SplitText by="words" text="Mes" accent="créations" step={90} />
               </h2>
             </div>
@@ -547,7 +547,7 @@ function Contact() {
         <div className="grid gap-14 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-20">
           <Reveal className="reveal--focus">
             <p className="sec-kicker">Scène 05 · Contact</p>
-            <h2 className="sec-title">
+            <h2 className="sec-title" data-cursor-fx="blend">
               <SplitText by="words" text="Prenons" accent="contact" step={90} />
             </h2>
             <p className="mt-6 max-w-md font-body text-lg leading-relaxed text-[var(--encre)]/85">

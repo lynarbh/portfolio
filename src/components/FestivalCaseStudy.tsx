@@ -1,7 +1,9 @@
+import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Reveal } from "@/components/Reveal";
 import { Picture } from "@/components/Picture";
 import { SplitText } from "@/components/SplitText";
+import { ToolChips } from "@/components/ToolChips";
 import type { MediaId } from "@/data/media.generated";
 
 // Étude de cas « Tafsut Festival » (projet festival-identite). Les textes sont ceux de la charte
@@ -54,6 +56,8 @@ const SUPPORTS: readonly { id: MediaId; label: string; pos?: string }[] = [
   { id: "festival-identite/planche-31", label: "Food truck", pos: "object-[40%_50%]" },
 ];
 
+type Shot = { id: MediaId; alt: string };
+
 function Square({
   id,
   alt,
@@ -61,6 +65,7 @@ function Square({
   pos = "",
   caption,
   n,
+  onOpen,
 }: {
   id: MediaId;
   alt: string;
@@ -68,12 +73,19 @@ function Square({
   pos?: string;
   caption?: string;
   n?: string;
+  onOpen?: (shot: Shot) => void;
 }) {
   return (
     <figure className="cs-sq">
-      <div className="cs-sq__img">
+      <button
+        type="button"
+        className="cs-sq__img"
+        data-cursor="Agrandir"
+        aria-label={`Agrandir : ${alt}`}
+        onClick={() => onOpen?.({ id, alt })}
+      >
         <Picture id={id} alt={alt} sizes={sizes} className={`h-full w-full object-cover ${pos}`} />
-      </div>
+      </button>
       {caption ? (
         <figcaption className="cs-cap">
           {n ? <span className="cs-cap__n">{n}</span> : null}
@@ -98,7 +110,7 @@ function Chapter({
   return (
     <section id={id} className="cs-chapter">
       <Reveal className="reveal--focus">
-        <p className="cs-kicker">
+        <p className="cs-kicker" data-cursor-fx="blend">
           <span>{n}</span> {title}
         </p>
       </Reveal>
@@ -107,9 +119,48 @@ function Chapter({
   );
 }
 
+function Lightbox({ shot, onClose }: { shot: Shot; onClose: () => void }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [onClose]);
+  return (
+    <div className="lb" role="dialog" aria-modal="true" aria-label={shot.alt} onClick={onClose}>
+      <button type="button" className="lb-close" aria-label="Fermer" data-cursor="Fermer" autoFocus>
+        ✕
+      </button>
+      <div className="lb-img" onClick={(e) => e.stopPropagation()}>
+        <Picture id={shot.id} alt={shot.alt} sizes="(min-width: 1024px) 1100px, 92vw" />
+      </div>
+      <p className="lb-cap">{shot.alt}</p>
+    </div>
+  );
+}
+
 export function FestivalCaseStudy({ role, tools }: { role: string; tools: readonly string[] }) {
+  const [shot, setShot] = useState<Shot | null>(null);
+  const close = () => setShot(null);
   return (
     <main className="cs">
+      <div className="cs-bg" aria-hidden="true">
+        <span className="cs-bg__blob cs-bg__blob--1" />
+        <span className="cs-bg__blob cs-bg__blob--2" />
+        <span className="cs-bg__blob cs-bg__blob--3" />
+        <span className="cs-bg__dots" />
+        <span className="cs-bg__film cs-bg__film--l" />
+        <span className="cs-bg__film cs-bg__film--r" />
+        <span className="cs-bg__grain" />
+        <span className="cs-bg__vignette" />
+      </div>
+      {shot ? <Lightbox shot={shot} onClose={close} /> : null}
       <div className="cs-wrap">
         <Reveal>
           <Link to="/" hash="projects" className="link-line" data-cursor="Retour">
@@ -120,7 +171,7 @@ export function FestivalCaseStudy({ role, tools }: { role: string; tools: readon
         <header className="cs-head">
           <Reveal delay={80}>
             <p className="sec-kicker">Identité d'un festival · Branding</p>
-            <h1 className="cs-h1">
+            <h1 className="cs-h1" data-cursor-fx="blend">
               <SplitText by="words" text="Tafsut" accent="Festival" step={110} />
             </h1>
             <p className="cs-slogan">Racines &amp; Renouveau</p>
@@ -137,7 +188,9 @@ export function FestivalCaseStudy({ role, tools }: { role: string; tools: readon
               </div>
               <div>
                 <dt>Outils</dt>
-                <dd>{tools.join(", ")}</dd>
+                <dd>
+                  <ToolChips names={tools} />
+                </dd>
               </div>
               <div>
                 <dt>Cadre</dt>
@@ -160,6 +213,7 @@ export function FestivalCaseStudy({ role, tools }: { role: string; tools: readon
             <div className="cs-grid-2">
               <Reveal delay={100}>
                 <Square
+                  onOpen={setShot}
                   id="festival-identite/planche-01"
                   alt="Logotype du Tafsut Festival dans son cercle, avec le slogan Racines & Renouveau"
                   sizes={SQ2}
@@ -208,6 +262,7 @@ export function FestivalCaseStudy({ role, tools }: { role: string; tools: readon
               </Reveal>
               <Reveal delay={200}>
                 <Square
+                  onOpen={setShot}
                   id="festival-identite/crop-picto"
                   alt="Pictogramme du Tafsut Festival : symbole amazigh Yaz orné de fleurs et de motifs géométriques"
                   sizes={SQ2}
@@ -220,6 +275,7 @@ export function FestivalCaseStudy({ role, tools }: { role: string; tools: readon
             <div className="cs-grid-3">
               <Reveal delay={80}>
                 <Square
+                  onOpen={setShot}
                   id="festival-identite/crop-logo-positif"
                   alt="Logotype complet, version positive"
                   caption="Version positive"
@@ -228,6 +284,7 @@ export function FestivalCaseStudy({ role, tools }: { role: string; tools: readon
               </Reveal>
               <Reveal delay={160}>
                 <Square
+                  onOpen={setShot}
                   id="festival-identite/crop-logo-negatif"
                   alt="Logotype complet, version négative"
                   caption="Version négative"
@@ -257,6 +314,7 @@ export function FestivalCaseStudy({ role, tools }: { role: string; tools: readon
               {POLES.map((p, i) => (
                 <Reveal key={p.id} delay={i * 70}>
                   <Square
+                    onOpen={setShot}
                     id={p.id}
                     alt={`Variante du logo, pôle ${p.label}`}
                     sizes={SQ5}
@@ -269,6 +327,7 @@ export function FestivalCaseStudy({ role, tools }: { role: string; tools: readon
             <div className="cs-grid-2 mt-8">
               <Reveal delay={100}>
                 <Square
+                  onOpen={setShot}
                   id="festival-identite/crop-motifs"
                   alt="Éléments graphiques : frises ornementales et pictogramme"
                   sizes={SQ2}
@@ -277,6 +336,7 @@ export function FestivalCaseStudy({ role, tools }: { role: string; tools: readon
               </Reveal>
               <Reveal delay={200}>
                 <Square
+                  onOpen={setShot}
                   id="festival-identite/crop-texture"
                   alt="Texture rose inspirée des tapis berbères"
                   sizes={SQ2}
@@ -387,6 +447,7 @@ export function FestivalCaseStudy({ role, tools }: { role: string; tools: readon
               {SUPPORTS.map((s, i) => (
                 <Reveal key={s.id} delay={(i % 3) * 90}>
                   <Square
+                    onOpen={setShot}
                     id={s.id}
                     alt={`Mise en situation : ${s.label}`}
                     pos={s.pos}

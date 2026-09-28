@@ -4,6 +4,7 @@ import { Reveal } from "@/components/Reveal";
 import { Picture } from "@/components/Picture";
 import { images, type ImageEntry } from "@/data/media.generated";
 import { FestivalCaseStudy } from "@/components/FestivalCaseStudy";
+import { ToolChips } from "@/components/ToolChips";
 
 // `sizes` per layout inside the max-w-4xl (896px) column with px-6 page padding.
 const SIZES_2COL =
@@ -845,13 +846,7 @@ function ProjectPage() {
                 {project.description}
               </p>
               <h2 className="mt-8 font-display text-2xl text-[var(--plum)]">Outils</h2>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {project.tools.map((tool) => (
-                  <span key={tool} className="hud-tag">
-                    {tool}
-                  </span>
-                ))}
-              </div>
+              <ToolChips names={project.tools} className="mt-3" />
 
               {/* --- BOUTON SITE EN LIGNE --- */}
               {project.url && (

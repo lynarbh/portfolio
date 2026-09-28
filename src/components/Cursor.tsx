@@ -50,16 +50,22 @@ export function Cursor() {
 
     const onOver = (e: PointerEvent) => {
       const t = e.target as Element | null;
-      const el = t?.closest?.("[data-cursor], a, button, input, textarea, select, label, summary");
+      const el = t?.closest?.(
+        "[data-cursor], [data-cursor-fx], a, button, input, textarea, select, label, summary",
+      );
       if (!el) {
         ring.className = "cur-ring";
         label.textContent = "";
         return;
       }
       const custom = el.closest("[data-cursor]")?.getAttribute("data-cursor");
+      const fx = el.closest("[data-cursor-fx]")?.getAttribute("data-cursor-fx");
       if (custom) {
         ring.className = "cur-ring is-label";
         label.textContent = custom;
+      } else if (fx === "blend") {
+        ring.className = "cur-ring is-blend";
+        label.textContent = "";
       } else if (el.matches("input, textarea, select")) {
         ring.className = "cur-ring is-text";
         label.textContent = "";
