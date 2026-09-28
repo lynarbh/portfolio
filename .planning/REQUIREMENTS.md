@@ -23,7 +23,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **SIZE-01**: Un script hors-ligne `scripts/media.mjs` (sharp + ffmpeg + Ghostscript) régénère de façon reproductible `public/media/**` et le manifeste `src/data/media.generated.ts` depuis `media-src/`
 - [x] **SIZE-02**: Chaque image est redimensionnée d'abord (≤ 2400 px grand côté), convertie en sRGB puis débarrassée de son ICC, encodée selon deux presets — photos : AVIF/WebP 4:2:0 + JPEG de repli ; affiches, logos, typo : AVIF 4:4:4 ou PNG quantifié — renommée en kebab-case ASCII et servie via `<picture>` + `srcset`
-- [ ] **SIZE-03**: `hero.mp4` est converti HDR HLG bt2020 → SDR bt709 (filtre `colorspace`), H.264 8 bits `yuv420p`, 30 fps, muet, `+faststart`, ≤ 4 Mo, avec un poster léger extrait de la sortie convertie
+- [x] **SIZE-03**: `hero.mp4` est converti HDR HLG bt2020 → SDR bt709 (filtre `colorspace`), H.264 8 bits `yuv420p`, 30 fps, muet, `+faststart`, ≤ 4 Mo, avec un poster léger extrait de la sortie convertie
 - [x] **SIZE-04**: La vidéo CV est réencodée ≤ 12 Mo, `yuv420p`, `+faststart`, audio AAC, sans dégradation visible
 - [x] **SIZE-05**: Les vidéos du process SkøllRub sont réencodées à 25 fps, `yuv420p`, `+faststart`, ≤ 12 Mo chacune, en conservant les chemins relatifs `videos/*.mp4` attendus par `1_MOHAMED.js`
 - [x] **SIZE-06**: ~10 pages clés de la charte Tafsut (logo, palette, typos, affiche, billets, goodies, signalétique) sont extraites via `gs` à 300 dpi puis passées au preset graphic ; le PDF sort de `public/`
@@ -33,7 +33,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Hero (HERO)
 
-- [ ] **HERO-01**: La vidéo de fond joue réellement sur iPhone, Android et desktop (`muted`, `playsInline`, poster léger) avec un bouton pause accessible
+- [x] **HERO-01**: La vidéo de fond joue réellement sur iPhone, Android et desktop (`muted`, `playsInline`, poster léger) avec un bouton pause accessible
 - [ ] **HERO-02**: Une ligne de positionnement + disponibilité apparaît sous le titre (slot texte : alternance chargée de communication, spécialité réalisation/montage, disponible à partir de…)
 - [ ] **HERO-03**: La mise en scène hybride conserve la palette et les typos actuelles et ajoute des codes cinéma légers (cadre écran, grain tuilé pré-rendu, transitions pellicule) sans coût mobile ni overlay bloquant, désactivés sous `prefers-reduced-motion`
 - [ ] **HERO-04**: Les métadonnées Open Graph utilisent une frame de la vidéo hero comme image et un slot de description (140-160 caractères)
@@ -132,14 +132,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CLEAN-09 | Phase 1 | Complete |
 | SIZE-01 | Phase 2 | Complete |
 | SIZE-02 | Phase 2 | Complete |
-| SIZE-03 | Phase 2 | Pending |
+| SIZE-03 | Phase 2 | Complete |
 | SIZE-04 | Phase 2 | Complete |
 | SIZE-05 | Phase 2 | Complete |
 | SIZE-06 | Phase 2 | Complete |
 | SIZE-07 | Phase 1 | Complete |
 | SIZE-08 | Phase 2 | Complete |
 | SIZE-09 | Phase 4 | Pending |
-| HERO-01 | Phase 2 | Pending |
+| HERO-01 | Phase 2 | Complete |
 | HERO-02 | Phase 3 | Pending |
 | HERO-03 | Phase 3 | Pending |
 | HERO-04 | Phase 3 | Pending |
