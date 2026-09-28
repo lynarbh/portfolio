@@ -5,7 +5,7 @@ export type Project = {
   title: string;
   category: "Site Web" | "Design" | "Branding" | "Illustration" | "Vidéo" | "SAE" | "Photo" | "Projet universitaire";
   thumbnail: MediaId;
-  media?: string[];
+  media?: readonly MediaId[];
   video?: string;
   url?: string;
   shortDescription: string;
@@ -25,7 +25,7 @@ export const projects: Project[] = [
     title: "Prototype de site accessible",
     category: "Site Web",
     thumbnail: "thumbnails/portfolio-thumbnail-03-web",
-    media: ["/assets/prototype1.png", "/assets/prototype2.png"],
+    media: ["prototype-site-accessible/prototype1", "prototype-site-accessible/prototype2"],
     shortDescription: "Prototype d'un site web accessible pour tous.",
     description:
       "Prototype Figma d'un site pensé pour être accessible au plus grand nombre. Le projet m'a poussée à interroger chaque choix de design — contrastes, typographies, hiérarchie, parcours clavier — afin de respecter les normes WCAG et de proposer une expérience adaptée aux utilisateurs en situation de handicap visuel ou auditif.",
@@ -67,7 +67,7 @@ export const projects: Project[] = [
     title: "Illustration Photoshop",
     category: "Photo",
     thumbnail: "thumbnails/portfolio-thumbnail-02-flyers",
-    media: ["/assets/affiche_sensibilisation_Lyna_Rebahi.png"],
+    media: ["illustration-photoshop/affiche-sensibilisation-lyna-rebahi"],
     shortDescription: "Illustration numérique réalisée sur Photoshop.",
     description: "Affiche de sensibilisation réalisée dans le cadre du cours de culture artistique, sur un brief de campagne éco-citoyenne commanditée par l'UPEC pour ses étudiants. J'ai choisi de traiter l'acidification des océans à travers un angle moins évoqué que celui des coraux : ses conséquences sur le plancton, ces micro-organismes invisibles qui forment pourtant la base de la chaîne alimentaire marine. L'affiche montre trois pierres tombales portant chacune le nom d'une espèce de plancton, posées sur un fond océanique sombre. Derrière elles, un corail blanchi sur lequel se concentre toute la lumière de la scène. La phrase « Et si les premières victimes de l'acidification des océans étaient invisibles ? » traverse l'image, à moitié éclairée du côté du corail, à moitié plongée dans l'ombre — une manière de jouer sur ce qu'on voit et ce qu'on choisit de ne pas voir. Le travail a été réalisé sur Photoshop au format A2, 300 dpi.",
     tools: ["Photoshop"],
@@ -78,7 +78,7 @@ export const projects: Project[] = [
     title: "Portraits vectoriels",
     category: "Illustration",
     thumbnail: "thumbnails/portfolio-thumbnail-02-flyers",
-    media: ["/assets/Lyna.jpg", "/assets/Joseph.jpg", "/assets/Imad.jpg"],
+    media: ["portraits-illustration/lyna", "portraits-illustration/joseph", "portraits-illustration/imad"],
     shortDescription: "Série de portraits réalisés sur Illustrator.",
     description: "Série de trois portraits vectoriels réalisés sur Illustrator : un autoportrait et deux portraits de camarades de promo. J'ai cherché à garder une vraie cohérence d'ensemble, en travaillant tous les visages dans le même style — notamment au niveau des ombrestion : retranscrire un visage uniquement avec des courbes, des aplats et des nuances, sans trahir l'identité du modèle.",
     tools: ["Illustrator"],

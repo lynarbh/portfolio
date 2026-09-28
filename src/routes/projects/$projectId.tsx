@@ -1,6 +1,13 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { projects } from "@/data/projects";
 import { Reveal } from "@/components/Reveal";
+import { Picture } from "@/components/Picture";
+import { images, type ImageEntry } from "@/data/media.generated";
+
+// `sizes` per layout inside the max-w-4xl (896px) column with px-6 page padding.
+const SIZES_2COL = "(min-width: 944px) 440px, (min-width: 640px) calc(50vw - 32px), calc(100vw - 48px)";
+const SIZES_FULL = "(min-width: 944px) 896px, calc(100vw - 48px)";
+const SIZES_3COL = "(min-width: 944px) 288px, (min-width: 640px) calc(33vw - 32px), calc(100vw - 48px)";
 
 export const Route = createFileRoute("/projects/$projectId")({
   component: ProjectPage,
@@ -84,14 +91,16 @@ function ProjectPage() {
               <section>
                 <h2 className="font-display text-2xl text-[var(--plum)]">Mock-ups</h2>
                 <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                  <img
-                    src="/assets/mockupcarterose.png"
+                  <Picture
+                    id="business-card-mockup/mockupcarterose"
                     alt="Mock-up carte de visite — variante rose"
+                    sizes={SIZES_2COL}
                     className="w-full rounded-md object-cover shadow"
                   />
-                  <img
-                    src="/assets/mockupcartechocolat.png"
+                  <Picture
+                    id="business-card-mockup/mockupcartechocolat"
                     alt="Mock-up carte de visite — variante chocolat"
+                    sizes={SIZES_2COL}
                     className="w-full rounded-md object-cover shadow"
                   />
                 </div>
@@ -103,14 +112,16 @@ function ProjectPage() {
               <section>
                 <h2 className="font-display text-2xl text-[var(--plum)]">Design des cartes</h2>
                 <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                  <img
-                    src="/assets/designcarterose.png"
+                  <Picture
+                    id="business-card-mockup/designcarterose"
                     alt="Design de la carte — variante rose"
+                    sizes={SIZES_2COL}
                     className="w-full rounded-md object-cover shadow"
                   />
-                  <img
-                    src="/assets/designcartechocolat.png"
+                  <Picture
+                    id="business-card-mockup/designcartechocolat"
                     alt="Design de la carte — variante chocolat"
+                    sizes={SIZES_2COL}
                     className="w-full rounded-md object-cover shadow"
                   />
                 </div>
@@ -122,9 +133,10 @@ function ProjectPage() {
               <section>
                 <h2 className="font-display text-2xl text-[var(--plum)]">Logo & déclinaisons</h2>
                 <div className="mt-6">
-                  <img
-                    src="/assets/logoen8variantes.png"
+                  <Picture
+                    id="business-card-mockup/logoen8variantes"
                     alt="Logo personnel L et R — déclinaisons de couleurs"
+                    sizes={SIZES_FULL}
                     className="w-full rounded-md object-contain shadow"
                   />
                 </div>
@@ -136,9 +148,10 @@ function ProjectPage() {
               <section>
                 <h2 className="font-display text-2xl text-[var(--plum)]">Palette de couleurs</h2>
                 <div className="mt-6 flex justify-center">
-                  <img
-                    src="/assets/palette%20de%20couleurs.png"
+                  <Picture
+                    id="business-card-mockup/palette-de-couleurs"
                     alt="Palette de couleurs de l'identité personnelle"
+                    sizes="448px"
                     className="w-full max-w-md rounded-md object-contain shadow"
                   />
                 </div>
@@ -176,9 +189,10 @@ function ProjectPage() {
               <section>
                 <h2 className="font-display text-2xl text-[var(--plum)]">Bloc 1 — Présentation du projet</h2>
                 <div className="mt-6">
-                  <img
-                    src="/assets/clip1.png"
+                  <Picture
+                    id="clip/clip1"
                     alt="Blue - Présentation du projet"
+                    sizes={SIZES_FULL}
                     className="w-full rounded-md object-cover shadow mb-6"
                   />
                   <p className="font-body leading-relaxed text-[var(--plum)]/80">
@@ -190,24 +204,28 @@ function ProjectPage() {
               <section>
                 <h2 className="font-display text-2xl text-[var(--plum)]">Bloc 2 — Analyse musicale et lecture du clip original</h2>
                 <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                  <img
-                    src="/assets/clip2.png"
+                  <Picture
+                    id="clip/clip2"
                     alt="Blue - Analyse musicale part 1"
+                    sizes={SIZES_2COL}
                     className="w-full rounded-md object-cover shadow"
                   />
-                  <img
-                    src="/assets/clip3.png"
+                  <Picture
+                    id="clip/clip3"
                     alt="Blue - Analyse musicale part 2"
+                    sizes={SIZES_2COL}
                     className="w-full rounded-md object-cover shadow"
                   />
-                  <img
-                    src="/assets/clip4.png"
+                  <Picture
+                    id="clip/clip4"
                     alt="Blue - Analyse musicale part 3"
+                    sizes={SIZES_2COL}
                     className="w-full rounded-md object-cover shadow"
                   />
-                  <img
-                    src="/assets/clip5.png"
+                  <Picture
+                    id="clip/clip5"
                     alt="Blue - Analyse musicale part 4"
+                    sizes={SIZES_2COL}
                     className="w-full rounded-md object-cover shadow"
                   />
                 </div>
@@ -219,9 +237,10 @@ function ProjectPage() {
               <section>
                 <h2 className="font-display text-2xl text-[var(--plum)]">Bloc 3 — Le plan final et l'ambiguïté narrative</h2>
                 <div className="mt-6">
-                  <img
-                    src="/assets/clip6.png"
+                  <Picture
+                    id="clip/clip6"
                     alt="Blue - Plan final"
+                    sizes={SIZES_FULL}
                     className="w-full rounded-md object-cover shadow mb-6"
                   />
                   <p className="font-body leading-relaxed text-[var(--plum)]/80">
@@ -233,14 +252,16 @@ function ProjectPage() {
               <section>
                 <h2 className="font-display text-2xl text-[var(--plum)]">Bloc 4 — Note d'intention : la mémoire comme reconstruction émotionnelle</h2>
                 <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                  <img
-                    src="/assets/clip7.png"
+                  <Picture
+                    id="clip/clip7"
                     alt="Blue - Note d'intention part 1"
+                    sizes={SIZES_2COL}
                     className="w-full rounded-md object-cover shadow"
                   />
-                  <img
-                    src="/assets/clip8.png"
+                  <Picture
+                    id="clip/clip8"
                     alt="Blue - Note d'intention part 2"
+                    sizes={SIZES_2COL}
                     className="w-full rounded-md object-cover shadow"
                   />
                 </div>
@@ -252,14 +273,16 @@ function ProjectPage() {
               <section>
                 <h2 className="font-display text-2xl text-[var(--plum)]">Bloc 5 — Dispositifs techniques et mise en scène</h2>
                 <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                  <img
-                    src="/assets/clip9.png"
+                  <Picture
+                    id="clip/clip9"
                     alt="Blue - Dispositifs techniques part 1"
+                    sizes={SIZES_2COL}
                     className="w-full rounded-md object-cover shadow"
                   />
-                  <img
-                    src="/assets/clip10.png"
+                  <Picture
+                    id="clip/clip10"
                     alt="Blue - Dispositifs techniques part 2"
+                    sizes={SIZES_2COL}
                     className="w-full rounded-md object-cover shadow"
                   />
                 </div>
@@ -271,14 +294,16 @@ function ProjectPage() {
               <section>
                 <h2 className="font-display text-2xl text-[var(--plum)]">Bloc 6 — Esthétique visuelle et références</h2>
                 <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                  <img
-                    src="/assets/clip11.png"
+                  <Picture
+                    id="clip/clip11"
                     alt="Blue - Esthétique visuelle part 1"
+                    sizes={SIZES_2COL}
                     className="w-full rounded-md object-cover shadow"
                   />
-                  <img
-                    src="/assets/clip12.png"
+                  <Picture
+                    id="clip/clip12"
                     alt="Blue - Esthétique visuelle part 2"
+                    sizes={SIZES_2COL}
                     className="w-full rounded-md object-cover shadow"
                   />
                 </div>
@@ -307,9 +332,10 @@ function ProjectPage() {
               <section>
                 <h2 className="font-display text-4xl font-bold text-[var(--plum)]">Logo</h2>
                 <div className="mt-4 flex justify-center">
-                  <img
-                    src="/assets/skøllrub_logo_final.png"
+                  <Picture
+                    id="sae-2/skollrub-logo-final"
                     alt="SkøllRub - Logo Final"
+                    sizes="320px"
                     className="max-w-xs rounded-md object-cover shadow"
                   />
                 </div>
@@ -322,9 +348,10 @@ function ProjectPage() {
               <section>
                 <h2 className="font-display text-4xl font-bold text-[var(--plum)]">Charte Graphique</h2>
                 <div className="mt-6">
-                  <img
-                    src="/assets/chartegraphique_SkollRub.png"
+                  <Picture
+                    id="sae-2/chartegraphique-skollrub"
                     alt="SkøllRub - Charte Graphique"
+                    sizes={SIZES_FULL}
                     className="w-full rounded-md object-cover shadow"
                   />
                 </div>
@@ -343,9 +370,10 @@ function ProjectPage() {
                     <h3 className="font-display text-xl font-bold" style={{color: '#D4348A'}}>SkøllRub Original</h3>
                     <p className="mt-1 text-xs uppercase tracking-widest text-[var(--plum)]/60">Cranberry & Framboise</p>
                     <div className="mt-4">
-                      <img
-                        src="/assets/Etiquettes_SkøllRub_Original-1.png"
+                      <Picture
+                        id="sae-2/etiquettes-skollrub-original-1"
                         alt="SkøllRub Original - Étiquette"
+                        sizes={SIZES_2COL}
                         className="w-full rounded-md object-cover shadow"
                       />
                     </div>
@@ -359,9 +387,10 @@ function ProjectPage() {
                     <h3 className="font-display text-xl font-bold" style={{color: '#6B4C8A'}}>Angerboda</h3>
                     <p className="mt-1 text-xs uppercase tracking-widest text-[var(--plum)]/60">Mûre & Myrtille</p>
                     <div className="mt-4">
-                      <img
-                        src="/assets/Etiquettes_SkøllRub_Angerboda-1.png"
+                      <Picture
+                        id="sae-2/etiquettes-skollrub-angerboda-1"
                         alt="Angerboda - Étiquette"
+                        sizes={SIZES_2COL}
                         className="w-full rounded-md object-cover shadow"
                       />
                     </div>
@@ -375,9 +404,10 @@ function ProjectPage() {
                     <h3 className="font-display text-xl font-bold" style={{color: '#A52A2A'}}>Cerisicide</h3>
                     <p className="mt-1 text-xs uppercase tracking-widest text-[var(--plum)]/60">Cerise & Figue</p>
                     <div className="mt-4">
-                      <img
-                        src="/assets/Etiquettes_SkøllRub_Cerisicide-1.png"
+                      <Picture
+                        id="sae-2/etiquettes-skollrub-cerisicide-1"
                         alt="Cerisicide - Étiquette"
+                        sizes={SIZES_2COL}
                         className="w-full rounded-md object-cover shadow"
                       />
                     </div>
@@ -391,9 +421,10 @@ function ProjectPage() {
                     <h3 className="font-display text-xl font-bold" style={{color: '#DAA520'}}>Freya</h3>
                     <p className="mt-1 text-xs uppercase tracking-widest text-[var(--plum)]/60">Raisin & Kumquat (0% alcool)</p>
                     <div className="mt-4">
-                      <img
-                        src="/assets/Etiquettes_SkøllRub_Freya-1.png"
+                      <Picture
+                        id="sae-2/etiquettes-skollrub-freya-1"
                         alt="Freya - Étiquette"
+                        sizes={SIZES_2COL}
                         className="w-full rounded-md object-cover shadow"
                       />
                     </div>
@@ -408,9 +439,10 @@ function ProjectPage() {
               <section>
                 <h2 className="font-display text-4xl font-bold text-[var(--plum)]">Moodboard</h2>
                 <div className="mt-6 flex justify-center">
-                  <img
-                    src="/assets/moodboard_lyna.png"
+                  <Picture
+                    id="sae-2/moodboard-lyna"
                     alt="SkøllRub - Moodboard"
+                    sizes="512px"
                     className="max-w-lg rounded-md object-cover shadow"
                   />
                 </div>
@@ -424,14 +456,14 @@ function ProjectPage() {
                 </p>
 
                 <div className="mt-8 grid gap-6 sm:grid-cols-2">
-                  <img src="/assets/original1.png" alt="Original - Post 1" className="w-full rounded-md object-cover shadow" />
-                  <img src="/assets/original2.png" alt="Original - Post 2" className="w-full rounded-md object-cover shadow" />
-                  <img src="/assets/angerboda1.png" alt="Angerboda - Post 1" className="w-full rounded-md object-cover shadow" />
-                  <img src="/assets/angerboda2.png" alt="Angerboda - Post 2" className="w-full rounded-md object-cover shadow" />
-                  <img src="/assets/cerisicide1.png" alt="Cerisicide - Post 1" className="w-full rounded-md object-cover shadow" />
-                  <img src="/assets/cerisicide2.png" alt="Cerisicide - Post 2" className="w-full rounded-md object-cover shadow" />
-                  <img src="/assets/freya1.png" alt="Freya - Post 1" className="w-full rounded-md object-cover shadow" />
-                  <img src="/assets/freya2.png" alt="Freya - Post 2" className="w-full rounded-md object-cover shadow" />
+                  <Picture id="sae-2/original1" alt="Original - Post 1" sizes={SIZES_2COL} className="w-full rounded-md object-cover shadow" />
+                  <Picture id="sae-2/original2" alt="Original - Post 2" sizes={SIZES_2COL} className="w-full rounded-md object-cover shadow" />
+                  <Picture id="sae-2/angerboda1" alt="Angerboda - Post 1" sizes={SIZES_2COL} className="w-full rounded-md object-cover shadow" />
+                  <Picture id="sae-2/angerboda2" alt="Angerboda - Post 2" sizes={SIZES_2COL} className="w-full rounded-md object-cover shadow" />
+                  <Picture id="sae-2/cerisicide1" alt="Cerisicide - Post 1" sizes={SIZES_2COL} className="w-full rounded-md object-cover shadow" />
+                  <Picture id="sae-2/cerisicide2" alt="Cerisicide - Post 2" sizes={SIZES_2COL} className="w-full rounded-md object-cover shadow" />
+                  <Picture id="sae-2/freya1" alt="Freya - Post 1" sizes={SIZES_2COL} className="w-full rounded-md object-cover shadow" />
+                  <Picture id="sae-2/freya2" alt="Freya - Post 2" sizes={SIZES_2COL} className="w-full rounded-md object-cover shadow" />
                 </div>
               </section>
 
@@ -473,10 +505,10 @@ function ProjectPage() {
                 </p>
 
                 <div className="mt-8 grid gap-4 sm:grid-cols-2">
-                  <img src="/assets/site1.png" alt="Site Web - Vue 1" className="w-full rounded-md object-cover shadow" />
-                  <img src="/assets/site2.png" alt="Site Web - Vue 2" className="w-full rounded-md object-cover shadow" />
-                  <img src="/assets/site3.png" alt="Site Web - Vue 3" className="w-full rounded-md object-cover shadow" />
-                  <img src="/assets/site4.png" alt="Site Web - Vue 4" className="w-full rounded-md object-cover shadow" />
+                  <Picture id="sae-2/site1" alt="Site Web - Vue 1" sizes={SIZES_2COL} className="w-full rounded-md object-cover shadow" />
+                  <Picture id="sae-2/site2" alt="Site Web - Vue 2" sizes={SIZES_2COL} className="w-full rounded-md object-cover shadow" />
+                  <Picture id="sae-2/site3" alt="Site Web - Vue 3" sizes={SIZES_2COL} className="w-full rounded-md object-cover shadow" />
+                  <Picture id="sae-2/site4" alt="Site Web - Vue 4" sizes={SIZES_2COL} className="w-full rounded-md object-cover shadow" />
                 </div>
 
                 <div className="mt-8 pt-8 border-t border-[var(--plum)]/10">
@@ -515,14 +547,16 @@ function ProjectPage() {
               <section>
                 <h2 className="font-display text-2xl text-[var(--plum)]">Logos</h2>
                 <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                  <img
-                    src="/assets/logoprincipal.png"
+                  <Picture
+                    id="sae-1/logoprincipal"
                     alt="Logo principal SAE 1"
+                    sizes={SIZES_2COL}
                     className="w-full rounded-md object-cover shadow"
                   />
-                  <img
-                    src="/assets/logosecondaire.png"
+                  <Picture
+                    id="sae-1/logosecondaire"
                     alt="Logo secondaire SAE 1"
+                    sizes={SIZES_2COL}
                     className="w-full rounded-md object-cover shadow"
                   />
                 </div>
@@ -534,14 +568,16 @@ function ProjectPage() {
               <section>
                 <h2 className="font-display text-2xl text-[var(--plum)]">Flyers</h2>
                 <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                  <img
-                    src="/assets/flyer1.png"
+                  <Picture
+                    id="sae-1/flyer1"
                     alt="Flyer SAE 1 - visuel 1"
+                    sizes={SIZES_2COL}
                     className="w-full rounded-md object-cover shadow"
                   />
-                  <img
-                    src="/assets/flyer2.png"
+                  <Picture
+                    id="sae-1/flyer2"
                     alt="Flyer SAE 1 - visuel 2"
+                    sizes={SIZES_2COL}
                     className="w-full rounded-md object-cover shadow"
                   />
                 </div>
@@ -553,19 +589,22 @@ function ProjectPage() {
               <section>
                 <h2 className="font-display text-2xl text-[var(--plum)]">Maquette et extrait vidéo</h2>
                 <div className="mt-6 grid gap-4 sm:grid-cols-3">
-                  <img
-                    src="/assets/maquette1.png"
+                  <Picture
+                    id="sae-1/maquette1"
                     alt="Maquette SAE 1 page 1"
+                    sizes={SIZES_3COL}
                     className="w-full rounded-md object-cover shadow"
                   />
-                  <img
-                    src="/assets/maquette3.png"
+                  <Picture
+                    id="sae-1/maquette3"
                     alt="Maquette SAE 1 page 2"
+                    sizes={SIZES_3COL}
                     className="w-full rounded-md object-cover shadow"
                   />
-                  <img
-                    src="/assets/maquette4.png"
+                  <Picture
+                    id="sae-1/maquette4"
                     alt="Maquette SAE 1 page 3"
+                    sizes={SIZES_3COL}
                     className="w-full rounded-md object-cover shadow"
                   />
                 </div>
@@ -628,14 +667,18 @@ function ProjectPage() {
         {project.media && project.media.length > 0 && (
           <Reveal delay={400}>
             <div className={`mt-12 grid gap-4 ${project.media.length > 1 ? "sm:grid-cols-2" : ""}`}>
-              {project.media.map((src, i) => (
-                <img
-                  key={i}
-                  src={src}
-                  alt={`${project.title} — vue ${i + 1}`}
-                  className="w-full rounded-md object-cover shadow"
-                />
-              ))}
+              {project.media.map((id, i, all) => {
+                const entry: ImageEntry = images[id];
+                return (
+                  <Picture
+                    key={id}
+                    id={id}
+                    alt={entry.alt ?? `${project.title} — vue ${i + 1}`}
+                    sizes={all.length > 1 ? SIZES_2COL : SIZES_FULL}
+                    className="w-full rounded-md object-cover shadow"
+                  />
+                );
+              })}
             </div>
           </Reveal>
         )}
