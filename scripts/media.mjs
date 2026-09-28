@@ -30,7 +30,7 @@ import {
   statSync,
   writeFileSync,
 } from "node:fs";
-import { dirname, join, relative, resolve } from "node:path";
+import { dirname, join, relative, resolve, sep } from "node:path";
 import {
   GENERATED,
   MEDIA_SRC,
@@ -109,7 +109,7 @@ function loadManifest() {
     try {
       abs = insideDir(PUBLIC, rel);
     } catch (err) {
-      invalid(`${where}: ${err.message} (must stay inside public/)`);
+      invalid(`${where}: ${err.message} (outputs must be canonical paths inside public/)`);
     }
     if (!OUT_PREFIXES.some((p) => rel.startsWith(p))) {
       invalid(`${where}: "${rel}" must start with ${OUT_PREFIXES.join(" or ")}`);
@@ -117,12 +117,19 @@ function loadManifest() {
     return abs;
   };
   // Output paths: two entries must never write the same file (the later encode would
-  // silently overwrite the earlier one). Keys are lower-cased: the disk is case-insensitive.
+  // silently overwrite the earlier one). outPath() already rejected non-canonical spellings
+  // (insideDir); the key is still derived from the resolved path relative to public/, so
+  // two spellings of one file can never get two keys. Keys are NFC + lower-cased: the disk
+  // (APFS) is case- and normalisation-insensitive.
   const claimed = new Map();
   const claim = (where, rel) => {
-    const k = rel.toLowerCase();
+    const abs = outPath(where, rel);
+    const canon = relative(PUBLIC, abs).split(sep).join("/");
+    if (canon !== rel) invalid(`${where}: "${rel}" is not canonical (write "${canon}")`);
+    const k = canon.normalize("NFC").toLowerCase();
     if (claimed.has(k)) invalid(`${where}: "${rel}" is already written by ${claimed.get(k)}`);
     claimed.set(k, where);
+    return abs;
   };
   for (const [i, v] of m.videos.entries()) {
     const where = `videos[${i}]`;
@@ -138,11 +145,10 @@ function loadManifest() {
     try {
       srcAbs = insideDir(MEDIA_SRC, v.src);
     } catch (err) {
-      invalid(`${where}.src: ${err.message} (sources must stay inside media-src/)`);
+      invalid(`${where}.src: ${err.message} (sources must be canonical paths inside media-src/)`);
     }
     if (!existsSync(srcAbs)) invalid(`${where}.src: media-src/${v.src} not found`);
-    const outAbs = outPath(`${where}.out`, v.out);
-    claim(`${where}.out`, v.out);
+    const outAbs = claim(`${where}.out`, v.out);
     // Process clips overwrite the file the Animate scene loads by relative path: the name
     // must be the source basename, exactly. Other classes live under media/video/.
     if (v.class === "process") {
@@ -156,7 +162,6 @@ function loadManifest() {
     }
     if (v.class === "hero") {
       if (typeof v.poster?.out !== "string") invalid(`${where}: hero needs "poster.out"`);
-      outPath(`${where}.poster.out`, v.poster.out);
       claim(`${where}.poster.out`, v.poster.out);
       const q = v.poster.quality;
       if (!Number.isInteger(q) || q < 1 || q > 100) {
@@ -173,7 +178,7 @@ function loadManifest() {
     try {
       srcAbs = insideDir(MEDIA_SRC, img.src);
     } catch (err) {
-      invalid(`${where}.src: ${err.message} (sources must stay inside media-src/)`);
+      invalid(`${where}.src: ${err.message} (sources must be canonical paths inside media-src/)`);
     }
     if (!existsSync(srcAbs)) invalid(`${where}.src: media-src/${img.src} not found`);
     const segments = img.src.split("/");
@@ -217,7 +222,7 @@ function loadManifest() {
     try {
       srcAbs = insideDir(MEDIA_SRC, pdf.src);
     } catch (err) {
-      invalid(`${where}.src: ${err.message} (sources must stay inside media-src/)`);
+      invalid(`${where}.src: ${err.message} (sources must be canonical paths inside media-src/)`);
     }
     if (!/\.pdf$/i.test(pdf.src)) invalid(`${where}.src: "${pdf.src}" is not a .pdf`);
     if (!existsSync(srcAbs)) invalid(`${where}.src: media-src/${pdf.src} not found`);

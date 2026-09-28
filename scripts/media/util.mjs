@@ -3,7 +3,7 @@
 // shell), hashing, kebab-case ids, path-traversal guard, MP4 box scan and video SSIM.
 import { createHash } from "node:crypto";
 import { closeSync, openSync, readFileSync, readSync, statSync } from "node:fs";
-import { isAbsolute, join, resolve, sep } from "node:path";
+import { isAbsolute, join, posix, resolve, sep } from "node:path";
 import { spawnSync } from "node:child_process";
 
 export const ROOT = join(import.meta.dirname, "..", "..");
@@ -63,12 +63,21 @@ export const toKebab = (name) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 
-// Resolves `rel` under `baseAbs`. Throws on absolute paths, ".." segments and anything
-// that resolves outside the base directory.
+// Resolves `rel` under `baseAbs`. Throws on absolute paths, ".." segments, non-canonical
+// spellings and anything that resolves outside the base directory.
+// Canonical = the POSIX spelling itself: "a/./b", "a//b", "a/b/", "./a" or "a\\b"
+// name the same file as "a/b" but compare as different strings, which would let two
+// manifest entries claim one output. Rejecting them keeps string keys = file identity.
 export function insideDir(baseAbs, rel) {
   if (typeof rel !== "string" || rel === "") throw new Error("path must be a non-empty string");
   if (isAbsolute(rel)) throw new Error(`absolute path not allowed: ${rel}`);
-  if (rel.split(/[\\/]/).includes("..")) throw new Error(`".." segment not allowed: ${rel}`);
+  if (rel.includes("\\")) throw new Error(`backslash not allowed (use "/"): ${rel}`);
+  const segments = rel.split("/");
+  if (segments.includes("..")) throw new Error(`".." segment not allowed: ${rel}`);
+  if (segments.some((s) => s === "" || s === ".") || posix.normalize(rel) !== rel) {
+    const canon = posix.normalize(rel).replace(/^(?:\.\/)+|\/+$/g, "");
+    throw new Error(`path is not canonical: "${rel}" (write "${canon}")`);
+  }
   const abs = resolve(baseAbs, rel);
   if (!abs.startsWith(baseAbs + sep)) throw new Error(`path escapes its base: ${rel}`);
   return abs;
