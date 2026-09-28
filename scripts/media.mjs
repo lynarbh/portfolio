@@ -103,6 +103,14 @@ function loadManifest() {
     }
     return abs;
   };
+  // Output paths: two entries must never write the same file (the later encode would
+  // silently overwrite the earlier one). Keys are lower-cased: the disk is case-insensitive.
+  const claimed = new Map();
+  const claim = (where, rel) => {
+    const k = rel.toLowerCase();
+    if (claimed.has(k)) invalid(`${where}: "${rel}" is already written by ${claimed.get(k)}`);
+    claimed.set(k, where);
+  };
   for (const [i, v] of m.videos.entries()) {
     const where = `videos[${i}]`;
     if (typeof v?.id !== "string" || !/^[a-z0-9-]+$/.test(v.id)) {
@@ -121,6 +129,7 @@ function loadManifest() {
     }
     if (!existsSync(srcAbs)) invalid(`${where}.src: media-src/${v.src} not found`);
     const outAbs = outPath(`${where}.out`, v.out);
+    claim(`${where}.out`, v.out);
     // Process clips overwrite the file the Animate scene loads by relative path: the name
     // must be the source basename, exactly. Other classes live under media/video/.
     if (v.class === "process") {
@@ -135,6 +144,7 @@ function loadManifest() {
     if (v.class === "hero") {
       if (typeof v.poster?.out !== "string") invalid(`${where}: hero needs "poster.out"`);
       outPath(`${where}.poster.out`, v.poster.out);
+      claim(`${where}.poster.out`, v.poster.out);
       const q = v.poster.quality;
       if (!Number.isInteger(q) || q < 1 || q > 100) {
         invalid(`${where}.poster: "quality" must be an integer in 1..100`);
@@ -232,6 +242,19 @@ function loadManifest() {
         dpi: pdf.dpi,
         pdfAbs: srcAbs,
       });
+    }
+  }
+
+  // Image outputs are predictable from the id "<project>/<name>":
+  // media/<project>/<name>-<width>.avif|webp and the fallback media/<project>/<name>.jpg|png.
+  // Unique ids keep images apart; a video or poster must not land on one of these names.
+  for (const img of [...m.images, ...m.pages]) {
+    const [project, name] = img.id.split("/");
+    const own = new RegExp(`^media/${project}/${name}(?:-[0-9]+)?\\.(?:avif|webp|jpg|png)$`);
+    for (const [rel, where] of claimed) {
+      if (own.test(rel)) {
+        invalid(`${where}: "${rel}" collides with the outputs of image "${img.id}"`);
+      }
     }
   }
 
