@@ -38,7 +38,7 @@ export type CsBlock =
       kind: "series";
       items: { image: CsImage; title: string; sub?: string; color?: string; text: string[] }[];
     }
-  | { kind: "video"; youtube: string; label?: string; text?: string[] }
+  | { kind: "video"; youtube: string; label?: string; text?: string[]; vertical?: boolean }
   | { kind: "embed"; src: string; title: string; text?: string[] }
   | { kind: "link"; href: string; label: string; text?: string[] };
 
@@ -1034,8 +1034,9 @@ const SAE2: CaseStudyData = {
       blocks: [
         {
           kind: "video",
-          youtube: "https://www.youtube.com/embed/jYkGO5j1BM4",
+          youtube: "https://www.youtube.com/embed/4fZkbMxrIRg",
           label: "SkøllRub — vidéo publicitaire",
+          vertical: true,
         },
       ],
     },

@@ -176,7 +176,7 @@ function Block({ block, onOpen }: { block: CsBlock; onOpen: Open }) {
     case "video":
       return (
         <Reveal delay={100}>
-          <div className="monitor cs-video">
+          <div className={`monitor cs-video ${block.vertical ? "cs-video--vertical" : ""}`}>
             <span className="monitor-label">
               <span className="rec-dot" /> {block.label ?? "Vidéo"}
             </span>

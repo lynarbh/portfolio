@@ -10,7 +10,7 @@
 // Every image: all files exist, long edge ≤ 2400 (≤ 1200 for thumbnails/*), no ICC
 // profile, w descriptors equal to the real widths, fallback ≤ 640 px, kebab-case names,
 // graphic = no WebP and AVIF in 4:4:4.
-// Galleries: every member is a known image, the Tafsut gallery has ≥ 10 plates, and no
+// Galleries: every member is a known image, the Tafsut gallery has ≥ 6 plates (curated selection), and no
 // .pdf file exists anywhere under public/ (PDF masters stay in media-src/).
 // Finally, every "/media/..." URL in the module must exist on disk.
 // Never writes anything. Exit codes: 2 = generated module missing, 1 = any FAIL, 0 = OK.
@@ -278,7 +278,7 @@ for (const [id, img] of Object.entries(images)) {
 }
 
 // Galleries.
-const TAFSUT_MIN = 10;
+const TAFSUT_MIN = 6;
 for (const [key, members] of Object.entries(galleries ?? {})) {
   for (const id of members) if (!images[id]) fail(`gallery ${key}: unknown image ${id}`);
 }

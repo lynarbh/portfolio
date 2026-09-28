@@ -259,22 +259,6 @@ export const images = {
     ],
     fallback: "/media/clip/clip7.jpg",
   },
-  "clip/clip8": {
-    preset: "photo",
-    width: 1614,
-    height: 906,
-    avif: [
-      [640, "/media/clip/clip8-640.avif"],
-      [1200, "/media/clip/clip8-1200.avif"],
-      [1614, "/media/clip/clip8-1614.avif"],
-    ],
-    webp: [
-      [640, "/media/clip/clip8-640.webp"],
-      [1200, "/media/clip/clip8-1200.webp"],
-      [1614, "/media/clip/clip8-1614.webp"],
-    ],
-    fallback: "/media/clip/clip8.jpg",
-  },
   "clip/clip9": {
     preset: "photo",
     width: 1624,
@@ -673,17 +657,6 @@ export const images = {
     ],
     fallback: "/media/sae-2/angerboda1.png",
   },
-  "sae-2/angerboda2": {
-    preset: "graphic",
-    width: 1080,
-    height: 1350,
-    avif: [
-      [512, "/media/sae-2/angerboda2-640.avif"],
-      [960, "/media/sae-2/angerboda2-1200.avif"],
-      [1080, "/media/sae-2/angerboda2-1350.avif"],
-    ],
-    fallback: "/media/sae-2/angerboda2.png",
-  },
   "sae-2/cerisicide1": {
     preset: "graphic",
     width: 1080,
@@ -694,17 +667,6 @@ export const images = {
       [1080, "/media/sae-2/cerisicide1-1350.avif"],
     ],
     fallback: "/media/sae-2/cerisicide1.png",
-  },
-  "sae-2/cerisicide2": {
-    preset: "graphic",
-    width: 1080,
-    height: 1350,
-    avif: [
-      [512, "/media/sae-2/cerisicide2-640.avif"],
-      [960, "/media/sae-2/cerisicide2-1200.avif"],
-      [1080, "/media/sae-2/cerisicide2-1350.avif"],
-    ],
-    fallback: "/media/sae-2/cerisicide2.png",
   },
   "sae-2/chartegraphique-skollrub": {
     preset: "graphic",
@@ -771,17 +733,6 @@ export const images = {
       [1080, "/media/sae-2/freya1-1350.avif"],
     ],
     fallback: "/media/sae-2/freya1.png",
-  },
-  "sae-2/freya2": {
-    preset: "graphic",
-    width: 1080,
-    height: 1350,
-    avif: [
-      [512, "/media/sae-2/freya2-640.avif"],
-      [960, "/media/sae-2/freya2-1200.avif"],
-      [1080, "/media/sae-2/freya2-1350.avif"],
-    ],
-    fallback: "/media/sae-2/freya2.png",
   },
   "sae-2/moodboard-lyna": {
     preset: "photo",

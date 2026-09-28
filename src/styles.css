@@ -966,6 +966,9 @@ html.cur-down .cur-ring { scale: 0.8; }
 .cs-swatch__name { font-family: var(--font-cine); font-weight: 400; font-size: 1.35rem; line-height: 1; color: var(--encre); }
 .cs-swatch__note { font-family: var(--font-body); font-size: 0.85rem; line-height: 1.55; color: color-mix(in oklab, var(--encre) 80%, transparent); }
 .cs-video__frame { position: relative; width: 100%; padding-top: 56.25%; }
+.cs-video .monitor-label { display: none; } /* YouTube affiche déjà son titre */
+.cs-video--vertical { max-width: 24rem; margin: 0 auto; }
+.cs-video--vertical .cs-video__frame { padding-top: 177.78%; }
 .cs-video__frame iframe, .cs-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 .cs-embed { position: relative; padding-top: 56.25%; min-height: 24rem; }
 .cs-linkblock { display: grid; gap: 1.4rem; justify-items: start; }
