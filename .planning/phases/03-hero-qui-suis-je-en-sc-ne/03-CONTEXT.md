@@ -57,6 +57,8 @@ Hors périmètre : fiches projet (logos par projet, crédits, process strip — 
 - **Bundle** : un seul `copy.ts` (+ ≈ 5 Ko gzip de textes de pages projet sur l'accueil) accepté pour cette phase ; `engines.node` relevé à `>=22.18` (import natif de `.ts` par le script)
 - **Outil de vérification** : harnais CDP sans dépendance (Chrome système piloté par le WebSocket natif de Node) fourni par la recherche (scratchpad `phase3-research/rm/cdp.mjs`) — à copier sous `scripts/` seulement s'il sert à la validation Nyquist, sinon rester dans le scratchpad
 
+- **Registre d'outils** (Lyna, 2026-09-28, après son édition de `SKILL_TAGS` commitée en `710f219`) : 13 outils = sa liste de 10 + Lightroom, Animate, VS Code — Vidéo : premiere-pro « Premiere Pro », after-effects « After Effects », davinci-resolve « DaVinci Resolve », capcut « CapCut » · Design : photoshop « Photoshop », illustrator « Illustrator », indesign « InDesign », lightroom « Lightroom », animate « Animate », canva « Canva » · Web : figma « Figma », html-css « HTML / CSS / JS / PHP » (icône simple-icons `html5`), vs-code « VS Code » ; l'ancienne constante `SKILL_TAGS` disparaît au profit de `src/data/tools.ts`
+
 ### Claude's Discretion
 - Valeurs exactes (rayon du cadre, opacité du grain 6–8 %, durée du balayage, tailles) dans les bornes ci-dessus ; nommage des classes dans `@layer cinema`
 - Choix de la frame du hero pour `og.jpg` et le poster CV (frame nette, non noire)
