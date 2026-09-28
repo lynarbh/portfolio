@@ -40,8 +40,13 @@ async function serveVideo(request: Request): Promise<Response> {
   res.headers.set("Accept-Ranges", "bytes");
   // Assets default to "max-age=0, must-revalidate", which the Cache API would treat as stale.
   res.headers.set("Cache-Control", "public, max-age=86400");
-  await cache.put(key, res.clone());
-  return (await cache.match(lookup)) ?? res;
+  // Store the only copy: a clone() would tee the body and buffer the whole file in the isolate
+  // while nothing reads the other branch. The response is then read back through match(),
+  // which answers Range with 206.
+  await cache.put(key, res);
+  const stored = await cache.match(lookup);
+  if (stored) return stored;
+  return ASSETS.fetch(new Request(asset, { method: "GET" }));
 }
 
 export default createServerEntry({
