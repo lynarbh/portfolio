@@ -291,6 +291,126 @@ export const images = {
     ],
     fallback: "/media/clip/clip9.jpg",
   },
+  "festival-identite/planche-01": {
+    preset: "graphic",
+    width: 2400,
+    height: 1697,
+    avif: [
+      [640, "/media/festival-identite/planche-01-640.avif"],
+      [1200, "/media/festival-identite/planche-01-1200.avif"],
+      [2400, "/media/festival-identite/planche-01-2400.avif"],
+    ],
+    fallback: "/media/festival-identite/planche-01.png",
+    alt: "Charte graphique Tafsut — logo",
+  },
+  "festival-identite/planche-09": {
+    preset: "graphic",
+    width: 2400,
+    height: 1697,
+    avif: [
+      [640, "/media/festival-identite/planche-09-640.avif"],
+      [1200, "/media/festival-identite/planche-09-1200.avif"],
+      [2400, "/media/festival-identite/planche-09-2400.avif"],
+    ],
+    fallback: "/media/festival-identite/planche-09.png",
+    alt: "Charte graphique Tafsut — logo",
+  },
+  "festival-identite/planche-16": {
+    preset: "graphic",
+    width: 2400,
+    height: 1697,
+    avif: [
+      [640, "/media/festival-identite/planche-16-640.avif"],
+      [1200, "/media/festival-identite/planche-16-1200.avif"],
+      [2400, "/media/festival-identite/planche-16-2400.avif"],
+    ],
+    fallback: "/media/festival-identite/planche-16.png",
+    alt: "Charte graphique Tafsut — palette de couleurs",
+  },
+  "festival-identite/planche-21": {
+    preset: "graphic",
+    width: 2400,
+    height: 1697,
+    avif: [
+      [640, "/media/festival-identite/planche-21-640.avif"],
+      [1200, "/media/festival-identite/planche-21-1200.avif"],
+      [2400, "/media/festival-identite/planche-21-2400.avif"],
+    ],
+    fallback: "/media/festival-identite/planche-21.png",
+    alt: "Charte graphique Tafsut — typographies",
+  },
+  "festival-identite/planche-23": {
+    preset: "graphic",
+    width: 2400,
+    height: 1697,
+    avif: [
+      [640, "/media/festival-identite/planche-23-640.avif"],
+      [1200, "/media/festival-identite/planche-23-1200.avif"],
+      [2400, "/media/festival-identite/planche-23-2400.avif"],
+    ],
+    fallback: "/media/festival-identite/planche-23.png",
+    alt: "Charte graphique Tafsut — affiche",
+  },
+  "festival-identite/planche-24": {
+    preset: "graphic",
+    width: 2400,
+    height: 1697,
+    avif: [
+      [640, "/media/festival-identite/planche-24-640.avif"],
+      [1200, "/media/festival-identite/planche-24-1200.avif"],
+      [2400, "/media/festival-identite/planche-24-2400.avif"],
+    ],
+    fallback: "/media/festival-identite/planche-24.png",
+    alt: "Charte graphique Tafsut — affiche",
+  },
+  "festival-identite/planche-25": {
+    preset: "graphic",
+    width: 2400,
+    height: 1697,
+    avif: [
+      [640, "/media/festival-identite/planche-25-640.avif"],
+      [1200, "/media/festival-identite/planche-25-1200.avif"],
+      [2400, "/media/festival-identite/planche-25-2400.avif"],
+    ],
+    fallback: "/media/festival-identite/planche-25.png",
+    alt: "Charte graphique Tafsut — billets",
+  },
+  "festival-identite/planche-27": {
+    preset: "graphic",
+    width: 2400,
+    height: 1697,
+    avif: [
+      [640, "/media/festival-identite/planche-27-640.avif"],
+      [1200, "/media/festival-identite/planche-27-1200.avif"],
+      [2400, "/media/festival-identite/planche-27-2400.avif"],
+    ],
+    fallback: "/media/festival-identite/planche-27.png",
+    alt: "Charte graphique Tafsut — goodies",
+  },
+  "festival-identite/planche-28": {
+    preset: "graphic",
+    width: 2400,
+    height: 1697,
+    avif: [
+      [640, "/media/festival-identite/planche-28-640.avif"],
+      [1200, "/media/festival-identite/planche-28-1200.avif"],
+      [2400, "/media/festival-identite/planche-28-2400.avif"],
+    ],
+    fallback: "/media/festival-identite/planche-28.png",
+    alt: "Charte graphique Tafsut — goodies",
+  },
+  "festival-identite/planche-32": {
+    preset: "graphic",
+    width: 2400,
+    height: 1697,
+    avif: [
+      [640, "/media/festival-identite/planche-32-640.avif"],
+      [1200, "/media/festival-identite/planche-32-1200.avif"],
+      [2400, "/media/festival-identite/planche-32-2400.avif"],
+    ],
+    fallback: "/media/festival-identite/planche-32.png",
+    alt: "Charte graphique Tafsut — signalétique",
+  },
   "home/portrait": {
     preset: "photo",
     width: 1139,
@@ -743,7 +863,20 @@ export const images = {
 
 export type MediaId = keyof typeof images;
 
-export const galleries = {} as const satisfies Record<string, readonly MediaId[]>;
+export const galleries = {
+  "festival-identite": [
+    "festival-identite/planche-01",
+    "festival-identite/planche-09",
+    "festival-identite/planche-16",
+    "festival-identite/planche-21",
+    "festival-identite/planche-24",
+    "festival-identite/planche-23",
+    "festival-identite/planche-25",
+    "festival-identite/planche-27",
+    "festival-identite/planche-28",
+    "festival-identite/planche-32",
+  ],
+} as const satisfies Record<string, readonly MediaId[]>;
 
 export const videos = {
   "hero": {

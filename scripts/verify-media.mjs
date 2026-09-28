@@ -5,9 +5,11 @@
 // Every image: all files exist, long edge ≤ 2400 (≤ 1200 for thumbnails/*), no ICC
 // profile, w descriptors equal to the real widths, fallback ≤ 640 px, kebab-case names,
 // graphic = no WebP and AVIF in 4:4:4.
+// Galleries: every member is a known image, the Tafsut gallery has ≥ 10 plates, and no
+// .pdf file exists anywhere under public/ (PDF masters stay in media-src/).
 // Finally, every "/media/..." URL in the module must exist on disk.
 // Never writes anything. Exit codes: 2 = generated module missing, 1 = any FAIL, 0 = OK.
-import { existsSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import sharp from "sharp";
@@ -29,7 +31,7 @@ if (!existsSync(GENERATED)) {
   console.error("verify-media: src/data/media.generated.ts missing: run `npm run media` first");
   process.exit(2);
 }
-const { images, videos } = await import(pathToFileURL(GENERATED).href);
+const { images, videos, galleries } = await import(pathToFileURL(GENERATED).href);
 
 const errors = [];
 const warns = [];
@@ -187,6 +189,25 @@ for (const [id, img] of Object.entries(images)) {
   }
   const top = img.avif.at(-1);
   if (top && top[0] !== img.width) fail(`${id}: width ${img.width} != top rung ${top[0]}w`);
+}
+
+// Galleries.
+const TAFSUT_MIN = 10;
+for (const [key, members] of Object.entries(galleries ?? {})) {
+  for (const id of members) if (!images[id]) fail(`gallery ${key}: unknown image ${id}`);
+}
+const tafsut = galleries?.["festival-identite"] ?? [];
+if (tafsut.length < TAFSUT_MIN) {
+  fail(`gallery festival-identite: ${tafsut.length} plates < ${TAFSUT_MIN}`);
+}
+
+// No PDF may ever be published.
+const walk = (dir) =>
+  readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
+    e.isDirectory() ? walk(join(dir, e.name)) : [join(dir, e.name)],
+  );
+for (const file of walk(PUBLIC)) {
+  if (file.toLowerCase().endsWith(".pdf")) fail(`PDF under public/: ${file}`);
 }
 
 // Every /media/... literal of the generated module must exist on disk.

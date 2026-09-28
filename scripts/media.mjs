@@ -36,7 +36,7 @@ import {
 } from "./media/util.mjs";
 
 // Bump on any encoder change (arguments, filters, poster settings) to invalidate the cache.
-const PIPELINE_VERSION = "2";
+const PIPELINE_VERSION = "3";
 const MiB = 1024 * 1024;
 const BUDGET_MIB = 60;
 const HERO_SSIM_WARN = 0.9;
@@ -60,7 +60,7 @@ const MANIFEST_FILE =
 const errors = [];
 const warns = [];
 
-// a) Binaries
+// a) Binaries (gs is checked once the manifest is known to have pdf entries)
 requireBins(["ffmpeg", "ffprobe"]);
 
 // b) Manifest: load and validate. Any problem is a configuration error (exit 2).
@@ -82,9 +82,6 @@ function loadManifest() {
   }
   if (typeof m.galleries !== "object" || m.galleries === null || Array.isArray(m.galleries)) {
     invalid('"galleries" must be an object');
-  }
-  if (m.pdf.length || Object.keys(m.galleries).length) {
-    invalid("pdf and galleries are not implemented yet (plan 02-06)");
   }
   const defaults = m.defaults ?? {};
   if (typeof defaults !== "object" || Array.isArray(defaults)) {
@@ -177,10 +174,75 @@ function loadManifest() {
     ids.add(img.id);
     img.srcAbs = srcAbs;
   }
+
+  // PDF masters: each listed page becomes a still image entry (same id space).
+  const imageIds = new Set(m.images.map((img) => img.id));
+  m.pages = [];
+  for (const [i, pdf] of m.pdf.entries()) {
+    const where = `pdf[${i}]`;
+    if (typeof pdf !== "object" || pdf === null) invalid(`${where}: must be an object`);
+    let srcAbs;
+    try {
+      srcAbs = insideDir(MEDIA_SRC, pdf.src);
+    } catch (err) {
+      invalid(`${where}.src: ${err.message} (sources must stay inside media-src/)`);
+    }
+    if (!/\.pdf$/i.test(pdf.src)) invalid(`${where}.src: "${pdf.src}" is not a .pdf`);
+    if (!existsSync(srcAbs)) invalid(`${where}.src: media-src/${pdf.src} not found`);
+    if (!Number.isInteger(pdf.dpi) || pdf.dpi < 72 || pdf.dpi > 600) {
+      invalid(`${where}: "dpi" must be an integer in 72..600`);
+    }
+    pdf.preset ??= "graphic";
+    if (!PRESET_NAMES.has(pdf.preset)) {
+      invalid(
+        `${where}: unknown preset ${JSON.stringify(pdf.preset)}; valid: ${[...PRESET_NAMES]}`,
+      );
+    }
+    if (!Array.isArray(pdf.pages) || pdf.pages.length === 0) {
+      invalid(`${where}: "pages" must be a non-empty array`);
+    }
+    for (const [j, pg] of pdf.pages.entries()) {
+      const pw = `${where}.pages[${j}]`;
+      if (typeof pg !== "object" || pg === null) invalid(`${pw}: must be an object`);
+      if (!Number.isInteger(pg.page) || pg.page < 1)
+        invalid(`${pw}: "page" must be an integer ≥ 1`);
+      if (typeof pg.id !== "string" || !/^[a-z0-9-]+\/[a-z0-9-]+$/.test(pg.id)) {
+        invalid(`${pw}: "id" must match /^[a-z0-9-]+\\/[a-z0-9-]+$/`);
+      }
+      if (pg.alt !== undefined && typeof pg.alt !== "string") {
+        invalid(`${pw}: "alt" must be a string`);
+      }
+      if (ids.has(pg.id)) invalid(`${pw}: duplicate id "${pg.id}"`);
+      ids.add(pg.id);
+      imageIds.add(pg.id);
+      m.pages.push({
+        id: pg.id,
+        preset: pdf.preset,
+        alt: pg.alt,
+        page: pg.page,
+        dpi: pdf.dpi,
+        pdfAbs: srcAbs,
+      });
+    }
+  }
+
+  // Galleries: kebab keys, members are known image ids, order kept as written.
+  for (const [key, members] of Object.entries(m.galleries)) {
+    const where = `galleries[${JSON.stringify(key)}]`;
+    if (!/^[a-z0-9-]+$/.test(key)) invalid(`${where}: key must match /^[a-z0-9-]+$/`);
+    if (!Array.isArray(members) || members.length === 0) {
+      invalid(`${where}: must be a non-empty array of image ids`);
+    }
+    for (const id of members) {
+      if (!imageIds.has(id)) invalid(`${where}: unknown image id ${JSON.stringify(id)}`);
+    }
+    if (new Set(members).size !== members.length) invalid(`${where}: duplicate member`);
+  }
   return m;
 }
 
 const manifest = loadManifest();
+if (manifest.pdf.length) requireBins(["gs"]);
 
 // c) Cache: { [id]: { key, outputs: [{ path, sha256 }], meta } }, paths relative to ROOT.
 function loadCache() {
@@ -207,6 +269,7 @@ const cacheHit = (id, key) => {
 // Effective options: everything that changes the output bytes, except the source path.
 const videoOptions = (v) => ({ class: v.class, out: v.out, crf: v.crf, poster: v.poster });
 const imageOptions = (img) => ({ id: img.id, preset: img.preset, max: img.max, alt: img.alt });
+const pageOptions = (pg) => ({ ...imageOptions(pg), page: pg.page, dpi: pg.dpi });
 
 // Encodes (or reuses the cache for) one entry, records its outputs as produced.
 async function processEntry(id, key, encode) {
@@ -237,6 +300,7 @@ try {
     });
   const { encodeVideo } = await loadEncoders("./media/video.mjs");
   const { encodeImage } = await loadEncoders("./media/images.mjs");
+  const { renderPdfPage } = await loadEncoders("./media/pdf.mjs");
   for (const v of manifest.videos) {
     const key = sha256(sha256File(v.srcAbs) + JSON.stringify(videoOptions(v)) + PIPELINE_VERSION);
     try {
@@ -272,6 +336,35 @@ try {
       errors.push(`${img.id}: ${err.message}`);
     }
   }
+  // PDF pages: gs renders one page at a time into media-src/.tmp/, then the image preset.
+  const pdfHashes = new Map();
+  for (const pg of [...manifest.pages].sort((a, b) => byKey(a.id, b.id))) {
+    if (!pdfHashes.has(pg.pdfAbs)) pdfHashes.set(pg.pdfAbs, sha256File(pg.pdfAbs));
+    const key = sha256(
+      pdfHashes.get(pg.pdfAbs) + JSON.stringify(pageOptions(pg)) + PIPELINE_VERSION,
+    );
+    try {
+      const { status, outputs, meta } = await processEntry(pg.id, key, async () => {
+        const png = join(TMP_DIR, `page-${String(pg.page).padStart(2, "0")}.png`);
+        renderPdfPage(pg.pdfAbs, pg.page, pg.dpi, png);
+        try {
+          return await encodeImage(pg, png, TMP_DIR);
+        } finally {
+          rmSync(png, { force: true });
+        }
+      });
+      const kib = outputs.reduce((sum, o) => sum + statSync(join(ROOT, o.path)).size, 0) / 1024;
+      const low = meta.ssim < IMAGE_SSIM_WARN[meta.preset];
+      lines.push(
+        `media: ${pg.id} (pdf p.${pg.page}) ${status} ${kib.toFixed(1)} KiB SSIM ${meta.ssim.toFixed(4)}${low ? " WARN" : ""}`,
+      );
+      if (low) {
+        warns.push(`${pg.id} SSIM ${meta.ssim.toFixed(4)} < ${IMAGE_SSIM_WARN[meta.preset]}`);
+      }
+    } catch (err) {
+      errors.push(`${pg.id}: ${err.message}`);
+    }
+  }
 } finally {
   rmSync(TMP_DIR, { recursive: true, force: true });
 }
@@ -279,7 +372,9 @@ try {
 // Keep only entries still in the manifest, keys sorted: stable file across runs.
 const cacheOut = {};
 for (const id of Object.keys(cache).sort(byKey)) {
-  if ([...manifest.videos, ...manifest.images].some((e) => e.id === id)) cacheOut[id] = cache[id];
+  if ([...manifest.videos, ...manifest.images, ...manifest.pages].some((e) => e.id === id)) {
+    cacheOut[id] = cache[id];
+  }
 }
 writeFileSync(CACHE_FILE, JSON.stringify(cacheOut, null, 2) + "\n");
 
@@ -301,7 +396,7 @@ function renderGenerated() {
   }
   const imageLines = [];
   const rungs = (list) => list.map(([w, url]) => `      [${w}, ${str(url)}],`);
-  const imgs = manifest.images
+  const imgs = [...manifest.images, ...manifest.pages]
     .filter((img) => cache[img.id]?.meta)
     .sort((a, b) => byKey(a.id, b.id));
   for (const img of imgs) {
@@ -315,6 +410,17 @@ function renderGenerated() {
     if (meta.alt !== undefined) imageLines.push(`    alt: ${str(meta.alt)},`);
     imageLines.push("  },");
   }
+  const galleryLines = [];
+  for (const key of Object.keys(manifest.galleries).sort(byKey)) {
+    // Members keep the manifest order (gallery order is editorial, never sorted).
+    const members = manifest.galleries[key].filter((id) => cache[id]?.meta);
+    galleryLines.push(`  ${str(key)}: [`, ...members.map((id) => `    ${str(id)},`), "  ],");
+  }
+  const galleriesDecl = galleryLines.length
+    ? ["export const galleries = {", ...galleryLines, "}"]
+    : ["export const galleries = {}"];
+  galleriesDecl[galleriesDecl.length - 1] +=
+    " as const satisfies Record<string, readonly MediaId[]>;";
   return [
     "/* eslint-disable */",
     "// AUTO-GENERATED by scripts/media.mjs from media-src/manifest.json — DO NOT EDIT. Run `npm run media`.",
@@ -346,7 +452,7 @@ function renderGenerated() {
     "",
     "export type MediaId = keyof typeof images;",
     "",
-    "export const galleries = {} as const satisfies Record<string, readonly MediaId[]>;",
+    ...galleriesDecl,
     "",
     "export const videos = {",
     ...videoLines,
