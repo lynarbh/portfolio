@@ -291,6 +291,18 @@ export const images = {
     ],
     fallback: "/media/clip/clip9.jpg",
   },
+  "cv/apercu": {
+    preset: "graphic",
+    width: 1697,
+    height: 2400,
+    avif: [
+      [453, "/media/cv/apercu-640.avif"],
+      [849, "/media/cv/apercu-1200.avif"],
+      [1697, "/media/cv/apercu-2400.avif"],
+    ],
+    fallback: "/media/cv/apercu.png",
+    alt: "Aperçu du CV de Lyna Rebahi (page 1)",
+  },
   "festival-identite/planche-01": {
     preset: "graphic",
     width: 2400,

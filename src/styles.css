@@ -234,3 +234,90 @@
   color: var(--plum);
   border-radius: 2px;
 }
+
+/* Parcours — frise chronologique */
+.tl { position: relative; list-style: none; margin: 0; padding: 0.5rem 0; }
+.tl-line {
+  position: absolute; top: 0; bottom: 0; left: 1.05rem; width: 2px; border-radius: 2px;
+  background: linear-gradient(to bottom, var(--sakura), var(--gold) 55%, color-mix(in oklab, var(--plum) 45%, transparent));
+  transform: scaleY(0); transform-origin: top;
+  transition: transform 1.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.tl.in .tl-line { transform: scaleY(1); }
+.tl-item { position: relative; padding: 0 0 2rem 3.25rem; }
+.tl-dot {
+  position: absolute; left: calc(1.05rem - 7px); top: 1.35rem; z-index: 1;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--cream); border: 3px solid var(--sakura);
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--sakura) 22%, transparent);
+  transform: scale(0);
+  transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.tl.in .tl-dot { transform: scale(1); }
+.tl-dot--now { border-color: var(--gold); }
+.tl-dot--now::after {
+  content: ""; position: absolute; inset: -3px; border-radius: 50%;
+  border: 2px solid var(--gold);
+  animation: tl-pulse 2.2s ease-out infinite;
+}
+@keyframes tl-pulse {
+  0% { transform: scale(0.8); opacity: 0.9; }
+  100% { transform: scale(2.3); opacity: 0; }
+}
+.tl-card {
+  position: relative; background: var(--card);
+  border: 1px solid var(--border); border-radius: 6px;
+  padding: 1.25rem 1.4rem;
+  box-shadow: var(--shadow-quest);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+.tl-card::before {
+  content: ""; position: absolute; top: 1.15rem; left: -8px;
+  width: 14px; height: 14px; background: var(--card);
+  border-left: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  transform: rotate(45deg);
+}
+.tl-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-glow); }
+.tl-period {
+  font-family: var(--font-display); font-style: italic;
+  letter-spacing: 0.14em; text-transform: uppercase; font-size: 0.78rem;
+  color: color-mix(in oklab, var(--plum) 75%, transparent);
+}
+.tl-detail { position: relative; padding-left: 1rem; }
+.tl-detail::before { content: "·"; position: absolute; left: 0; color: var(--sakura); font-weight: 700; }
+.tl-kind--objectif { border-color: var(--gold); background: color-mix(in oklab, var(--gold) 22%, var(--cream)); }
+.tl-kind--formation { border-color: color-mix(in oklab, var(--plum) 45%, transparent); }
+.tl-kind--experience { border-color: var(--sakura); background: color-mix(in oklab, var(--sakura) 24%, var(--cream)); }
+.tl-kind--engagement { border-color: var(--mint-sage); background: color-mix(in oklab, var(--mint-sage) 32%, var(--cream)); }
+@media (min-width: 768px) {
+  .tl-line { left: 50%; margin-left: -1px; }
+  .tl-item { width: 50%; padding-left: 0; padding-bottom: 2.5rem; }
+  .tl-item--l { padding-right: 3rem; }
+  .tl-item--r { margin-left: 50%; padding-left: 3rem; }
+  .tl-item--l .tl-dot { left: auto; right: -8px; }
+  .tl-item--r .tl-dot { left: -8px; }
+  .tl-item--l .tl-card::before {
+    left: auto; right: -8px;
+    border-left: none; border-bottom: none;
+    border-right: 1px solid var(--border); border-top: 1px solid var(--border);
+  }
+}
+
+/* CV téléchargeable */
+.cv-card {
+  position: relative; display: block; overflow: hidden;
+  border-radius: 10px; border: 3px solid var(--cream);
+  background: var(--card); box-shadow: var(--shadow-quest);
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+.cv-card:hover, .cv-card:focus-visible { transform: translateY(-4px) rotate(-0.6deg); box-shadow: var(--shadow-glow); }
+.cv-card img { display: block; width: 100%; height: auto; }
+
+/* Mouvement réduit : rendu statique, sans transition ni animation */
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .tl-line, .tl-dot { transform: none; transition: none; }
+  .tl-dot--now::after { animation: none; }
+  .tl-card, .cv-card, .quest-btn, .quest-card { transition: none; }
+  .tl-card:hover, .cv-card:hover, .cv-card:focus-visible { transform: none; }
+}

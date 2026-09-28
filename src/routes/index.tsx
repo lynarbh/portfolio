@@ -3,6 +3,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { projects, type Project } from "@/data/projects";
 import { Reveal } from "@/components/Reveal";
 import { Picture } from "@/components/Picture";
+import { Timeline } from "@/components/Timeline";
+import { languages, CV_PDF, CV_PDF_LABEL } from "@/data/timeline";
 import { videos } from "@/data/media.generated";
 import emailjs from "@emailjs/browser";
 
@@ -31,12 +33,24 @@ const CATEGORIES = [
 ] as const;
 type Category = (typeof CATEGORIES)[number];
 
-const SKILL_TAGS = ["Illustrator", "Photoshop", "Premiere Pro", "AfterEffect", "InDesign", "Davinci resolve", "Capcut", "Figma", "Canva", "HTML / CSS / JS / PHP"];
+const SKILL_TAGS = [
+  "Illustrator",
+  "Photoshop",
+  "Premiere Pro",
+  "AfterEffect",
+  "InDesign",
+  "Davinci resolve",
+  "Capcut",
+  "Figma",
+  "Canva",
+  "HTML / CSS / JS / PHP",
+];
 
 function Nav() {
   const [open, setOpen] = useState(false);
   const links = [
     { href: "#about", label: "À propos" },
+    { href: "#parcours", label: "Parcours" },
     { href: "#projects", label: "Créations" },
     { href: "#contact", label: "Contact" },
   ];
@@ -96,14 +110,14 @@ function Hero() {
     const onError = () => setFailed(true);
     const onVisibility = () => {
       if (document.hidden) v.pause();
-      else if (!userPaused.current && !reduce) v.play().catch(() => { });
+      else if (!userPaused.current && !reduce) v.play().catch(() => {});
     };
     v.addEventListener("play", onPlay);
     v.addEventListener("pause", onPause);
     v.addEventListener("error", onError);
     document.addEventListener("visibilitychange", onVisibility);
     v.muted = true;
-    if (!reduce) v.play().catch(() => { });
+    if (!reduce) v.play().catch(() => {});
     return () => {
       v.removeEventListener("play", onPlay);
       v.removeEventListener("pause", onPause);
@@ -120,7 +134,7 @@ function Hero() {
       v.pause();
     } else {
       userPaused.current = false;
-      v.play().catch(() => { });
+      v.play().catch(() => {});
     }
   };
 
@@ -209,17 +223,15 @@ function About() {
               Qui <em className="text-[var(--sakura)]">suis-je ?</em>
             </h2>
             <p className="mt-5 font-body leading-relaxed text-[var(--plum)]/85">
-
               Faites connaissance avec Lyna REBAHI, jeune femme de 20 ans, étudiante en BUT MMI, en
-              recherche d'une alternance en communication digitale. Ok ça c'était la partie formelle, si je devais 
-              me décrire avec mes mots : 
+              recherche d'une alternance en communication digitale. Ok ça c'était la partie
+              formelle, si je devais me décrire avec mes mots :<br></br>
               <br></br>
-              <br></br>
-              Une cinéphile accro romantisme gothique et à l'audiovisuel qui pense résoudre le monde avec des vidéos. J'ai
-              20 ans, je crée des contenus visuels (vidéos, affiches, identités) et je passe mes
-              journées à rêver de courts-métrages et mes soirées à faire du bénévolat. Je filme ;
-              j'imagine ; je dessine ; je monte ; je crée des identités visuelles et bien sûr je RA.CON.TE.Pas mal, non
-              ?
+              Une cinéphile accro romantisme gothique et à l'audiovisuel qui pense résoudre le monde
+              avec des vidéos. J'ai 20 ans, je crée des contenus visuels (vidéos, affiches,
+              identités) et je passe mes journées à rêver de courts-métrages et mes soirées à faire
+              du bénévolat. Je filme ; j'imagine ; je dessine ; je monte ; je crée des identités
+              visuelles et bien sûr je RA.CON.TE.Pas mal, non ?
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
               {SKILL_TAGS.map((t) => (
@@ -270,6 +282,66 @@ function About() {
           </div>
         </div>
       </Reveal>
+    </section>
+  );
+}
+
+function CvCard() {
+  return (
+    <aside className="self-start lg:sticky lg:top-24" aria-label="Curriculum vitae">
+      <Reveal delay={200}>
+        <a
+          href={CV_PDF}
+          target="_blank"
+          rel="noopener"
+          className="cv-card"
+          aria-label="Ouvrir le CV (PDF) dans un nouvel onglet"
+        >
+          <Picture
+            id="cv/apercu"
+            alt="Aperçu du CV de Lyna Rebahi"
+            sizes="(min-width: 1024px) 320px, 90vw"
+          />
+        </a>
+        <div className="mt-5 flex flex-col gap-3">
+          <a href={CV_PDF} download="Lyna_REBAHI_CV.pdf" className="quest-btn justify-center">
+            {CV_PDF_LABEL}
+          </a>
+          <p className="text-center font-body text-xs tracking-wide text-[var(--plum)]/70">
+            Disponible en alternance à partir de 2026
+          </p>
+        </div>
+        <ul className="mt-5 flex flex-wrap justify-center gap-2" aria-label="Langues">
+          {languages.map((l) => (
+            <li key={l.name} className="hud-tag">
+              {l.name} · {l.level}
+            </li>
+          ))}
+        </ul>
+      </Reveal>
+    </aside>
+  );
+}
+
+function Parcours() {
+  return (
+    <section id="parcours" className="relative px-6 py-24">
+      <div className="mx-auto max-w-6xl">
+        <Reveal>
+          <span className="hud-tag">Frise chronologique</span>
+          <h2 className="mt-4 font-display text-4xl sm:text-5xl">
+            Mon <em className="text-[var(--sakura)]">parcours</em>
+          </h2>
+          <p className="mt-4 max-w-2xl font-body leading-relaxed text-[var(--plum)]/85">
+            Formations, expériences et engagements, du plus récent au plus ancien. Le CV complet est
+            consultable et téléchargeable à côté.
+          </p>
+        </Reveal>
+        <div className="mt-12 grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] lg:gap-16">
+          <Timeline />
+          <CvCard />
+        </div>
+      </div>
     </section>
   );
 }
@@ -354,10 +426,11 @@ function Projects() {
               <button
                 key={c}
                 onClick={() => setFilter(c)}
-                className={`hud-tag transition ${filter === c
-                  ? "!bg-[var(--plum)] !text-[var(--cream)] !border-[var(--plum)]"
-                  : "hover:!bg-[var(--sakura)]/40"
-                  }`}
+                className={`hud-tag transition ${
+                  filter === c
+                    ? "!bg-[var(--plum)] !text-[var(--cream)] !border-[var(--plum)]"
+                    : "hover:!bg-[var(--sakura)]/40"
+                }`}
               >
                 {c}
               </button>
@@ -503,6 +576,7 @@ function Index() {
       <Nav />
       <Hero />
       <About />
+      <Parcours />
       <Projects />
       <Contact />
     </main>
