@@ -95,7 +95,7 @@ Plans:
 
 **Wave 5** *(blocked on Wave 4 completion)*
 
-- [ ] 02-05-PLAN.md — Branche PDF (`gs` 300 dpi, une page par appel) : galerie des 10 planches Tafsut sur « Identité d'un festival », `inProgress` retiré
+- [x] 02-05-PLAN.md — Branche PDF (`gs` 300 dpi, une page par appel) : galerie des 10 planches Tafsut sur « Identité d'un festival », `inProgress` retiré
 
 **Wave 6** *(blocked on Wave 5 completion)*
 
@@ -188,7 +188,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Nettoyage & filet de sécurité | 4/4 | Complete    | 2026-09-27 |
-| 2. Médias légers & hero qui joue partout | 4/7 | In Progress|  |
+| 2. Médias légers & hero qui joue partout | 5/7 | In Progress|  |
 | 3. Hero & Qui suis-je en scène | 0/TBD | Not started | - |
 | 4. Projets mis en scène | 0/TBD | Not started | - |
 | 5. Contact, candidature & QA mobile réelle | 0/TBD | Not started | - |

@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 02-04-PLAN.md
-last_updated: "2026-09-28T00:02:21.831Z"
-last_activity: 2026-09-28 -- Plan 02-04 complete (project pages via <Picture>, public/assets removed)
+stopped_at: Completed 02-03-PLAN.md
+last_updated: "2026-09-28T00:11:16.891Z"
+last_activity: 2026-09-28
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 11
-  completed_plans: 8
-  percent: 73
+  completed_plans: 9
+  percent: 20
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-09-21)
 ## Current Position
 
 Phase: 2 (Médias légers & hero qui joue partout) — EXECUTING
-Plan: 5 of 7
+Plan: 6 of 7
 Status: Ready to execute
-Last activity: 2026-09-28 -- Plan 02-04 complete (project pages via <Picture>, public/assets removed)
+Last activity: 2026-09-28
 
-Progress: [███████░░░] 73%
+Progress: [████████░░] 82%
 
 ## Performance Metrics
 
@@ -60,6 +60,7 @@ Progress: [███████░░░] 73%
 | Phase 02 P02 | 10 min | 2 tasks | 18 files |
 | Phase 02 P03 | 8 min | 2 tasks | 44 files |
 | Phase 02 P04 | 9 min | 3 tasks | 339 files |
+| Phase 02 P05 | 12 min | 2 tasks | 45 files |
 
 ## Accumulated Context
 
@@ -89,6 +90,7 @@ Recent decisions affecting current work:
 - [Phase 02]: 02-03: 4:4:4 des AVIF graphic vérifié par ffprobe pix_fmt (sharp n'expose pas chromaSubsampling pour HEIF)
 - [Phase 02]: 02-04: $projectId.tsx non passé à prettier (déjà non conforme au HEAD), diff limité aux lignes migrées
 - [Phase 02]: 02-04: « 0 /assets/ dans le HTML » vaut pour les images ; seuls restent les bundles Vite /assets/*.js|css
+- [Phase 02]: 02-05: PIPELINE_VERSION 3 ; pages PDF = entrées image (gs -dSAFER 300 dpi, une page par appel), galleries dans l'ordre du manifeste
 
 ### Pending Todos
 
@@ -116,6 +118,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-09-28T00:02:15.071Z
+Last session: 2026-09-28T00:11:11.638Z
 Stopped at: Completed 02-03-PLAN.md
 Resume file: None
