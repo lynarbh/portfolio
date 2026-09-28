@@ -14,7 +14,7 @@ Ce milestone sauve un portfolio existant (~525 Mo, vidéo hero illisible sur iPh
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Nettoyage & filet de sécurité** - Code mort, décor, doublons et sources de travail retirés ; garde-fou de taille actif ; site redéployé plus léger (completed 2026-09-27)
-- [ ] **Phase 2: Médias légers & hero qui joue partout** - Pipeline média offline, `public/` < 60 Mo, vidéos conformes iPhone, charte Tafsut extraite
+- [x] **Phase 2: Médias légers & hero qui joue partout** - Pipeline média offline, `public/` < 60 Mo, vidéos conformes iPhone, charte Tafsut extraite (completed 2026-09-28)
 - [ ] **Phase 3: Hero & Qui suis-je en scène** - Mise en scène hybride cinéma, positionnement explicite, compétences en logos, textes en slots nommés
 - [ ] **Phase 4: Projets mis en scène** - Vraies vignettes, vidéo en tête, logos d'outils, crédits type générique, bande process, embeds allégés
 - [ ] **Phase 5: Contact, candidature & QA mobile réelle** - Contact complet avec CV téléchargeable, formulaire protégé, validation sur vrais téléphones
@@ -103,7 +103,7 @@ Plans:
 
 **Wave 7** *(blocked on Wave 6 completion)*
 
-- [ ] 02-07-PLAN.md — Règle de budget 60 Mio dans le garde-fou, porte de fin de phase depuis zéro, premier `npm run deploy`, curl en production, rollback documenté, push, UAT appareils réels
+- [x] 02-07-PLAN.md — Règle de budget 60 Mio dans le garde-fou, porte de fin de phase depuis zéro, premier `npm run deploy`, curl en production, rollback documenté, push, UAT appareils réels
 
 **UI hint**: yes
 **Notes**:
@@ -188,7 +188,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Nettoyage & filet de sécurité | 4/4 | Complete    | 2026-09-27 |
-| 2. Médias légers & hero qui joue partout | 6/7 | In Progress|  |
+| 2. Médias légers & hero qui joue partout | 7/7 | Complete   | 2026-09-28 |
 | 3. Hero & Qui suis-je en scène | 0/TBD | Not started | - |
 | 4. Projets mis en scène | 0/TBD | Not started | - |
 | 5. Contact, candidature & QA mobile réelle | 0/TBD | Not started | - |

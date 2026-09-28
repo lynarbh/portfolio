@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
+status: verifying
 stopped_at: Completed 02-06-PLAN.md
-last_updated: "2026-09-28T00:39:06.124Z"
+last_updated: "2026-09-28T01:06:40.349Z"
 last_activity: 2026-09-28
 progress:
   total_phases: 5
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 11
-  completed_plans: 10
-  percent: 20
+  completed_plans: 11
+  percent: 40
 ---
 
 # Project State
@@ -27,10 +27,10 @@ See: .planning/PROJECT.md (updated 2026-09-21)
 
 Phase: 2 (Médias légers & hero qui joue partout) — EXECUTING
 Plan: 7 of 7
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-09-28
 
-Progress: [█████████░] 91%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -62,6 +62,7 @@ Progress: [█████████░] 91%
 | Phase 02 P04 | 9 min | 3 tasks | 339 files |
 | Phase 02 P05 | 12 min | 2 tasks | 45 files |
 | Phase 2 P06 | session | 3 tasks | 17 files |
+| Phase 02 P07 | 25 min | 2 tasks | 12 files |
 
 ## Accumulated Context
 
@@ -94,6 +95,9 @@ Recent decisions affecting current work:
 - [Phase 02]: 02-05: PIPELINE_VERSION 3 ; pages PDF = entrées image (gs -dSAFER 300 dpi, une page par appel), galleries dans l'ordre du manifeste
 - [Phase 02]: 02-06: Lyna a validé le 720p CRF 30 sur empattage (approved) ; les 8 clips process sont au même réglage, public/ à 55,9 Mio
 - [Phase 02]: 02-06: le budget de 60 Mio se mesure en octets (media, check-assets, du -A) ; du -sm compte la préallocation APFS des MP4 fraîchement écrits
+- [Phase 02]: 02-07: le budget total de 60 Mio de dist/client est une règle de check-assets non dérogeable
+- [Phase 02]: 02-07: x264 VBV + threads de trame non déterministe ; classes cv et process encodées avec -threads:v 1
+- [Phase 02]: 02-07: production phase 2 = version 30a0c129-7de4-448d-b814-4bf98c03b5b4 ; rollback vers 0b1ccd2a-db8e-4136-b65c-55615d6787b4 ; 206 confirmé en prod (A2)
 
 ### Pending Todos
 
@@ -110,6 +114,7 @@ None yet.
 - Gestionnaire de paquets : npm (bun non installé) ; scripts en `.mjs`
 - Rendu de l'export Adobe Animate sur iOS réel non vérifié (phase 4 / QA phase 5)
 - Validation visuelle humaine de la phase 1 EN ATTENTE (Task 2 de 01-04 reportée par l'utilisatrice) : accueil sans pétales/curseur rose/badge/ornements, 0 × 404 sur accueil + 9 pages, chaîne Animate 1_MOHAMED→3_ALBERTIN complète sur /projects/sae-2 — preuves automatiques seulement (curl 67 URL, 0 × 404)
+- 02-07 Task 3 : UAT appareils réels (iPhone Safari + économie d'énergie, Android, VoiceOver, CV, sae-2, Tafsut, A/B 100 %) en attente ; HERO-01 reste Pending jusqu'au test iPhone
 
 ## Deferred Items
 
@@ -121,6 +126,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-09-28T00:38:59.432Z
+Last session: 2026-09-28T01:06:32.310Z
 Stopped at: Completed 02-06-PLAN.md
 Resume file: None
