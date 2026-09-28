@@ -1,5 +1,5 @@
 ---
-last_mapped_commit: 163c48737bad29b01210096abf6fb8eeec45c5a0
+last_mapped_commit: b4a65c7eb7cb5381e1e814d9888c57c5bdb3009a
 ---
 
 # Technology Stack
@@ -77,10 +77,13 @@ Two hand-written Node ESM scripts live under `scripts/`, both run against `dist/
 - Non-faststart MP4s (`moov` atom after `mdat`) — waivable via `"faststart"` rule
 - Non-`yuv420p` pixel format video, detected via `ffprobe` if present on `PATH` — waivable via `"pix_fmt"` rule; if `ffprobe` is missing the check WARNs (not FAILs) unless run with `--strict` / `CHECK_ASSETS_STRICT=1`
 - Also warns (10 MiB threshold), respects Cloudflare's `.assetsignore` glob syntax in `dist/client`, and reads waivers from `scripts/check-assets.exceptions.json`
+- Two further rules were added for the phase-2 media pipeline, both **never waivable**: any single `.mp4` over 12,000,000 B (the per-video contract the media pipeline encodes to), and the whole `dist/client` tree over a 60 MiB total budget (the real byte sizes of everything Cloudflare uploads).
 
 `scripts/check-assets.exceptions.json` currently waives 3 legacy media files pending a "phase 2" re-encode: `videos/hero.mp4` (HDR `yuv420p10le`, waives `pix_fmt`), `videos/56_Lyna_REBAHI_CVvideo.mp4` (23.10 MiB, `moov` after `mdat`, waives `faststart` + `size`), `animate/videos/empattage.mp4` (22.37 MiB, waives `size`). The 25 MiB hard ceiling and forbidden extensions can never be waived through this file.
 
 **`scripts/inventory-assets.mjs`** — read-only asset inventory (not wired into `npm run check`). Scans `public/` (excluding `public/animate/`) and classifies every file as REF (full path referenced in source), NAME-ONLY (only the bare filename found — needs manual review), or UNREF (not referenced anywhere). It also reverse-scans `src/**/*.{ts,tsx,css,json,html}` plus the Animate export's `.html`/`.js` files for `/assets|videos|animate|media/` URL literals that point to files missing from `public/`, exiting 1 if any are MISSING. Run manually (`node scripts/inventory-assets.mjs`) to audit for dead/missing media before a cleanup or release.
+
+**Offline media pipeline (`scripts/media.mjs` + `scripts/media/{util,images,video,pdf}.mjs`, and `scripts/verify-media.mjs`)** — a separate, hand-run pipeline, never wired into `build`/`check`/`deploy`, added alongside the Worker-based video serving in `src/server.ts`. `npm run media` reads the gitignored `media-src/manifest.json` and encodes source masters under `media-src/` with `sharp` (images: AVIF/WebP/JPEG/PNG, presets `photo`/`graphic`, widths 640/1200/2400), `ffmpeg` (videos: `hero`/`cv`/`process` classes, single-pass CRF, `-threads:v 1`, bitexact flags for reproducible output), and Ghostscript (`gs`, only when the manifest has PDF page entries). Outputs are staged under `media-src/.tmp/stage/<id>/` and moved atomically into `public/media/**` / `public/animate/videos/*.mp4` only once an entry's encode, SSIM check, and probes all succeed; a content-addressed cache at `media-src/.cache.json` (source SHA-256 + entry options + a `PIPELINE_VERSION` constant + an encoder-tool-version fingerprint) skips re-encoding unchanged entries. Every successful run rewrites `src/data/media.generated.ts` (generated, Prettier-ignored, exports the `MediaId` union plus `images`/`videos`/`galleries` const records) from scratch; a failed run leaves it untouched. `npm run verify-media` is a separate, read-only companion script that re-checks the pipeline's own committed output (via `ffprobe`) against the claims in `media.generated.ts` — file existence, faststart, `yuv420p`, per-file byte ceilings (≤ 12,000,000 B for any video, plus tighter hero-specific limits), no residual `.pdf` under `public/`, and gallery completeness — without needing `media-src/` or any encoder binary beyond `ffprobe`/`sharp`. `sharp` (pinned `0.35.4`) and `wrangler` (pinned `4.82.2`) are both `devDependencies` specifically for this pipeline and its verification/dry-run needs; `package.json` also now declares `engines.node >= 22.12` (up from the prior `>=20.11`), matching the Node APIs these scripts rely on.
 
 ## Configuration
 

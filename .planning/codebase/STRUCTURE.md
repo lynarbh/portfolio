@@ -1,95 +1,144 @@
 ---
-last_mapped_commit: 163c48737bad29b01210096abf6fb8eeec45c5a0
+last_mapped_commit: b4a65c7eb7cb5381e1e814d9888c57c5bdb3009a
 ---
 # Codebase Structure
 
-**Analysis Date:** 2026-09-27
+**Analysis Date:** 2026-09-28
 
 ## Directory Layout
 
 ```
 portfolio/
 ├── .planning/              # GSD workflow artifacts (PROJECT.md, ROADMAP.md, phases/, codebase/) — not app code
-├── .nvmrc                   # Pins Node 24 for local dev
+├── .nvmrc                   # Pins Node 24 for local dev (package.json engines.node requires >=22.12)
 ├── CLAUDE.md                # Project-level instructions for Claude Code
-├── components.json          # shadcn/ui config (legacy — the ui/ kit it configures no longer exists in src/)
 ├── eslint.config.js         # ESLint 9 flat config
-├── knip.json                # Unused-code/dead-file detector config (new since last map)
-├── package.json / package-lock.json   # npm-only now (no bun.lockb/bunfig.toml present)
+├── knip.json                # Unused-code/dead-file detector config
+├── package.json / package-lock.json   # npm-only (no bun.lockb/bunfig.toml present); engines.node >=22.12
 ├── tsconfig.json            # TS strict mode, @/* → ./src/* alias
 ├── vite.config.ts           # Thin wrapper delegating to @lovable.dev/vite-tanstack-config
-├── wrangler.jsonc           # Cloudflare Workers deploy config — the only deployment target
+├── wrangler.jsonc           # Cloudflare Workers deploy config — main: src/server.ts, assets.binding: ASSETS,
+│                            #   assets.run_worker_first: ["/media/video/*", "/animate/videos/*"], workers_dev: false
 ├── .prettierrc / .prettierignore
-├── .gitignore                # ignores public/videos/extraitpubSAE1.mp4, public/assets/charte_graphique.pdf, media-src/
+├── .gitignore                # ignores media-src/ (working masters + hand-written manifest.json); still lists
+│                            #   public/videos/extraitpubSAE1.mp4 and public/assets/charte_graphique.pdf, both
+│                            #   stale entries — those two public/ subdirectories no longer exist at all
 ├── scripts/
-│   ├── check-assets.mjs               # post-build asset guard (size/encoding rules), run by `npm run check`
-│   ├── check-assets.exceptions.json   # waiver list for legacy oversized/non-faststart media
-│   └── inventory-assets.mjs           # manual reference-audit script (not wired into any npm script)
+│   ├── check-assets.mjs               # post-build asset guard: 25 MiB hard/asset (never waivable), 60 MiB
+│   │                                  #   dist/client total budget (never waivable), 12,000,000 B per-MP4
+│   │                                  #   ceiling (never waivable), forbidden source extensions, faststart/
+│   │                                  #   yuv420p video rules (waivable). Run by `npm run check`.
+│   ├── check-assets.exceptions.json   # waiver list — currently EMPTY; the phase-2 media re-encode closed
+│   │                                  #   every prior waiver (hero.mp4, CV video, empattage.mp4)
+│   ├── inventory-assets.mjs           # manual reference-audit script (not wired into any npm script)
+│   ├── media.mjs                      # offline media pipeline orchestrator (npm run media, never in
+│   │                                  #   check/build/deploy). Reads media-src/manifest.json (gitignored,
+│   │                                  #   hand-written). Writes public/media/**, public/animate/videos/*.mp4,
+│   │                                  #   src/data/media.generated.ts, media-src/.cache.json. Staged writes
+│   │                                  #   (media-src/.tmp/stage/<id>/) moved atomically into public/ only
+│   │                                  #   once an entry's encode + SSIM + probes all succeed.
+│   ├── media/
+│   │   ├── util.mjs                   # shared helpers: argv-array subprocess runner (never a shell), sha256,
+│   │   │                              #   kebab-case id derivation, manifest path-traversal guard (insideDir),
+│   │   │                              #   MP4 top-level-box scan (faststart), video/image SSIM via ffmpeg
+│   │   ├── images.mjs                 # sharp encoders — presets "photo"/"graphic", AVIF/WebP/JPEG/PNG ladder
+│   │   │                              #   at 640/1200/2400px, metadata always stripped, deterministic bytes
+│   │   ├── video.mjs                  # ffmpeg encoders per class "hero"/"cv"/"process" — single-pass CRF,
+│   │   │                              #   bitexact flags, faststart; hero also renders a WebP poster via sharp
+│   │   └── pdf.mjs                    # Ghostscript (-dSAFER) page-to-PNG rasterizer for PDF masters
+│   └── verify-media.mjs               # read-only checks against src/data/media.generated.ts's own claims
+│                                      #   (npm run verify-media, never wired into check/build/deploy):
+│                                      #   file existence, faststart, yuv420p, per-file size ceilings, the
+│                                      #   hero's exact SDR signature, image chroma/ICC/dimension rules,
+│                                      #   gallery membership, "no PDF ever published under public/"
 ├── src/
 │   ├── components/
-│   │   └── Reveal.tsx                # only shared component; scroll-triggered fade-in wrapper
+│   │   ├── Picture.tsx                # <picture> built from src/data/media.generated.ts — AVIF (+ WebP for
+│   │   │                              #   photo-preset images) sources, one lazy/async fallback <img> with
+│   │   │                              #   intrinsic width/height; no hooks
+│   │   └── Reveal.tsx                 # scroll-triggered fade-in wrapper (IntersectionObserver)
 │   ├── data/
-│   │   └── projects.ts                # Project type + the full projects[] array (single content source)
+│   │   ├── media.generated.ts         # GENERATED by scripts/media.mjs — DO NOT EDIT. MediaId union,
+│   │   │                              #   `images`/`videos` const records (srcset rungs, fallback, intrinsic
+│   │   │                              #   dimensions, poster/alt), `galleries` (named ordered MediaId lists)
+│   │   └── projects.ts                # Project type + the full projects[] array (single content source);
+│   │                                  #   `thumbnail`/`media` fields are typed MediaId, not raw path strings
 │   ├── routes/
-│   │   ├── __root.tsx                 # HTML shell, <head> meta, global 404
-│   │   ├── index.tsx                  # home page: Nav, Hero, About, Projects, Contact (all inline)
+│   │   ├── __root.tsx                 # HTML shell, <head> meta, global 404, hero-poster preload link
+│   │   ├── index.tsx                  # home page: Nav, Hero, About, Projects, Contact (all inline); hero
+│   │   │                              #   video driven by JS (prefers-reduced-motion, visibilitychange), no
+│   │   │                              #   bare autoplay attribute
 │   │   └── projects/
-│   │       └── $projectId.tsx         # project detail page, per-id hardcoded content branches
+│   │       └── $projectId.tsx         # project detail page, per-id hardcoded content branches (4), 45
+│   │                                  #   <Picture> call sites, 665 lines
+│   ├── cloudflare-workers.d.ts        # ambient `declare module "cloudflare:workers"` typing the ASSETS
+│   │                                  #   binding — avoids depending on @cloudflare/workers-types
 │   ├── router.tsx                     # router factory + default error component
 │   ├── routeTree.gen.ts               # GENERATED — do not hand-edit
+│   ├── server.ts                      # Cloudflare Worker entry (wrangler.jsonc `main`) — wraps
+│   │                                  #   @tanstack/react-start/server-entry, intercepts GET on
+│   │                                  #   /media/video/*.mp4 and /animate/videos/*.mp4, serves them via
+│   │                                  #   the Cache API with Range/206 support, hand-rolled Range fallback
 │   └── styles.css                     # Tailwind v4 CSS-first theme + custom "quest" design-system classes
-├── public/                  # static assets served as-is
-│   ├── assets/               # (~82M) project images/screenshots referenced from src/data/projects.ts
-│   ├── videos/                # (~40M) hero.mp4, CV video
-│   ├── media/                  # (~2.5M) portrait.jpg
-│   ├── animate/                # (~90M) vendored Adobe Animate/CreateJS export — DO NOT deep-edit, iframed in
-│   │                            #   $projectId.tsx's "sae-2" branch; scene chain 1_MOHAMED → 1_LYNA →
-│   │                            #   2_IMAD → 2_CLEMENT → 2_SOPHIA → 3_ALBERTIN, navigated via window.open
+├── public/                  # static assets served as-is (~57 MiB total)
+│   ├── media/                 # (~36M) all first-party images (per-project id folders + thumbnails/ + home/,
+│   │                          #   each as -640/-1200/-2400 AVIF/WebP rungs + one fallback jpg/png) and
+│   │                          #   media/video/ (hero.mp4 ~3.6M, hero-poster.webp ~104K, cv-lyna-rebahi.mp4
+│   │                          #   ~9.9M) — every path under media/video/*.mp4 is Worker-intercepted
+│   ├── animate/                # (~20M) vendored Adobe Animate/CreateJS export — HTML/JS/images/components/
+│   │                          #   DO NOT deep-edit, iframed in $projectId.tsx's "sae-2" branch; scene chain
+│   │                          #   1_MOHAMED → 1_LYNA → 2_IMAD → 2_CLEMENT → 2_SOPHIA → 3_ALBERTIN, navigated
+│   │                          #   via window.open. animate/videos/*.mp4 (8 process clips) ARE managed content:
+│   │                          #   re-encoded 1280×720/25fps/AAC by scripts/media/video.mjs and Worker-served
+│   │                          #   exactly like media/video/*.mp4 (both prefixes share the same run_worker_first
+│   │                          #   rule and the same VIDEO regex in src/server.ts)
 │   ├── favicon.ico
 │   └── logo.png
-├── media-src/                # gitignored working-media backups/quarantine (never committed, never deployed)
+├── media-src/                # gitignored working-media backups/quarantine — never committed, never deployed.
+│                            #   Also holds manifest.json (hand-written pipeline input, gitignored) and
+│                            #   .cache.json (scripts/media.mjs's content-addressed encode cache)
 ├── dist/                     # build output (gitignored)
 └── node_modules/             # gitignored
 ```
 
-**Directories that no longer exist** (present in older documentation, absent from the current tree — verified via `find src -type f`): `src/components/ui/`, `src/lib/`, `src/hooks/`, `src/assets/`. Do not recreate them speculatively; if new shared logic is needed, place it directly under `src/` following the flat structure above (e.g. a new top-level `src/lib/utils.ts` only if a genuine cross-file utility need arises).
+**Directories that no longer exist** (present in older documentation, absent from the current tree — verified via `find src -type f` and direct `ls`): `src/components/ui/`, `src/lib/`, `src/hooks/`, `src/assets/`, `public/assets/`, `public/videos/`. The two `public/` subdirectories were fully replaced by `public/media/` as part of the media-pipeline migration (phase 2). Do not recreate any of them speculatively; if new shared logic is needed, place it directly under `src/` following the flat structure above (e.g. a new top-level `src/lib/utils.ts` only if a genuine cross-file utility need arises), and add new media through `media-src/manifest.json` + `npm run media` rather than dropping files directly into `public/`.
 
-**Files that no longer exist**: `server.js` (standalone Node HTTP server), `vercel.json`, `bun.lockb`, `bunfig.toml`. The project is npm-only (`package-lock.json` present) and Cloudflare-Workers-only.
+**Files that no longer exist**: `server.js` (standalone Node HTTP server), `vercel.json`, `bun.lockb`, `bunfig.toml`, `components.json` (shadcn/ui CLI config — the `ui/` kit it configured has been gone for a while, and the config file itself has now been deleted too; do not assume shadcn conventions apply to new components). The project is npm-only (`package-lock.json` present) and Cloudflare-Workers-only.
 
 ## Directory Purposes
 
 **`src/routes/`:**
 - Purpose: TanStack Router file-based route definitions — the entire page-level composition of the site.
-- Contains: `__root.tsx` (root shell/404), `index.tsx` (single-page home, 431 lines), `projects/$projectId.tsx` (project detail, 647 lines — the largest source file in the repo).
+- Contains: `__root.tsx` (root shell/404), `index.tsx` (single-page home, 431 lines), `projects/$projectId.tsx` (project detail, 665 lines — the largest source file in the repo, now rendering imagery through `Picture` at 45 call sites instead of raw `<img>` tags).
 - Key files: `src/routes/index.tsx`, `src/routes/projects/$projectId.tsx`.
 - Invariant for this milestone: no route file is added, removed, or renamed, so `src/routeTree.gen.ts` never needs regeneration mid-milestone.
 
 **`src/components/`:**
 - Purpose: Reusable, presentational, cross-page building blocks.
-- Contains: exactly one file, `Reveal.tsx` (40 lines) — a scroll-triggered `IntersectionObserver` fade-in wrapper used throughout both routes.
-- Key files: `src/components/Reveal.tsx`.
+- Contains: `Reveal.tsx` (40 lines, scroll-triggered `IntersectionObserver` fade-in wrapper) and `Picture.tsx` (manifest-driven `<picture>` renderer, no hooks) — used throughout both routes.
+- Key files: `src/components/Reveal.tsx`, `src/components/Picture.tsx`.
 
 **`src/data/`:**
-- Purpose: Single source of truth for portfolio project content (pure static data, no I/O).
-- Contains: `projects.ts` — `Project` TypeScript type (id, title, category, thumbnail, optional `media[]`/`video`/`url`, descriptions, tools, role, `inProgress`) plus the `projects` array (9 entries, grouped by `// --- CATEGORY ---` comment dividers).
-- Key files: `src/data/projects.ts`.
+- Purpose: Single source of truth for portfolio project content (pure static data, no I/O) plus the generated media manifest both it and `Picture` depend on.
+- Contains: `projects.ts` — `Project` TypeScript type (id, title, category, `thumbnail: MediaId`, optional `media?: readonly MediaId[]`/`video`/`url`, descriptions, tools, role, `inProgress`) plus the `projects` array (9 entries, grouped by `// --- CATEGORY ---` comment dividers); `media.generated.ts` — GENERATED, exports `MediaId`, `images`, `videos`, `galleries`, `ImageEntry`/`VideoEntry` types. Never hand-edit `media.generated.ts`; it is rewritten wholesale by `scripts/media.mjs`.
+- Key files: `src/data/projects.ts`, `src/data/media.generated.ts`.
 
 **`scripts/`:**
-- Purpose: Node/ESM tooling that runs outside the Vite build — asset-weight and asset-reference enforcement for the "lite" milestone.
-- Contains: `check-assets.mjs` (post-build guard: 25 MiB hard Cloudflare ceiling, 20 MiB fail threshold, 10 MiB warn threshold, forbidden source extensions `.fla/.ai/.tmp/.pdf/.psd/.xd/.aep/.prproj`, video `pix_fmt`/faststart checks via `ffprobe`), `check-assets.exceptions.json` (waiver list, tied to a "phase 2 re-encode" TODO for `videos/hero.mp4`, `videos/56_Lyna_REBAHI_CVvideo.mp4`, `animate/videos/empattage.mp4`), `inventory-assets.mjs` (classifies every `public/` file — excluding `public/animate/` — as REF/NAME-ONLY/UNREF and reverse-scans `src/` for dangling media URLs; not wired into any npm script, run manually).
-- Key files: `scripts/check-assets.mjs`, `scripts/inventory-assets.mjs`.
+- Purpose: Node/ESM tooling that runs outside the Vite build — asset-weight/reference enforcement for the "lite" milestone, plus the offline media production pipeline.
+- Contains: `check-assets.mjs` (post-build guard: 25 MiB hard Cloudflare ceiling, 20 MiB waivable fail threshold, 10 MiB warn threshold, a 60 MiB `dist/client` total budget, a 12,000,000 B per-MP4 ceiling — the 25 MiB/60 MiB/12 MB rules and forbidden extensions can never be waived — plus faststart/`pix_fmt` checks via `ffprobe`, both waivable), `check-assets.exceptions.json` (waiver list, currently **empty**), `inventory-assets.mjs` (classifies every `public/` file — excluding `public/animate/` — as REF/NAME-ONLY/UNREF and reverse-scans `src/` for dangling media URLs; not wired into any npm script, run manually), `media.mjs` + `media/util.mjs`/`media/images.mjs`/`media/video.mjs`/`media/pdf.mjs` (the offline media pipeline: manifest-driven sharp/ffmpeg/Ghostscript encoding with a content-addressed cache, staged writes, and generated TypeScript output), `verify-media.mjs` (read-only post-hoc verifier against the generated module's own claims).
+- Key files: `scripts/check-assets.mjs`, `scripts/inventory-assets.mjs`, `scripts/media.mjs`, `scripts/verify-media.mjs`.
 
 **`public/`:**
-- Purpose: Static media served verbatim by the Cloudflare Worker/Vite dev server.
-- Contains (sizes via `du -sh public/*`): `animate/` (90M, vendored Adobe Animate export — treat as opaque, do not deep-edit or deep-map), `assets/` (82M, project images/screenshots), `videos/` (40M, `hero.mp4` 17M + `56_Lyna_REBAHI_CVvideo.mp4` 23M), `media/` (2.5M, `portrait.jpg`), plus root-level `favicon.ico` (248K) and `logo.png` (60K).
-- Largest individual files in `public/assets/`: `affiche_sensibilisation_Lyna_Rebahi.png` (9.6M), `hero.png` (4.2M), `chartegraphique_SkollRub.png` (3.0M), several `clip*.png`/`flyer*.png`/`SAE*.png`/`logo*.png` in the 1.7–2.8M range — these are the primary targets for any future "lighten without visible quality loss" re-encode pass.
-- Generated: No (all hand-placed/exported media, none Vite-generated).
-- Committed: Yes, except the two files/patterns explicitly gitignored (`public/videos/extraitpubSAE1.mp4`, `public/assets/charte_graphique.pdf`).
+- Purpose: Static media served verbatim by the Cloudflare Worker (`src/server.ts`, for `/media/video/*.mp4` and `/animate/videos/*.mp4`) or directly by Workers Static Assets / the Vite dev server (everything else).
+- Contains (sizes via `du -sh public/*`): `media/` (~36M, all first-party images grouped by project-id folder plus `thumbnails/` and `home/`, each with `-640`/`-1200`/`-2400` AVIF+WebP rungs and one JPEG/PNG fallback ≤ 640px; `media/video/` holds `hero.mp4` ~3.6M, `hero-poster.webp` ~104K, `cv-lyna-rebahi.mp4` ~9.9M), `animate/` (~20M, vendored Adobe Animate export — treat the HTML/JS/images/components sub-tree as opaque; `animate/videos/*.mp4`, 8 files, ARE first-party managed content re-encoded by the media pipeline), plus root-level `favicon.ico` (248K) and `logo.png` (60K). `public/assets/` and `public/videos/` (the pre-pipeline image/video directories) and the standalone `public/media/portrait.jpg` no longer exist — the portrait now lives at `public/media/home/portrait*.{avif,webp,jpg}`.
+- Generated: Partially. `media/` and `animate/videos/*.mp4` are generated by `scripts/media.mjs` from `media-src/` masters (never by Vite). `animate/`'s HTML/JS/images/components sub-tree is generated by an external Adobe Animate export process, not by anything in this repo. `favicon.ico`/`logo.png` are hand-placed.
+- Committed: Yes, in full (no per-file gitignore exceptions currently apply — the two legacy `.gitignore` entries referencing `public/videos/extraitpubSAE1.mp4` and `public/assets/charte_graphique.pdf` are stale, since those directories don't exist anymore).
 
 **`media-src/`:**
-- Purpose: Working originals/backups/quarantine for media re-encoding work.
-- Generated: No — manually populated.
-- Committed: No (gitignored via `media-src/`).
+- Purpose: Working originals/backups/quarantine for media re-encoding work, plus the pipeline's hand-written input and its encode cache.
+- Contains: `manifest.json` (hand-written; `version`, `defaults`, `images[]`, `pdf[]`, `videos[]`, `galleries{}` — read by `scripts/media.mjs`/`scripts/verify-media.mjs`), `.cache.json` (content-addressed cache: `{ [id]: { key, outputs: [{path, sha256}], meta } }`), plus per-project subfolders of source masters and a `quarantine/` folder for anything pending review.
+- Generated: `.cache.json` is machine-written by `scripts/media.mjs`; everything else is manually populated/authored.
+- Committed: No (gitignored via `media-src/`, called out with a comment in `.gitignore`: "Working originals, backups and quarantine — never committed, never deployed"). This directory (and the binaries `ffmpeg`/`ffprobe`/`sharp`/`gs` it depends on) is required to run `npm run media`, but is absent from CI/most machines by design — the pipeline is a local, hand-run step whose committed output (`public/media/**`, `public/animate/videos/*.mp4`, `src/data/media.generated.ts`) is what ships.
 
 **`.planning/`:**
 - Purpose: GSD workflow artifacts (milestone/phase plans, research, this `codebase/` reference set). Not application code; not read by the Vite build.
@@ -100,53 +149,75 @@ portfolio/
 **Entry Points:**
 - `src/router.tsx`: Router factory (`getRouter`), default error component.
 - `src/routes/__root.tsx`: Root route — HTML shell, `<head>` metadata, global 404.
-- `wrangler.jsonc`: Cloudflare Workers entry (`main: "@tanstack/react-start/server-entry"`) — the sole production entry point; no `server.js` exists.
+- `src/server.ts`: Cloudflare Worker entry (`wrangler.jsonc` `main`) — the sole production entry point; wraps the framework's `@tanstack/react-start/server-entry` handler and adds Range-capable video serving for `/media/video/*.mp4` and `/animate/videos/*.mp4`.
+- `wrangler.jsonc`: Cloudflare Workers deployment config pointing `main` at `src/server.ts`.
 
 **Configuration:**
 - `vite.config.ts`: Delegates entirely to `@lovable.dev/vite-tanstack-config`'s `defineConfig()` — do not manually re-add plugins it already bundles (see comment block at the top of the file).
 - `tsconfig.json`: ES2022 target, Bundler resolution, strict mode, `@/*` → `./src/*`.
-- `components.json`: shadcn/ui config — kept for reference/history but the `ui/` component kit it targets (`@/components/ui`) no longer exists in `src/`; do not treat this file as evidence that shadcn primitives are in use.
-- `wrangler.jsonc`: Cloudflare deployment config (`compatibility_date: 2025-09-24`, `nodejs_compat`).
-- `knip.json`: Configuration for the `knip` dead-code/unused-dependency detector (new tooling addition since the previous map — check this file before assuming any file/export is dead code).
+- `wrangler.jsonc`: Cloudflare deployment config (`compatibility_date: 2025-09-24`, `nodejs_compat`, `main: "src/server.ts"`, `assets.binding: "ASSETS"`, `assets.run_worker_first: ["/media/video/*", "/animate/videos/*"]`, `workers_dev: false`).
+- `knip.json`: Configuration for the `knip` dead-code/unused-dependency detector — check this file before assuming any file/export is dead code.
+- `src/cloudflare-workers.d.ts`: Ambient TypeScript module declaration for `cloudflare:workers`, scoped only to typing the `ASSETS` binding used by `src/server.ts`.
 
 **Core Logic:**
 - `src/routes/index.tsx`: Entire home page (hero, about, filterable project grid, contact form).
 - `src/routes/projects/$projectId.tsx`: Project detail page and all per-project bespoke content.
 - `src/data/projects.ts`: All project content/metadata.
+- `src/data/media.generated.ts`: All first-party media asset metadata (generated; do not hand-edit).
+- `src/server.ts`: Edge video-serving/caching logic (Range support, Cache API).
+
+**Media pipeline (hand-run, not part of `build`/`check`/`deploy`):**
+- `scripts/media.mjs`: Entry point (`npm run media`) — validates `media-src/manifest.json`, drives the encoders, writes `public/media/**`, `public/animate/videos/*.mp4`, `src/data/media.generated.ts`.
+- `scripts/verify-media.mjs`: Entry point (`npm run verify-media`) — read-only checks against what `media.generated.ts` claims.
+- `scripts/media/{util,images,video,pdf}.mjs`: Shared helpers and per-media-type encoders, imported only by the two scripts above.
 
 **Testing:**
-- Not applicable — no test runner, no `*.test.*`/`*.spec.*` files, no test script in `package.json` (confirmed via `find` for test file patterns and `package.json` script list: `dev`, `build`, `build:dev`, `preview`, `lint`, `format`, `check`, `deploy`).
+- Not applicable — no test runner, no `*.test.*`/`*.spec.*` files, no test script in `package.json` (confirmed via `find` for test file patterns and `package.json` script list: `dev`, `build`, `build:dev`, `preview`, `lint`, `format`, `check`, `deploy`, `media`, `verify-media`).
 
 ## Naming Conventions
 
 **Files:**
-- React components: `PascalCase.tsx` — `src/components/Reveal.tsx`.
+- React components: `PascalCase.tsx` — `src/components/Reveal.tsx`, `src/components/Picture.tsx`.
 - Route files: TanStack Router file-based routing, lower-case / `$param` dynamic segments — `src/routes/index.tsx`, `src/routes/__root.tsx`, `src/routes/projects/$projectId.tsx`.
-- Data modules: `camelCase.ts` — `src/data/projects.ts`.
-- Generated files are not hand-edited: `src/routeTree.gen.ts` (excluded from Prettier via `.prettierignore`).
-- Tooling scripts: `kebab-case.mjs` — `scripts/check-assets.mjs`, `scripts/inventory-assets.mjs`.
+- Data modules: `camelCase.ts` — `src/data/projects.ts`, `src/data/media.generated.ts` (generated).
+- Non-route, non-component TS entry files: `camelCase.ts`/`kebab-case.d.ts` — `src/server.ts`, `src/cloudflare-workers.d.ts`.
+- Generated files are not hand-edited: `src/routeTree.gen.ts` (TanStack Router codegen), `src/data/media.generated.ts` (media pipeline codegen) — both excluded from Prettier via `.prettierignore` and marked with a header comment/`/* eslint-disable */`.
+- Tooling scripts: `kebab-case.mjs` — `scripts/check-assets.mjs`, `scripts/inventory-assets.mjs`, `scripts/media.mjs`, `scripts/verify-media.mjs`; the `scripts/media/` sub-module files use single lower-case words matching their media type (`util.mjs`, `images.mjs`, `video.mjs`, `pdf.mjs`).
 
 **Directories:**
-- Lower-case, singular-purpose nouns — `components/`, `data/`, `routes/`, `scripts/`, `public/`.
+- Lower-case, singular-purpose nouns — `components/`, `data/`, `routes/`, `scripts/`, `public/`, `media-src/`.
 - Route sub-directories mirror URL segments — `routes/projects/` for the `/projects/*` path family.
+- `scripts/media/` groups the pipeline's per-media-type encoder modules separately from the top-level `scripts/*.mjs` entry points/guards.
+- `media-src/` and `public/media/` mirror each other's project-id-based subfolder naming (e.g. `media-src/festival-identite/` → `public/media/festival-identite/`), but `media-src/` additionally holds non-published masters (PDFs, quarantine) that never reach `public/`.
 
 ## Where to Add New Code
 
 **New project entry (most common addition):**
 - Add to `src/data/projects.ts`, under (or creating) the matching `// --- CATEGORY ---` comment block.
-- If it needs bespoke detail-page content beyond the generic description/tools/media block, add a new `{project.id === "new-id" && (...)}` branch in `src/routes/projects/$projectId.tsx` — consistent with the existing (if debt-laden) pattern; do not introduce a different content mechanism without an explicit phase for that refactor.
+- Reference its imagery via `thumbnail`/`media` fields typed as `MediaId` — these must already exist as keys in `src/data/media.generated.ts`. To add new media, add entries to `media-src/manifest.json` first and run `npm run media` (hand-run only; do not add this to `check`/`build`/`deploy`) before referencing the new `MediaId` from `projects.ts` — do not hand-write files into `public/media/`.
+- If it needs bespoke detail-page content beyond the generic description/tools/media block, add a new `{project.id === "new-id" && (...)}` branch in `src/routes/projects/$projectId.tsx`, rendering imagery through `<Picture id={...} alt={...} sizes={...} />` — consistent with the existing (if debt-laden) pattern; do not introduce a different content or image-rendering mechanism without an explicit phase for that refactor.
 - Do not create a new route file for it — the dynamic `$projectId` route already handles all project detail pages, and this milestone's invariant forbids adding/removing/renaming files under `src/routes/`.
 
 **New shared UI behavior:**
-- Add alongside `src/components/Reveal.tsx` in `src/components/` — this is the only place for reusable presentational components in the current tree.
+- Add alongside `src/components/Reveal.tsx`/`src/components/Picture.tsx` in `src/components/` — this is the only place for reusable presentational components in the current tree. Follow `Picture.tsx`'s hook-free pattern if the new component's output can be fully determined by its props (keeps SSR output final at hydration).
+
+**New media asset (image, video, PDF page):**
+- Add the source master under `media-src/<project-or-category>/` (gitignored) and a corresponding entry in `media-src/manifest.json` (`images[]`, `videos[]`, or `pdf[].pages[]`); assign it a `<project>/<name>` id (or let it derive from the source filename).
+- Run `npm run media` locally (needs `sharp`, `ffmpeg`/`ffprobe`, and `gs` for PDF entries) to encode it into `public/media/**` (or `public/animate/videos/` for `process`-class clips) and regenerate `src/data/media.generated.ts`.
+- Run `npm run verify-media` to confirm the new output meets size/encoding/chroma rules before committing.
+- Reference the new id as a `MediaId` from `src/data/projects.ts` (or a gallery in the manifest's `galleries` map, then `galleries["<key>"]` from `projects.ts`).
 
 **New section on the home page:**
 - Add as a new inline component function inside `src/routes/index.tsx`, following the existing pattern (`Nav`, `Hero`, `About`, `Projects`, `Contact`), and render it from `Index` (`src/routes/index.tsx:421-431`).
 
+**Video-serving/edge-caching changes:**
+- Modify `src/server.ts` (the `VIDEO`/`WORKER_FIRST` regexes, `serveVideo()`, `sliceRange()`, cache headers). Keep `wrangler.jsonc`'s `assets.run_worker_first` glob list in sync with any new path prefix the Worker needs to intercept — a path added to the Worker's regex without a matching `run_worker_first` entry (or vice versa) will silently never be exercised.
+
 **Asset/tooling changes:**
-- Size/encoding rule changes: `scripts/check-assets.mjs` (`RULES`, `HARD`/`FAIL`/`WARN` thresholds, `FORBIDDEN` extensions).
-- New waivers for known-oversized legacy media: `scripts/check-assets.exceptions.json` (each entry needs `path`, `waive: [...]`, `reason`).
+- Size/encoding rule changes for the built site: `scripts/check-assets.mjs` (`RULES`, `HARD`/`FAIL`/`WARN`/`BUDGET`/`VIDEO_MAX` thresholds, `FORBIDDEN` extensions).
+- New waivers for legacy oversized/non-faststart media: `scripts/check-assets.exceptions.json` (each entry needs `path`, `waive: [...]`, `reason`) — currently empty; only `size`, `faststart`, `pix_fmt` are waivable rules.
 - Reference-audit changes: `scripts/inventory-assets.mjs` (note it explicitly excludes `public/animate/` from its scan by design).
+- Media pipeline changes (encoder settings, presets, output naming, manifest schema): `scripts/media.mjs` (orchestration/validation/codegen) and `scripts/media/{images,video,pdf}.mjs` (per-type encoder args) — bump `PIPELINE_VERSION` in `media.mjs` for logic changes the encoder-argument fingerprint cannot see on its own.
 
 **Styling/theme tokens:**
 - Add new CSS custom properties or component classes to `src/styles.css`, reusing existing tokens (`var(--plum)`, `var(--cream)`, `var(--sakura)`, `var(--gold)`) rather than introducing new raw hex colors.
@@ -158,10 +229,15 @@ portfolio/
 - Generated: Yes (by the `@tanstack/router-plugin` Vite plugin, part of `@lovable.dev/vite-tanstack-config`).
 - Committed: Yes (tracked in git, but excluded from Prettier via `.prettierignore` and marked `/* eslint-disable */`/`// @ts-nocheck` at the top of the file).
 
+**`src/data/media.generated.ts`:**
+- Purpose: Typed media asset manifest (`MediaId`, `images`, `videos`, `galleries`) consumed by `Picture.tsx` and `projects.ts`.
+- Generated: Yes, by `scripts/media.mjs` (`npm run media`, hand-run) — rewritten wholesale on every successful run, left untouched after a failed run.
+- Committed: Yes (tracked in git; excluded from Prettier via `.prettierignore` and marked `/* eslint-disable */` with a "DO NOT EDIT" header comment). Never hand-edit — round-trip any change through `media-src/manifest.json` + `npm run media`.
+
 **`public/animate/`:**
 - Purpose: Vendored Adobe Animate (CreateJS) interactive export, embedded via `<iframe>` in the `sae-2` project's detail-page branch.
-- Generated: Yes, but by an external Adobe Animate export process, not by this repo's build — treat as a black box.
-- Committed: Yes (90M total), but excluded from `scripts/inventory-assets.mjs`'s reference scan and out of scope for deep exploration per this milestone's directives.
+- Generated: Mixed — the HTML/JS/images/components sub-tree is generated by an external Adobe Animate export process, not by this repo's build (treat as a black box); `animate/videos/*.mp4` (8 files) is generated by `scripts/media.mjs` from `media-src/` masters and is first-class managed media.
+- Committed: Yes (~20M total). The HTML/JS/image sub-tree is excluded from `scripts/inventory-assets.mjs`'s reference scan and out of scope for deep exploration per this milestone's directives; `animate/videos/*.mp4` is in scope for `scripts/check-assets.mjs`/`scripts/verify-media.mjs`'s size/encoding rules like any other first-party video.
 
 **`dist/`:**
 - Purpose: Vite build output (`dist/client`, `dist/server`), consumed by `wrangler deploy` and `scripts/check-assets.mjs`.
@@ -169,8 +245,8 @@ portfolio/
 - Committed: No (gitignored).
 
 **`media-src/`:**
-- Purpose: Pre-optimization working copies / backups / quarantine for media assets.
-- Generated: No.
+- Purpose: Pre-optimization working copies / backups / quarantine for media assets, plus the pipeline's hand-written `manifest.json` input and machine-written `.cache.json` encode cache.
+- Generated: `.cache.json` only; everything else (including `manifest.json`) is manually populated/authored.
 - Committed: No (gitignored, explicitly called out with a comment in `.gitignore`: "Working originals, backups and quarantine — never committed, never deployed").
 
 **`.wrangler/`:**
@@ -180,4 +256,4 @@ portfolio/
 
 ---
 
-*Structure analysis: 2026-09-27*
+*Structure analysis: 2026-09-28*
