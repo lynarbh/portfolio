@@ -31,6 +31,9 @@ const WARN = 10 * MiB;
 const BUDGET = 60 * MiB; // whole dist/client, never waivable
 const VIDEO_MAX = 12_000_000; // bytes per .mp4, never waivable
 const FORBIDDEN = new Set([".fla", ".ai", ".tmp", ".pdf", ".psd", ".xd", ".aep", ".prproj"]);
+// The only PDF allowed to ship: the downloadable CV, under a hard byte cap. Not waivable, not extensible
+// through the exceptions file (brand-guide PDFs and other sources stay in media-src/).
+const PDF_ALLOWLIST = new Map([["media/cv-lyna-rebahi.pdf", 3_000_000]]);
 const STRICT = process.argv.includes("--strict") || process.env.CHECK_ASSETS_STRICT === "1";
 
 if (!existsSync(DIST)) {
@@ -214,7 +217,11 @@ for (const abs of walk(DIST)) {
   const mib = (size / MiB).toFixed(2);
   const ext = extname(rel).toLowerCase();
 
-  if (FORBIDDEN.has(ext)) errors.push(`forbidden source file: ${rel}`);
+  if (FORBIDDEN.has(ext)) {
+    const cap = PDF_ALLOWLIST.get(rel);
+    if (cap === undefined) errors.push(`forbidden source file: ${rel}`);
+    else if (size > cap) errors.push(`${rel} ${size} B > ${cap} B CV PDF cap (not waivable)`);
+  }
 
   if (size > HARD) errors.push(`${rel} ${mib} MiB > 25 MiB (Cloudflare hard limit, not waivable)`);
   else if (size > FAIL) report(rel, "size", `${rel} ${mib} MiB > 20 MiB`);

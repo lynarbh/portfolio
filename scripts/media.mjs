@@ -577,6 +577,8 @@ function renderGenerated() {
 if (errors.length === 0) writeFileSync(GENERATED, renderGenerated());
 else warns.push("src/data/media.generated.ts not rewritten (the run had failures)");
 
+// Files under public/media that are copied by hand (master in media-src/), not produced here.
+const STATIC_EXTRAS = new Set(["public/media/cv-lyna-rebahi.pdf"]);
 // f) Report: orphans under public/media (never deleted), public/ budget.
 const walk = (dir) =>
   readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
@@ -586,7 +588,9 @@ const mediaDir = join(PUBLIC, "media");
 if (existsSync(mediaDir)) {
   for (const abs of walk(mediaDir).sort(byKey)) {
     const rel = toRootRel(abs);
-    if (!produced.has(rel) && !abs.endsWith(".DS_Store")) warns.push(`orphan ${rel}`);
+    if (!produced.has(rel) && !abs.endsWith(".DS_Store") && !STATIC_EXTRAS.has(rel)) {
+      warns.push(`orphan ${rel}`);
+    }
   }
 }
 const publicMiB = walk(PUBLIC).reduce((sum, f) => sum + statSync(f).size, 0) / MiB;

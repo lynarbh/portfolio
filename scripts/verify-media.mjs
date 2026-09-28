@@ -287,13 +287,16 @@ if (tafsut.length < TAFSUT_MIN) {
   fail(`gallery festival-identite: ${tafsut.length} plates < ${TAFSUT_MIN}`);
 }
 
-// No PDF may ever be published.
+// No PDF may ever be published, except the downloadable CV (also capped by check-assets).
+const PDF_ALLOWLIST = new Set([join(PUBLIC, "media", "cv-lyna-rebahi.pdf")]);
 const walk = (dir) =>
   readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
     e.isDirectory() ? walk(join(dir, e.name)) : [join(dir, e.name)],
   );
 for (const file of walk(PUBLIC)) {
-  if (file.toLowerCase().endsWith(".pdf")) fail(`PDF under public/: ${file}`);
+  if (file.toLowerCase().endsWith(".pdf") && !PDF_ALLOWLIST.has(file)) {
+    fail(`PDF under public/: ${file}`);
+  }
 }
 
 // Every /media/... literal of the generated module must exist on disk.
