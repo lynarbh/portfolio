@@ -1,7 +1,8 @@
 ---
 phase: 3
 slug: hero-qui-suis-je-en-sc-ne
-status: draft
+status: approved
+reviewed_at: 2026-09-28
 shadcn_initialized: false
 preset: none
 created: 2026-09-28
