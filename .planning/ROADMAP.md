@@ -99,7 +99,7 @@ Plans:
 
 **Wave 6** *(blocked on Wave 5 completion)*
 
-- [ ] 02-06-PLAN.md — Vidéo CV (CRF 29) + 8 vidéos process en 720p (point de contrôle Lyna sur empattage avant le lot), exceptions vidées, `public/` < 60 Mio
+- [x] 02-06-PLAN.md — Vidéo CV (CRF 29) + 8 vidéos process en 720p (point de contrôle Lyna sur empattage avant le lot), exceptions vidées, `public/` < 60 Mio
 
 **Wave 7** *(blocked on Wave 6 completion)*
 
@@ -188,7 +188,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Nettoyage & filet de sécurité | 4/4 | Complete    | 2026-09-27 |
-| 2. Médias légers & hero qui joue partout | 5/7 | In Progress|  |
+| 2. Médias légers & hero qui joue partout | 6/7 | In Progress|  |
 | 3. Hero & Qui suis-je en scène | 0/TBD | Not started | - |
 | 4. Projets mis en scène | 0/TBD | Not started | - |
 | 5. Contact, candidature & QA mobile réelle | 0/TBD | Not started | - |

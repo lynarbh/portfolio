@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: "02-06 Task 2 checkpoint (empattage 720p, awaiting Lyna)"
-last_updated: "2026-09-28T00:18:36.414Z"
+stopped_at: Completed 02-06-PLAN.md
+last_updated: "2026-09-28T00:39:06.124Z"
 last_activity: 2026-09-28
 progress:
   total_phases: 5
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-09-21)
 ## Current Position
 
 Phase: 2 (Médias légers & hero qui joue partout) — EXECUTING
-Plan: 6 of 7
+Plan: 7 of 7
 Status: Ready to execute
 Last activity: 2026-09-28
 
-Progress: [████████░░] 82%
+Progress: [█████████░] 91%
 
 ## Performance Metrics
 
@@ -61,6 +61,7 @@ Progress: [████████░░] 82%
 | Phase 02 P03 | 8 min | 2 tasks | 44 files |
 | Phase 02 P04 | 9 min | 3 tasks | 339 files |
 | Phase 02 P05 | 12 min | 2 tasks | 45 files |
+| Phase 2 P06 | session | 3 tasks | 17 files |
 
 ## Accumulated Context
 
@@ -91,6 +92,8 @@ Recent decisions affecting current work:
 - [Phase 02]: 02-04: $projectId.tsx non passé à prettier (déjà non conforme au HEAD), diff limité aux lignes migrées
 - [Phase 02]: 02-04: « 0 /assets/ dans le HTML » vaut pour les images ; seuls restent les bundles Vite /assets/*.js|css
 - [Phase 02]: 02-05: PIPELINE_VERSION 3 ; pages PDF = entrées image (gs -dSAFER 300 dpi, une page par appel), galleries dans l'ordre du manifeste
+- [Phase 02]: 02-06: Lyna a validé le 720p CRF 30 sur empattage (approved) ; les 8 clips process sont au même réglage, public/ à 55,9 Mio
+- [Phase 02]: 02-06: le budget de 60 Mio se mesure en octets (media, check-assets, du -A) ; du -sm compte la préallocation APFS des MP4 fraîchement écrits
 
 ### Pending Todos
 
@@ -118,6 +121,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-09-28T00:18:36.408Z
-Stopped at: 02-06 Task 2 checkpoint (empattage 720p, awaiting Lyna)
-Resume file: .planning/phases/02-m-dias-l-gers-hero-qui-joue-partout/02-06-SUMMARY.md
+Last session: 2026-09-28T00:38:59.432Z
+Stopped at: Completed 02-06-PLAN.md
+Resume file: None
