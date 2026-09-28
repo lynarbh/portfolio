@@ -126,7 +126,7 @@ function ScreenChrome({
         <span className="hud-corner hud-corner--tc">
           BUT MMI · Communication digitale
           <br />
-          Instagram : @lynae.quiet
+          Instagram : @lynae.ty
         </span>
         <span className="hud-corner hud-corner--tr">
           <b>Dites bonjour</b>
@@ -570,7 +570,7 @@ function Contact() {
                 LinkedIn ↗
               </a>
               <a
-                href="https://www.instagram.com/lynae.quiet/"
+                href="https://www.instagram.com/lynae.ty/"
                 className="link-line"
                 target="_blank"
                 rel="noopener"
