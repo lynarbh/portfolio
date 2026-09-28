@@ -37,6 +37,7 @@ Un recruteur qui ouvre le site comprend en 3 secondes que Lyna vit l'audiovisuel
 - ✓ Worker Cloudflare `src/server.ts` : réponses 206 aux requêtes Range (Cache API + repli manuel), sans quoi Safari/iOS ne lisent aucune vidéo (la prod d'origine répondait 200) — Phase 2
 - ✓ Page « Identité d'un festival » terminée avec 10 planches Tafsut ; PDF hors de `public/` — Phase 2
 - ✓ `public/` = 55,4 Mio (< 60) ; production `lynarebahi.fr` redéployée (version `9b787c88`), test sur appareil réel en attente (`02-HUMAN-UAT.md`) — Phase 2
+- ✓ Section « Parcours » (hors roadmap, demande de Lyna du 2026-09-28) : frise chronologique animée des formations, expériences et engagements (source : CV 2025), CV PDF consultable et téléchargeable avec aperçu de la page 1 ; rendu statique sous `prefers-reduced-motion` — Livré et déployé le 2026-09-28
 - ✓ Garde-fou de poids en continu : `npm run check` = `tsc --noEmit && vite build && node scripts/check-assets.mjs && wrangler deploy --dry-run` ; échoue sur un fichier > 20 Mio, une vidéo non `yuv420p` ou sans faststart, une extension interdite ; `npm run deploy` passe par `check` ; 3 exceptions héritées listées dans `scripts/check-assets.exceptions.json` que la phase 2 doit vider — Phase 1
 
 ### Active
