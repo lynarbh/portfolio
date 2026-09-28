@@ -70,6 +70,9 @@ const withAudioArgs = (src, out, crf, { vf, maxrate, bufsize, audio }) => [
   maxrate,
   "-bufsize",
   bufsize,
+  // VBV + x264 frame threads is not deterministic: single thread keeps runs byte-identical.
+  "-threads:v",
+  "1",
   "-profile:v",
   "high",
   "-pix_fmt",
