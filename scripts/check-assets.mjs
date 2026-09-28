@@ -1,5 +1,7 @@
 // Asset guard: run after `vite build`. Fails on oversize files, forbidden source files,
 // non-yuv420p videos and non-faststart MP4s in dist/client (what Cloudflare will serve).
+// The whole dist/client must also stay under a 60 MiB total budget (real byte sizes of the
+// files Cloudflare uploads); this rule is never waivable.
 //
 // Requires ffprobe (FFmpeg) on PATH for the pix_fmt rule. Without it, the rule is skipped
 // with a WARN by default. Strict mode turns "ffprobe not found" into a failure; use it on
@@ -25,6 +27,7 @@ const MiB = 1024 * 1024;
 const HARD = 25 * MiB; // Cloudflare per-asset limit, never waivable
 const FAIL = 20 * MiB; // waivable with rule "size"
 const WARN = 10 * MiB;
+const BUDGET = 60 * MiB; // whole dist/client, never waivable
 const FORBIDDEN = new Set([".fla", ".ai", ".tmp", ".pdf", ".psd", ".xd", ".aep", ".prproj"]);
 const STRICT = process.argv.includes("--strict") || process.env.CHECK_ASSETS_STRICT === "1";
 
@@ -36,8 +39,8 @@ if (!existsSync(DIST)) {
 const errors = [];
 const warns = [];
 
-// Rules an exception may waive. The 25 MiB ceiling, forbidden extensions and ffprobe
-// failures are deliberately absent: they can never be waived.
+// Rules an exception may waive. The 25 MiB ceiling, the 60 MiB total budget, forbidden
+// extensions and ffprobe failures are deliberately absent: they can never be waived.
 const RULES = new Set(["size", "faststart", "pix_fmt"]);
 
 function loadExceptions() {
@@ -226,6 +229,10 @@ for (const abs of walk(DIST)) {
     else if (pf.error) errors.push(`${rel} ffprobe failed: ${pf.error}`);
     else if (pf.pixFmt !== "yuv420p") report(rel, "pix_fmt", `${rel} pix_fmt=${pf.pixFmt}`);
   }
+}
+
+if (total > BUDGET) {
+  errors.push(`dist/client ${(total / MiB).toFixed(1)} MiB > 60 MiB total budget (not waivable)`);
 }
 
 for (const e of exceptions) {
