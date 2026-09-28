@@ -291,6 +291,22 @@ export const images = {
     ],
     fallback: "/media/clip/clip9.jpg",
   },
+  "clip/image-youtube": {
+    preset: "photo",
+    width: 1280,
+    height: 720,
+    avif: [
+      [640, "/media/clip/image-youtube-640.avif"],
+      [1200, "/media/clip/image-youtube-1200.avif"],
+      [1280, "/media/clip/image-youtube-1280.avif"],
+    ],
+    webp: [
+      [640, "/media/clip/image-youtube-640.webp"],
+      [1200, "/media/clip/image-youtube-1200.webp"],
+      [1280, "/media/clip/image-youtube-1280.webp"],
+    ],
+    fallback: "/media/clip/image-youtube.jpg",
+  },
   "cv/apercu": {
     preset: "graphic",
     width: 1697,
@@ -795,81 +811,21 @@ export const images = {
     ],
     fallback: "/media/sae-2/skollrub-logo-final.png",
   },
-  "thumbnails/portfolio-thumbnail-01-branding": {
+  "stop-motion/image-youtube": {
     preset: "photo",
-    width: 896,
-    height: 1200,
+    width: 1280,
+    height: 720,
     avif: [
-      [478, "/media/thumbnails/portfolio-thumbnail-01-branding-640.avif"],
-      [896, "/media/thumbnails/portfolio-thumbnail-01-branding-1200.avif"],
+      [640, "/media/stop-motion/image-youtube-640.avif"],
+      [1200, "/media/stop-motion/image-youtube-1200.avif"],
+      [1280, "/media/stop-motion/image-youtube-1280.avif"],
     ],
     webp: [
-      [478, "/media/thumbnails/portfolio-thumbnail-01-branding-640.webp"],
-      [896, "/media/thumbnails/portfolio-thumbnail-01-branding-1200.webp"],
+      [640, "/media/stop-motion/image-youtube-640.webp"],
+      [1200, "/media/stop-motion/image-youtube-1200.webp"],
+      [1280, "/media/stop-motion/image-youtube-1280.webp"],
     ],
-    fallback: "/media/thumbnails/portfolio-thumbnail-01-branding.jpg",
-  },
-  "thumbnails/portfolio-thumbnail-02-flyers": {
-    preset: "photo",
-    width: 1024,
-    height: 1024,
-    avif: [
-      [640, "/media/thumbnails/portfolio-thumbnail-02-flyers-640.avif"],
-      [1024, "/media/thumbnails/portfolio-thumbnail-02-flyers-1024.avif"],
-    ],
-    webp: [
-      [640, "/media/thumbnails/portfolio-thumbnail-02-flyers-640.webp"],
-      [1024, "/media/thumbnails/portfolio-thumbnail-02-flyers-1024.webp"],
-    ],
-    fallback: "/media/thumbnails/portfolio-thumbnail-02-flyers.jpg",
-  },
-  "thumbnails/portfolio-thumbnail-03-web": {
-    preset: "photo",
-    width: 1024,
-    height: 1024,
-    avif: [
-      [640, "/media/thumbnails/portfolio-thumbnail-03-web-640.avif"],
-      [1024, "/media/thumbnails/portfolio-thumbnail-03-web-1024.avif"],
-    ],
-    webp: [
-      [640, "/media/thumbnails/portfolio-thumbnail-03-web-640.webp"],
-      [1024, "/media/thumbnails/portfolio-thumbnail-03-web-1024.webp"],
-    ],
-    fallback: "/media/thumbnails/portfolio-thumbnail-03-web.jpg",
-  },
-  "thumbnails/portfolio-thumbnail-04-video": {
-    preset: "photo",
-    width: 1024,
-    height: 1024,
-    avif: [
-      [640, "/media/thumbnails/portfolio-thumbnail-04-video-640.avif"],
-      [1024, "/media/thumbnails/portfolio-thumbnail-04-video-1024.avif"],
-    ],
-    webp: [
-      [640, "/media/thumbnails/portfolio-thumbnail-04-video-640.webp"],
-      [1024, "/media/thumbnails/portfolio-thumbnail-04-video-1024.webp"],
-    ],
-    fallback: "/media/thumbnails/portfolio-thumbnail-04-video.jpg",
-  },
-  "thumbnails/sae1": {
-    preset: "graphic",
-    width: 951,
-    height: 1200,
-    avif: [
-      [507, "/media/thumbnails/sae1-640.avif"],
-      [951, "/media/thumbnails/sae1-1200.avif"],
-    ],
-    fallback: "/media/thumbnails/sae1.png",
-  },
-  "thumbnails/sae2": {
-    preset: "graphic",
-    width: 948,
-    height: 1200,
-    avif: [
-      [505, "/media/thumbnails/sae2-640.avif"],
-      [948, "/media/thumbnails/sae2-1200.avif"],
-    ],
-    fallback: "/media/thumbnails/sae2.png",
+    fallback: "/media/stop-motion/image-youtube.jpg",
   },
 } as const satisfies Record<string, ImageEntry>;
 

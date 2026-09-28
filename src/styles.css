@@ -728,61 +728,58 @@ html.cur-down .cur-ring { scale: 0.8; }
 }
 .cv-card:hover::after { opacity: 1; }
 
-/* ===== Projets : inclinaison 3D, cartes ===== */
-.tilt {
-  transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transform-style: preserve-3d;
-  transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1); will-change: transform;
+/* ===== Projets : cartes carrées épurées, mosaïque des vraies images, défilement au survol ===== */
+.pc { display: block; color: var(--encre); }
+.pc-media {
+  position: relative; display: grid; gap: 3px; aspect-ratio: 1; overflow: hidden; border-radius: 6px;
+  background: color-mix(in oklab, var(--encre) 8%, var(--cream));
+  clip-path: inset(0 0 100% 0); transition: clip-path 0.9s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.5s ease;
 }
-.tilt:hover { transition: transform 0.12s ease-out; }
-.quest-card {
-  position: relative; display: block; overflow: hidden; border-radius: 18px; background: var(--card);
-  border: 1px solid color-mix(in oklab, var(--encre) 10%, transparent);
-  box-shadow: 0 20px 50px -30px color-mix(in oklab, var(--encre) 40%, transparent);
-  transition: box-shadow 0.5s ease, border-color 0.5s ease;
+.reveal.in .pc-media { clip-path: inset(0); }
+.pc:hover .pc-media, .pc:focus-visible .pc-media { transform: translateY(-4px); box-shadow: 0 30px 60px -30px color-mix(in oklab, var(--rouge) 55%, transparent); }
+.pc-mosaic--1 { grid-template-columns: 1fr; }
+.pc-mosaic--2 { grid-template-columns: 1fr 1fr; }
+.pc-mosaic--3 { grid-template-columns: 2fr 1fr; grid-template-rows: 1fr 1fr; }
+.pc-mosaic--3 .pc-tile:first-child { grid-row: 1 / 3; }
+.pc-tile { position: relative; overflow: hidden; background: color-mix(in oklab, var(--encre) 6%, var(--cream)); }
+.pc-tile picture { display: contents; }
+.pc-img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.08);
+  transition: opacity 0.6s ease, transform 1.4s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
-.quest-card:hover {
-  box-shadow: 0 40px 80px -30px color-mix(in oklab, var(--rouge) 55%, transparent);
-  border-color: color-mix(in oklab, var(--rouge) 50%, transparent);
+.pc-img.is-on { opacity: 1; transform: scale(1); }
+.pc:hover .pc-img.is-on { transform: scale(1.04); }
+.pc-count {
+  position: absolute; top: 10px; right: 10px; z-index: 2; padding: 0.42rem 0.65rem; border-radius: 999px;
+  font-family: var(--font-body); font-weight: 600; font-size: 0.58rem; letter-spacing: 0.18em; text-transform: uppercase; line-height: 1;
+  color: var(--cream); background: rgba(14, 8, 12, 0.55); backdrop-filter: blur(6px);
+  opacity: 0; transform: translateY(-4px); transition: opacity 0.35s ease, transform 0.35s ease;
 }
-.quest-card::before {
-  content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none; opacity: 0; transition: opacity 0.4s ease;
-  background: radial-gradient(circle at var(--gx, 50%) var(--gy, 50%), rgba(255, 255, 255, 0.26), transparent 42%);
+.pc:hover .pc-count, .pc:focus-visible .pc-count { opacity: 1; transform: none; }
+.pc-play {
+  position: absolute; left: 50%; top: 50%; z-index: 2; display: grid; place-items: center; width: 3.4rem; height: 3.4rem; border-radius: 50%;
+  transform: translate(-50%, -50%); background: var(--rouge); color: var(--cream); box-shadow: 0 10px 30px -10px rgba(14, 8, 12, 0.6);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-.quest-card:hover::before { opacity: 1; }
-.quest-card::after {
-  content: ""; position: absolute; top: 0; left: 0; z-index: 4; height: 4px; width: 0;
-  background: repeating-linear-gradient(135deg, var(--rouge) 0 8px, var(--cream) 8px 16px);
-  transition: width 0.45s ease;
+.pc-play svg { width: 1.3rem; height: 1.3rem; margin-left: 2px; }
+.pc:hover .pc-play { transform: translate(-50%, -50%) scale(1.12); }
+.pc-meta {
+  display: flex; align-items: baseline; gap: 0.8rem; margin-top: 1rem; padding-top: 0.85rem;
+  border-top: 1px solid color-mix(in oklab, var(--encre) 16%, transparent);
 }
-.quest-card:hover::after { width: 100%; }
-.qc-media { position: relative; overflow: hidden; }
-.qc-media img { transition: transform 1s cubic-bezier(0.2, 0.7, 0.2, 1), filter 1s ease; }
-.quest-card:hover .qc-media img { transform: scale(1.08); filter: saturate(1.2); }
-.qc-cat { position: absolute; top: 12px; left: 12px; z-index: 2; }
-.qc-index {
-  position: absolute; top: 6px; right: 14px; z-index: 2; font-family: var(--font-cine); font-style: italic; font-size: 3.2rem; line-height: 1;
-  color: transparent; -webkit-text-stroke: 1px var(--cream); opacity: 0.95; transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1), color 0.5s ease;
-}
-.quest-card:hover .qc-index { transform: translateY(-4px); color: var(--cream); }
-.quest-card .overlay {
-  position: absolute; inset: 0; z-index: 2;
-  background: linear-gradient(180deg, transparent 35%, color-mix(in oklab, var(--rouge) 82%, var(--encre)));
-  opacity: 0; transform: translateY(12%);
-  transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
-  display: flex; flex-direction: column; justify-content: flex-end;
-  padding: 1.25rem; color: var(--cream);
-}
-.quest-card:hover .overlay { opacity: 1; transform: none; }
-.qc-foot { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.95rem 1.1rem 1.05rem; }
-.qc-title { font-family: var(--font-cine); font-size: 1.55rem; line-height: 1.05; letter-spacing: 0; color: var(--encre); }
-.qc-arrow {
-  display: grid; place-items: center; flex: none; width: 2.2rem; height: 2.2rem; border-radius: 50%;
-  border: 1px solid color-mix(in oklab, var(--encre) 25%, transparent); color: var(--encre);
+.pc-index { font-family: var(--font-body); font-weight: 600; font-size: 0.62rem; letter-spacing: 0.2em; color: var(--rouge); font-variant-numeric: tabular-nums; }
+.pc-title { flex: 1; font-family: var(--font-cine); font-size: 1.5rem; line-height: 1.05; letter-spacing: 0; color: var(--encre); }
+.pc-title::after { content: ""; display: block; width: 0; height: 1.5px; margin-top: 0.25rem; background: var(--rouge); transition: width 0.45s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.pc:hover .pc-title::after, .pc:focus-visible .pc-title::after { width: 2.5rem; }
+.pc-arrow {
+  display: grid; place-items: center; flex: none; align-self: center; width: 2rem; height: 2rem; border-radius: 50%;
+  border: 1px solid color-mix(in oklab, var(--encre) 25%, transparent); color: var(--encre); font-size: 0.95rem;
   transition: background 0.35s ease, color 0.35s ease, transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), border-color 0.35s ease;
 }
-.quest-card:hover .qc-arrow { background: var(--rouge); border-color: var(--rouge); color: var(--cream); transform: rotate(-45deg); }
-.quest-card.is-soon { pointer-events: none; }
-.quest-card.is-soon .qc-media img { filter: saturate(0.6) contrast(0.9); }
+.pc:hover .pc-arrow, .pc:focus-visible .pc-arrow { background: var(--rouge); border-color: var(--rouge); color: var(--cream); transform: rotate(-45deg); }
+.pc-sub { margin-top: 0.4rem; font-family: var(--font-body); font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: color-mix(in oklab, var(--encre) 60%, transparent); }
+.pc.is-soon { pointer-events: none; }
+.pc.is-soon .pc-img { filter: saturate(0.6) contrast(0.9); }
 
 .stamp {
   display: inline-block; padding: 0.5rem 0.95rem; border-radius: 12px; text-align: center; line-height: 1.05;
@@ -854,12 +851,11 @@ html.cur-down .cur-ring { scale: 0.8; }
   .tl-line, .tl-dot { transform: none; transition: none; }
   .tl-dot--now::after, .film-grain, .rec-dot, .nav-pill__dot, .grid-switch, .vf-focus, .vf-ring, .monitor-play__btn, .marquee-track { animation: none; }
   .reveal.in .tool, .tool { animation: none; opacity: 1; }
-  .tl-card, .cv-card, .quest-btn, .quest-card, .tilt, .tool, .chip, .qc-media img, .vf-media img { transition: none; }
+  .tl-card, .cv-card, .quest-btn, .pc-media, .pc-img, .tool, .chip, .vf-media img { transition: none; }
   .tl-card:hover, .cv-card:hover, .cv-card:focus-visible, .quest-btn:hover, .tool:hover { transform: none; }
-  .tilt { transform: none; }
+  .pc-media { clip-path: none; }
   .marquee-track { width: 100%; white-space: normal; flex-wrap: wrap; }
   .marquee-row[aria-hidden="true"] { display: none; }
   .vf-media, .marquee-band { animation: none; translate: none; transform: none; }
   ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
-  .quest-card::after { transition: none; }
 }

@@ -7,8 +7,8 @@ import { Timeline } from "@/components/Timeline";
 import { SplitText } from "@/components/SplitText";
 import { Marquee } from "@/components/Marquee";
 import { Magnetic } from "@/components/Magnetic";
-import { Tilt } from "@/components/Tilt";
 import { Tools } from "@/components/Tools";
+import { ProjectCard } from "@/components/ProjectCard";
 import { Viewfinder } from "@/components/Viewfinder";
 import { languages, CV_PDF, CV_PDF_LABEL } from "@/data/timeline";
 import { videos } from "@/data/media.generated";
@@ -442,52 +442,6 @@ function Parcours() {
   );
 }
 
-function ProjectCard({ p, index }: { p: Project; index: number }) {
-  return (
-    <Tilt className="h-full">
-      <Link
-        to="/projects/$projectId"
-        params={{ projectId: p.id }}
-        className={`quest-card group ${p.inProgress ? "is-soon" : ""}`}
-        aria-label={`Voir le projet ${p.title}`}
-        data-cursor={p.inProgress ? "Bientôt" : "Voir"}
-      >
-        <div className="qc-media aspect-[4/5]">
-          <Picture
-            id={p.thumbnail}
-            alt={p.title}
-            sizes="(min-width: 1280px) 395px, (min-width: 1024px) 31vw, (min-width: 640px) 46vw, calc(100vw - 48px)"
-            className="h-full w-full object-cover"
-          />
-          <span className="hud-tag qc-cat">{p.category}</span>
-          <span className="qc-index" aria-hidden="true">
-            {String(index + 1).padStart(2, "0")}
-          </span>
-          {p.inProgress && (
-            <span className="stamp stamp--card">
-              En cours
-              <br />
-              de dev
-            </span>
-          )}
-          <div className="overlay">
-            <p className="text-sm leading-snug text-[var(--cream)]/90">{p.shortDescription}</p>
-            <span className="mt-3 inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-[var(--cream)]">
-              Voir le projet &rarr;
-            </span>
-          </div>
-        </div>
-        <div className="qc-foot">
-          <h3 className="qc-title">{p.title}</h3>
-          <span className="qc-arrow" aria-hidden="true">
-            →
-          </span>
-        </div>
-      </Link>
-    </Tilt>
-  );
-}
-
 function Projects() {
   const [filter, setFilter] = useState<Category>("Tout");
   const filtered = useMemo(
@@ -531,7 +485,10 @@ function Projects() {
           </div>
         </Reveal>
 
-        <div key={filter} className="grid-switch mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div
+          key={filter}
+          className="grid-switch mt-12 grid gap-x-7 gap-y-14 sm:grid-cols-2 lg:grid-cols-3"
+        >
           {filtered.map((p, i) => (
             <Reveal key={p.id} delay={i * 80}>
               <ProjectCard p={p} index={projects.indexOf(p)} />
