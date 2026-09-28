@@ -64,7 +64,9 @@ function imageSsim(refPng, testPng) {
 }
 
 // entry: validated manifest entry { id: "<project>/<name>", preset, max?, alt? }.
-export async function encodeImage(entry, srcAbs, tmpDir) {
+// outRoot stands for public/: the pipeline passes a staging directory and moves the files
+// into public/ only once the whole entry succeeded.
+export async function encodeImage(entry, srcAbs, tmpDir, outRoot = PUBLIC) {
   const preset = PRESETS[entry.preset];
   if (!preset) throw new Error(`unknown preset: ${entry.preset}`);
   const [project, name] = entry.id.split("/");
@@ -79,7 +81,7 @@ export async function encodeImage(entry, srcAbs, tmpDir) {
   const top = Math.min(longEdge, entry.max ?? MAX_EDGE, MAX_EDGE);
   const targets = [...LADDER.filter((t) => t < top), top];
 
-  const outDir = join(PUBLIC, "media", project);
+  const outDir = join(outRoot, "media", project);
   mkdirSync(outDir, { recursive: true });
   const url = (file) => `/media/${project}/${file}`;
 

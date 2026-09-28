@@ -177,7 +177,9 @@ function probeSize(file) {
   return { width, height };
 }
 
-export async function encodeVideo(entry, srcAbs, outAbs, tmpDir) {
+// outRoot: where the poster path (entry.poster.out, relative to public/) is written. The
+// pipeline passes a staging directory and moves the files into public/ only on success.
+export async function encodeVideo(entry, srcAbs, outAbs, tmpDir, outRoot = PUBLIC) {
   if (entry.class === "cv" || entry.class === "process") {
     return encodeWithAudio(entry, srcAbs, outAbs, tmpDir);
   }
@@ -189,7 +191,7 @@ export async function encodeVideo(entry, srcAbs, outAbs, tmpDir) {
   // Poster = frame 0 of the SDR output, native width, no resize.
   const posterPng = join(tmpDir, `${entry.id}-poster.png`);
   run("ffmpeg", ["-v", "error", "-y", "-i", outAbs, "-frames:v", "1", "-update", "1", posterPng]);
-  const posterAbs = insideDir(PUBLIC, entry.poster.out);
+  const posterAbs = insideDir(outRoot, entry.poster.out);
   mkdirSync(dirname(posterAbs), { recursive: true });
   await sharp(posterPng).webp({ quality: entry.poster.quality, effort: 6 }).toFile(posterAbs);
 

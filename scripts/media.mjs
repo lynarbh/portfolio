@@ -4,6 +4,10 @@
 // Reads   media-src/manifest.json (hand-written).
 // Writes  public/media/**, public/animate/videos/*.mp4, src/data/media.generated.ts and
 //         media-src/.cache.json. Scratch files go to media-src/.tmp/ (removed at exit).
+//         Each entry is encoded into media-src/.tmp/stage/ and moved into public/ only once
+//         all its outputs, SSIM and probes succeeded: a failed or interrupted encode never
+//         leaves a truncated file where the site serves it. After any failure the failed
+//         entries are dropped from the cache and media.generated.ts is left untouched.
 // Needs   sharp, ffmpeg and ffprobe (plus gs once the manifest has pdf entries).
 // Output is deterministic: same masters + same manifest = byte-identical files.
 //
@@ -16,15 +20,17 @@
 //
 // Exit codes: 2 = environment or configuration, 1 = an entry failed, 0 = OK.
 import {
+  copyFileSync,
   existsSync,
   mkdirSync,
   readFileSync,
   readdirSync,
+  renameSync,
   rmSync,
   statSync,
   writeFileSync,
 } from "node:fs";
-import { join, relative, resolve } from "node:path";
+import { dirname, join, relative, resolve } from "node:path";
 import {
   GENERATED,
   MEDIA_SRC,
@@ -49,6 +55,7 @@ const IMAGE_SSIM_WARN = { photo: 0.93, graphic: 0.96 };
 const OUT_PREFIXES = ["media/", "animate/videos/"];
 const CACHE_FILE = join(MEDIA_SRC, ".cache.json");
 const TMP_DIR = join(MEDIA_SRC, ".tmp");
+const STAGE_DIR = join(TMP_DIR, "stage");
 
 const argv = process.argv.slice(2);
 const FORCE = argv.includes("--force");
@@ -309,16 +316,45 @@ const videoOptions = (v) => ({ class: v.class, out: v.out, crf: v.crf, poster: v
 const imageOptions = (img) => ({ id: img.id, preset: img.preset, max: img.max, alt: img.alt });
 const pageOptions = (pg) => ({ ...imageOptions(pg), page: pg.page, dpi: pg.dpi });
 
+// rename() within one volume; copy + delete when public/ sits on another one.
+function moveFile(from, to) {
+  mkdirSync(dirname(to), { recursive: true });
+  try {
+    renameSync(from, to);
+  } catch (err) {
+    if (err.code !== "EXDEV") throw err;
+    copyFileSync(from, to);
+    rmSync(from);
+  }
+}
+
 // Encodes (or reuses the cache for) one entry, records its outputs as produced.
+// encode(stage) writes under `stage` (a stand-in for public/) and returns absolute paths
+// there; they are moved into public/ only after encode() resolved. On failure the entry is
+// dropped from the cache, so no stale meta is written back or emitted.
 async function processEntry(id, key, encode) {
   let status = "cached";
   if (FORCE || !cacheHit(id, key)) {
-    const { outputs, meta } = await encode();
-    cache[id] = {
-      key,
-      outputs: outputs.map((abs) => ({ path: toRootRel(abs), sha256: sha256File(abs) })),
-      meta,
-    };
+    const stage = join(STAGE_DIR, id);
+    rmSync(stage, { recursive: true, force: true });
+    try {
+      const { outputs, meta } = await encode(stage);
+      const finals = outputs.map((abs) => {
+        const to = join(PUBLIC, relative(stage, abs));
+        moveFile(abs, to);
+        return to;
+      });
+      cache[id] = {
+        key,
+        outputs: finals.map((abs) => ({ path: toRootRel(abs), sha256: sha256File(abs) })),
+        meta,
+      };
+    } catch (err) {
+      delete cache[id];
+      throw err;
+    } finally {
+      rmSync(stage, { recursive: true, force: true });
+    }
     status = "encoded";
   }
   for (const o of cache[id].outputs) produced.add(o.path);
@@ -342,8 +378,8 @@ try {
   for (const v of manifest.videos) {
     const key = sha256(sha256File(v.srcAbs) + JSON.stringify(videoOptions(v)) + PIPELINE_VERSION);
     try {
-      const { status, meta } = await processEntry(v.id, key, () =>
-        encodeVideo(v, v.srcAbs, v.outAbs, TMP_DIR),
+      const { status, meta } = await processEntry(v.id, key, (stage) =>
+        encodeVideo(v, v.srcAbs, insideDir(stage, v.out), TMP_DIR, stage),
       );
       const mib = (statSync(v.outAbs).size / MiB).toFixed(2);
       const low = meta.ssim < SSIM_WARN[v.class];
@@ -360,8 +396,8 @@ try {
       sha256File(img.srcAbs) + JSON.stringify(imageOptions(img)) + PIPELINE_VERSION,
     );
     try {
-      const { status, outputs, meta } = await processEntry(img.id, key, () =>
-        encodeImage(img, img.srcAbs, TMP_DIR),
+      const { status, outputs, meta } = await processEntry(img.id, key, (stage) =>
+        encodeImage(img, img.srcAbs, TMP_DIR, stage),
       );
       const kib = outputs.reduce((sum, o) => sum + statSync(join(ROOT, o.path)).size, 0) / 1024;
       const low = meta.ssim < IMAGE_SSIM_WARN[meta.preset];
@@ -383,11 +419,11 @@ try {
       pdfHashes.get(pg.pdfAbs) + JSON.stringify(pageOptions(pg)) + PIPELINE_VERSION,
     );
     try {
-      const { status, outputs, meta } = await processEntry(pg.id, key, async () => {
+      const { status, outputs, meta } = await processEntry(pg.id, key, async (stage) => {
         const png = join(TMP_DIR, `page-${String(pg.page).padStart(2, "0")}.png`);
         renderPdfPage(pg.pdfAbs, pg.page, pg.dpi, png);
         try {
-          return await encodeImage(pg, png, TMP_DIR);
+          return await encodeImage(pg, png, TMP_DIR, stage);
         } finally {
           rmSync(png, { force: true });
         }
@@ -499,7 +535,10 @@ function renderGenerated() {
     "",
   ].join("\n");
 }
-writeFileSync(GENERATED, renderGenerated());
+// After a failure the module is left as committed: it must never describe files that the
+// failed run did not produce.
+if (errors.length === 0) writeFileSync(GENERATED, renderGenerated());
+else warns.push("src/data/media.generated.ts not rewritten (the run had failures)");
 
 // f) Report: orphans under public/media (never deleted), public/ budget.
 const walk = (dir) =>
