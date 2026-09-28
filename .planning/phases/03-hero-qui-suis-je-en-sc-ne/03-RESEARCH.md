@@ -1003,7 +1003,7 @@ Baseline on production today (2026-09-28): `{"lang":"en","paused":true,"og":null
 | A7 | Texture-memory figures for a transform-based grain (≈ 18–44 MB at 390×844 @3×) | Alternatives | Only relevant if the locked approach is revisited |
 | A8 | « identité colorimétrique » is the intended word; the portrait sentence repair | Typos | Wording, to confirm with Lyna |
 
-## Open Questions
+## Open Questions (RESOLVED — 2026-09-28, see 03-CONTEXT.md « Décisions ajoutées après recherche » : 1 frames 16 s / 75 s → UAT ; 2 ≈ 5 Ko gzip acceptés ; 3 engines >=22.18 ; 4 phrases bannies des pages projet seulement signalées ; 5 disponibilité pré-remplie « septembre 2026 » (Lyna) ; 6 opacité 0,07 → UAT ; 7 texte About de Lyna gardé tel quel (Lyna))
 
 1. **Frame timestamps for og.jpg (16 s) and the CV poster (75 s)**
    - What we know: both are sharp and bright; the UI-SPEC defaults (2 s / 3 s) are worse for the CV (black bands).
