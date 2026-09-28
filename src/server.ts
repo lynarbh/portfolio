@@ -6,7 +6,8 @@ import { env } from "cloudflare:workers";
 // (wrangler.jsonc assets.run_worker_first) and are answered from the Cache API, whose
 // match() slices Range requests into 206 responses. The cache key drops the query string so
 // "?v=1" cannot create parallel entries (cache poisoning), and only 200 origin responses are
-// cached.
+// cached. The key carries the asset ETag: files re-encoded in place under the same name
+// (the Animate clips) get a new key on the next deploy instead of a day of stale bytes.
 const VIDEO = /^\/(?:media\/video|animate\/videos)\/[^/]+\.mp4$/;
 // Every path run_worker_first sends here. Non-MP4 files under these prefixes (the hero
 // poster sits next to the hero video) go straight back to Static Assets, never to the SSR
@@ -15,16 +16,17 @@ const WORKER_FIRST = /^\/(?:media\/video|animate\/videos)\//;
 
 async function serveVideo(request: Request): Promise<Response> {
   const url = new URL(request.url);
-  const key = new Request(url.origin + url.pathname, { method: "GET" });
+  const asset = url.origin + url.pathname;
+  const head = await env.ASSETS.fetch(new Request(asset, { method: "HEAD" }));
+  if (head.status !== 200) return env.ASSETS.fetch(new Request(asset, { method: "GET" }));
+  const cacheUrl = `${asset}?etag=${encodeURIComponent(head.headers.get("ETag") ?? "")}`;
+  const key = new Request(cacheUrl, { method: "GET" });
   // Same URL as the key, but keeps the incoming headers (Range) so match() can answer 206.
-  const lookup = new Request(url.origin + url.pathname, {
-    method: "GET",
-    headers: request.headers,
-  });
+  const lookup = new Request(cacheUrl, { method: "GET", headers: request.headers });
   const cache = (caches as unknown as { default: Cache }).default;
   const hit = await cache.match(lookup);
   if (hit) return hit;
-  const full = await env.ASSETS.fetch(key);
+  const full = await env.ASSETS.fetch(new Request(asset, { method: "GET" }));
   if (full.status !== 200) return full;
   const res = new Response(full.body, full);
   res.headers.set("Accept-Ranges", "bytes");
