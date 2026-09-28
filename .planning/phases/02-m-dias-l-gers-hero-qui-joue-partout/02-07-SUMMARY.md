@@ -179,3 +179,7 @@ Aucune nouvelle surface. Le déploiement suit T-02-29 à T-02-33 : pas de secret
 - `scripts/check-assets.mjs` contient `BUDGET = 60 * MiB` ; `components.json` est absent ; `scripts/media/video.mjs` contient `-threads:v`.
 - Les commits `b3b035b` et `c2e8d0e` sont présents dans `git log` et poussés sur `origin/main`.
 - Production : nouvelle version `30a0c129-7de4-448d-b814-4bf98c03b5b4`, relevée dans la sortie de `wrangler deploy`.
+
+## Checkpoint Task 3 — résolu : « defer »
+
+**Réponse de Lyna (2026-09-28, via l'orchestrateur) : « defer ».** Les 8 points de test sur appareil réel (hero iPhone Safari + mode économie d'énergie, Android/desktop, VoiceOver, vidéo CV, chaîne SkøllRub 6 scènes, 10 planches Tafsut, comparaison à 100 %) passent en UAT humaine en attente (`02-HUMAN-UAT.md`). HERO-01 reste « Pending » jusqu'au test iPhone. Production : version `30a0c129-7de4-448d-b814-4bf98c03b5b4`, rollback `npx wrangler rollback 0b1ccd2a-db8e-4136-b65c-55615d6787b4`.
