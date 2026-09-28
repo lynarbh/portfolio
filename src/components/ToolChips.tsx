@@ -13,7 +13,7 @@ const ALIASES: Record<string, string> = {
 const norm = (s: string) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").trim();
 
 // Retrouve l'entrée du registre d'outils à partir d'un libellé libre (données projets).
-export function findTool(name: string): Tool | undefined {
+function findTool(name: string): Tool | undefined {
   const n = norm(name);
   const id = ALIASES[n] ?? n.replace(/\s+/g, "-");
   return tools.find((t) => t.id === id || norm(t.name) === n);

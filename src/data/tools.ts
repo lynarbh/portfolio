@@ -6,7 +6,7 @@ import { simpleIcons, type SimpleIconSlug } from "@/data/tool-icons";
 
 export type ToolGroup = "video" | "design" | "web";
 
-export type ToolIcon =
+type ToolIcon =
   | { kind: "si"; slug: SimpleIconSlug }
   | { kind: "cluster"; slugs: readonly SimpleIconSlug[] }
   | { kind: "mono"; text: string; bg: string; fg: string; serif?: boolean }

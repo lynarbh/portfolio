@@ -285,9 +285,19 @@ function Hero() {
 
 function Band() {
   return (
-    <div className="marquee-band" aria-label="Ce que je fais">
-      <Marquee items={MARQUEE_WORDS} speed={40} />
-      <Marquee items={MARQUEE_WORDS} reverse outline speed={52} />
+    <div className="filmstrip" aria-label="Ce que je fais">
+      <div className="filmstrip-clouds" aria-hidden="true">
+        <span />
+        <span />
+        <span />
+        <span />
+      </div>
+      <div className="filmstrip-rail filmstrip-rail--top" aria-hidden="true" />
+      <Marquee items={MARQUEE_WORDS} speed={44} />
+      <Marquee items={MARQUEE_WORDS} reverse outline speed={58} />
+      <div className="filmstrip-rail filmstrip-rail--bottom" aria-hidden="true" />
+      <div className="filmstrip-grain" aria-hidden="true" />
+      <div className="filmstrip-flicker" aria-hidden="true" />
     </div>
   );
 }
@@ -603,7 +613,7 @@ function Contact() {
                   className="field"
                 />
               </div>
-              {error && <p className="text-[var(--rouge)]">{error}</p>}
+              {error && <p className="text-[var(--rose)]">{error}</p>}
               <Magnetic className="mt-4 flex">
                 <button
                   type="submit"
@@ -624,7 +634,7 @@ function Contact() {
 
         <footer className="mt-24 flex flex-wrap items-center justify-between gap-4 border-t border-[color-mix(in_oklab,var(--encre)_18%,transparent)] pt-8 text-xs tracking-[0.2em] uppercase text-[var(--encre)]/60">
           <span>Lyna Rebahi · Portfolio {new Date().getFullYear()}</span>
-          <a href="#top" className="hover:text-[var(--rouge)] transition">
+          <a href="#top" className="hover:text-[var(--rose)] transition">
             Haut de page ↑
           </a>
         </footer>
