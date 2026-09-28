@@ -1,5 +1,4 @@
 import handler, { createServerEntry } from "@tanstack/react-start/server-entry";
-import { env } from "cloudflare:workers";
 
 // Workers Static Assets ignore the Range header (always 200 + full body). Safari/iOS will not
 // play a <video> without 206 responses, so video paths run through this Worker first
@@ -14,11 +13,20 @@ const VIDEO = /^\/(?:media\/video|animate\/videos)\/[^/]+\.mp4$/;
 // handler.
 const WORKER_FIRST = /^\/(?:media\/video|animate\/videos)\//;
 
+// "cloudflare:workers" only exists in workerd. TanStack Start also loads this entry in the
+// Node dev server (vite dev), where a top-level import would fail every SSR request, so the
+// binding is loaded lazily and only on the video paths. In vite dev those paths never reach
+// here: Vite's static middleware answers them from public/ first.
+async function assets() {
+  return (await import("cloudflare:workers")).env.ASSETS;
+}
+
 async function serveVideo(request: Request): Promise<Response> {
+  const ASSETS = await assets();
   const url = new URL(request.url);
   const asset = url.origin + url.pathname;
-  const head = await env.ASSETS.fetch(new Request(asset, { method: "HEAD" }));
-  if (head.status !== 200) return env.ASSETS.fetch(new Request(asset, { method: "GET" }));
+  const head = await ASSETS.fetch(new Request(asset, { method: "HEAD" }));
+  if (head.status !== 200) return ASSETS.fetch(new Request(asset, { method: "GET" }));
   const cacheUrl = `${asset}?etag=${encodeURIComponent(head.headers.get("ETag") ?? "")}`;
   const key = new Request(cacheUrl, { method: "GET" });
   // Same URL as the key, but keeps the incoming headers (Range) so match() can answer 206.
@@ -26,7 +34,7 @@ async function serveVideo(request: Request): Promise<Response> {
   const cache = (caches as unknown as { default: Cache }).default;
   const hit = await cache.match(lookup);
   if (hit) return hit;
-  const full = await env.ASSETS.fetch(new Request(asset, { method: "GET" }));
+  const full = await ASSETS.fetch(new Request(asset, { method: "GET" }));
   if (full.status !== 200) return full;
   const res = new Response(full.body, full);
   res.headers.set("Accept-Ranges", "bytes");
@@ -37,13 +45,13 @@ async function serveVideo(request: Request): Promise<Response> {
 }
 
 export default createServerEntry({
-  fetch(request) {
+  async fetch(request) {
     const { pathname } = new URL(request.url);
     if (VIDEO.test(pathname)) {
       if (request.method === "GET") return serveVideo(request);
-      return env.ASSETS.fetch(request);
+      return (await assets()).fetch(request);
     }
-    if (WORKER_FIRST.test(pathname)) return env.ASSETS.fetch(request);
+    if (WORKER_FIRST.test(pathname)) return (await assets()).fetch(request);
     return handler.fetch(request);
   },
 });
