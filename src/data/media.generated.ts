@@ -319,6 +319,106 @@ export const images = {
     fallback: "/media/cv/apercu.png",
     alt: "Aperçu du CV de Lyna Rebahi (page 1)",
   },
+  "festival-identite/crop-logo-negatif": {
+    preset: "graphic",
+    width: 1200,
+    height: 1200,
+    avif: [
+      [640, "/media/festival-identite/crop-logo-negatif-640.avif"],
+      [1200, "/media/festival-identite/crop-logo-negatif-1200.avif"],
+    ],
+    fallback: "/media/festival-identite/crop-logo-negatif.png",
+  },
+  "festival-identite/crop-logo-positif": {
+    preset: "graphic",
+    width: 1200,
+    height: 1200,
+    avif: [
+      [640, "/media/festival-identite/crop-logo-positif-640.avif"],
+      [1200, "/media/festival-identite/crop-logo-positif-1200.avif"],
+    ],
+    fallback: "/media/festival-identite/crop-logo-positif.png",
+  },
+  "festival-identite/crop-motifs": {
+    preset: "graphic",
+    width: 938,
+    height: 938,
+    avif: [
+      [640, "/media/festival-identite/crop-motifs-640.avif"],
+      [938, "/media/festival-identite/crop-motifs-938.avif"],
+    ],
+    fallback: "/media/festival-identite/crop-motifs.png",
+  },
+  "festival-identite/crop-picto": {
+    preset: "graphic",
+    width: 1200,
+    height: 1200,
+    avif: [
+      [640, "/media/festival-identite/crop-picto-640.avif"],
+      [1200, "/media/festival-identite/crop-picto-1200.avif"],
+    ],
+    fallback: "/media/festival-identite/crop-picto.png",
+  },
+  "festival-identite/crop-pole-ateliers": {
+    preset: "graphic",
+    width: 750,
+    height: 750,
+    avif: [
+      [640, "/media/festival-identite/crop-pole-ateliers-640.avif"],
+      [750, "/media/festival-identite/crop-pole-ateliers-750.avif"],
+    ],
+    fallback: "/media/festival-identite/crop-pole-ateliers.png",
+  },
+  "festival-identite/crop-pole-cuisine": {
+    preset: "graphic",
+    width: 750,
+    height: 750,
+    avif: [
+      [640, "/media/festival-identite/crop-pole-cuisine-640.avif"],
+      [750, "/media/festival-identite/crop-pole-cuisine-750.avif"],
+    ],
+    fallback: "/media/festival-identite/crop-pole-cuisine.png",
+  },
+  "festival-identite/crop-pole-education": {
+    preset: "graphic",
+    width: 750,
+    height: 750,
+    avif: [
+      [640, "/media/festival-identite/crop-pole-education-640.avif"],
+      [750, "/media/festival-identite/crop-pole-education-750.avif"],
+    ],
+    fallback: "/media/festival-identite/crop-pole-education.png",
+  },
+  "festival-identite/crop-pole-musique": {
+    preset: "graphic",
+    width: 750,
+    height: 750,
+    avif: [
+      [640, "/media/festival-identite/crop-pole-musique-640.avif"],
+      [750, "/media/festival-identite/crop-pole-musique-750.avif"],
+    ],
+    fallback: "/media/festival-identite/crop-pole-musique.png",
+  },
+  "festival-identite/crop-pole-soins": {
+    preset: "graphic",
+    width: 750,
+    height: 750,
+    avif: [
+      [640, "/media/festival-identite/crop-pole-soins-640.avif"],
+      [750, "/media/festival-identite/crop-pole-soins-750.avif"],
+    ],
+    fallback: "/media/festival-identite/crop-pole-soins.png",
+  },
+  "festival-identite/crop-texture": {
+    preset: "graphic",
+    width: 750,
+    height: 750,
+    avif: [
+      [640, "/media/festival-identite/crop-texture-640.avif"],
+      [750, "/media/festival-identite/crop-texture-750.avif"],
+    ],
+    fallback: "/media/festival-identite/crop-texture.png",
+  },
   "festival-identite/planche-01": {
     preset: "graphic",
     width: 2400,
@@ -426,6 +526,18 @@ export const images = {
     ],
     fallback: "/media/festival-identite/planche-28.png",
     alt: "Charte graphique Tafsut — goodies",
+  },
+  "festival-identite/planche-31": {
+    preset: "graphic",
+    width: 2400,
+    height: 1697,
+    avif: [
+      [640, "/media/festival-identite/planche-31-640.avif"],
+      [1200, "/media/festival-identite/planche-31-1200.avif"],
+      [2400, "/media/festival-identite/planche-31-2400.avif"],
+    ],
+    fallback: "/media/festival-identite/planche-31.png",
+    alt: "Charte graphique Tafsut — food truck",
   },
   "festival-identite/planche-32": {
     preset: "graphic",
