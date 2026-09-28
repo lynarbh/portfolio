@@ -183,3 +183,7 @@ Aucune nouvelle surface. Le déploiement suit T-02-29 à T-02-33 : pas de secret
 ## Checkpoint Task 3 — résolu : « defer »
 
 **Réponse de Lyna (2026-09-28, via l'orchestrateur) : « defer ».** Les 8 points de test sur appareil réel (hero iPhone Safari + mode économie d'énergie, Android/desktop, VoiceOver, vidéo CV, chaîne SkøllRub 6 scènes, 10 planches Tafsut, comparaison à 100 %) passent en UAT humaine en attente (`02-HUMAN-UAT.md`). HERO-01 reste « Pending » jusqu'au test iPhone. Production : version `30a0c129-7de4-448d-b814-4bf98c03b5b4`, rollback `npx wrangler rollback 0b1ccd2a-db8e-4136-b65c-55615d6787b4`.
+
+## Redéploiement après revue de code et audit sécurité
+
+2026-09-28 : `npm run deploy` relancé une fois par l'orchestrateur après les 11 correctifs de revue (`b93efa4..0fddc33`) et l'audit sécurité (`02-SECURITY.md`, 42/42 fermées). Nouvelle version de production : `9b787c88-e735-4fc9-84dc-2b83f9b4faa2` (5 assets modifiés, 356 inchangés). Rollback vers la version phase 2 initiale : `npx wrangler rollback 30a0c129-7de4-448d-b814-4bf98c03b5b4` ; vers la prod d'avant milestone : `npx wrangler rollback 0b1ccd2a-db8e-4136-b65c-55615d6787b4`.
