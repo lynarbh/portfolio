@@ -1,4 +1,4 @@
-import type { MediaId } from "@/data/media.generated";
+import { galleries, type MediaId } from "@/data/media.generated";
 
 export type Project = {
   id: string;
@@ -53,12 +53,11 @@ export const projects: Project[] = [
     title: "Identité d'un festival",
     category: "Branding",
     thumbnail: "thumbnails/portfolio-thumbnail-01-branding",
-    media: [],
+    media: galleries["festival-identite"],
     shortDescription: "Identité visuelle complète d'un festival imaginaire.",
     description: "Conception de l'identité visuelle complète d'un festival imaginé de A à Z : du logo aux déclinaisons sur supports de communication (flyers, affiches, goodies). Un projet qui m'a permis d'explorer la construction d'un univers cohérent — direction artistique, charte graphique, ton de voix — et de raconter une histoire à travers chaque pièce.",
     tools: ["Illustrator", "Photoshop"],
     role: "Direction artistique & design",
-    inProgress: true,
   },
 
   // --- ILLUSTRATION / PHOTO ---
