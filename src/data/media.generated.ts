@@ -431,54 +431,6 @@ export const images = {
     fallback: "/media/festival-identite/planche-01.png",
     alt: "Charte graphique Tafsut — logo",
   },
-  "festival-identite/planche-09": {
-    preset: "graphic",
-    width: 2400,
-    height: 1697,
-    avif: [
-      [640, "/media/festival-identite/planche-09-640.avif"],
-      [1200, "/media/festival-identite/planche-09-1200.avif"],
-      [2400, "/media/festival-identite/planche-09-2400.avif"],
-    ],
-    fallback: "/media/festival-identite/planche-09.png",
-    alt: "Charte graphique Tafsut — logo",
-  },
-  "festival-identite/planche-16": {
-    preset: "graphic",
-    width: 2400,
-    height: 1697,
-    avif: [
-      [640, "/media/festival-identite/planche-16-640.avif"],
-      [1200, "/media/festival-identite/planche-16-1200.avif"],
-      [2400, "/media/festival-identite/planche-16-2400.avif"],
-    ],
-    fallback: "/media/festival-identite/planche-16.png",
-    alt: "Charte graphique Tafsut — palette de couleurs",
-  },
-  "festival-identite/planche-21": {
-    preset: "graphic",
-    width: 2400,
-    height: 1697,
-    avif: [
-      [640, "/media/festival-identite/planche-21-640.avif"],
-      [1200, "/media/festival-identite/planche-21-1200.avif"],
-      [2400, "/media/festival-identite/planche-21-2400.avif"],
-    ],
-    fallback: "/media/festival-identite/planche-21.png",
-    alt: "Charte graphique Tafsut — typographies",
-  },
-  "festival-identite/planche-23": {
-    preset: "graphic",
-    width: 2400,
-    height: 1697,
-    avif: [
-      [640, "/media/festival-identite/planche-23-640.avif"],
-      [1200, "/media/festival-identite/planche-23-1200.avif"],
-      [2400, "/media/festival-identite/planche-23-2400.avif"],
-    ],
-    fallback: "/media/festival-identite/planche-23.png",
-    alt: "Charte graphique Tafsut — affiche",
-  },
   "festival-identite/planche-24": {
     preset: "graphic",
     width: 2400,
@@ -946,11 +898,7 @@ export type MediaId = keyof typeof images;
 export const galleries = {
   "festival-identite": [
     "festival-identite/planche-01",
-    "festival-identite/planche-09",
-    "festival-identite/planche-16",
-    "festival-identite/planche-21",
     "festival-identite/planche-24",
-    "festival-identite/planche-23",
     "festival-identite/planche-25",
     "festival-identite/planche-27",
     "festival-identite/planche-28",
