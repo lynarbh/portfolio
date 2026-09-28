@@ -6,12 +6,22 @@ import handler, { createServerEntry } from "@tanstack/react-start/server-entry";
 // match() slices Range requests into 206 responses. The cache key drops the query string so
 // "?v=1" cannot create parallel entries (cache poisoning), and only 200 origin responses are
 // cached. The key carries the asset ETag: files re-encoded in place under the same name
-// (the Animate clips) get a new key on the next deploy instead of a day of stale bytes.
+// (the Animate clips) get a new edge key on the next deploy instead of a day of stale bytes.
+// Only the edge copy lives a day (EDGE_CACHE). Browsers get BROWSER_CACHE plus the ETag, so
+// they revalidate on each use (a cheap 304) instead of keeping re-encoded clips for 24 h.
+const EDGE_CACHE = "public, max-age=86400";
+const BROWSER_CACHE = "public, max-age=0, must-revalidate";
 const VIDEO = /^\/(?:media\/video|animate\/videos)\/[^/]+\.mp4$/;
 // Every path run_worker_first sends here. Non-MP4 files under these prefixes (the hero
 // poster sits next to the hero video) go straight back to Static Assets, never to the SSR
 // handler.
 const WORKER_FIRST = /^\/(?:media\/video|animate\/videos)\//;
+
+function forBrowser(res: Response): Response {
+  const out = new Response(res.body, res);
+  out.headers.set("Cache-Control", BROWSER_CACHE);
+  return out;
+}
 
 // "cloudflare:workers" only exists in workerd. TanStack Start also loads this entry in the
 // Node dev server (vite dev), where a top-level import would fail every SSR request, so the
@@ -28,6 +38,7 @@ async function assets() {
 async function sliceRange(request: Request, full: Response): Promise<Response> {
   const headers = new Headers(full.headers);
   headers.set("Accept-Ranges", "bytes");
+  headers.set("Cache-Control", BROWSER_CACHE);
   const match = /^bytes=(\d*)-(\d*)$/.exec(request.headers.get("Range")?.trim() ?? "");
   if (full.status !== 200 || !match || (match[1] === "" && match[2] === "")) {
     return new Response(full.body, { status: full.status, headers });
@@ -60,19 +71,19 @@ async function serveVideo(request: Request): Promise<Response> {
   try {
     const cache = (caches as unknown as { default: Cache }).default;
     const hit = await cache.match(lookup);
-    if (hit) return hit;
+    if (hit) return forBrowser(hit);
     const full = await origin();
     if (full.status !== 200) return full;
     const res = new Response(full.body, full);
     res.headers.set("Accept-Ranges", "bytes");
     // Assets default to "max-age=0, must-revalidate", which the Cache API would treat as stale.
-    res.headers.set("Cache-Control", "public, max-age=86400");
+    res.headers.set("Cache-Control", EDGE_CACHE);
     // Store the only copy: a clone() would tee the body and buffer the whole file in the
     // isolate while nothing reads the other branch. The response is then read back through
     // match(), which answers Range with 206.
     await cache.put(key, res);
     const stored = await cache.match(lookup);
-    if (stored) return stored;
+    if (stored) return forBrowser(stored);
   } catch {
     // Cache API unavailable or failing: fall through to the hand-made Range answer.
   }
