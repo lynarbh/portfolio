@@ -539,7 +539,7 @@ html.cur-down .cur-ring { scale: 0.8; }
 .vf-meta--tl { top: 17px; left: 46px; }
 .vf-meta--tr { top: 17px; right: 46px; }
 .vf-meta--bl { bottom: 17px; left: 46px; }
-.vf-meta--br { bottom: 17px; right: 46px; }
+.vf-meta--br { top: 17px; left: 50%; transform: translateX(-50%); }
 .vf-ring { position: absolute; right: -2.4rem; bottom: -2.4rem; width: 9.5rem; height: 9.5rem; animation: spin 22s linear infinite; }
 .vf-ring circle { fill: var(--rouge); }
 .vf-ring text { font-family: var(--font-cine); font-style: italic; font-size: 18.5px; fill: var(--rouge); }
@@ -795,34 +795,30 @@ html.cur-down .cur-ring { scale: 0.8; }
 .grid-switch { animation: grid-wipe 0.5s ease-out both; }
 @keyframes grid-wipe { from { clip-path: inset(0 100% 0 0); opacity: 0.5; } to { clip-path: inset(0 0 0 0); opacity: 1; } }
 
-/* ===== Contact : aurore, champs ===== */
-.contact { position: relative; overflow: hidden; background: color-mix(in oklab, var(--encre) 88%, black); color: var(--cream); }
-.aurora { position: absolute; inset: -20%; pointer-events: none; filter: blur(70px); opacity: 0.6; }
-.aurora span { position: absolute; width: 42vw; height: 42vw; min-width: 320px; min-height: 320px; border-radius: 50%; will-change: transform; }
-.aurora span:nth-child(1) { left: 5%; top: 10%; background: var(--rose-vif); animation: drift 14s ease-in-out infinite alternate; }
-.aurora span:nth-child(2) { right: 5%; top: 30%; background: var(--or-vif); animation: drift 18s ease-in-out infinite alternate-reverse; }
-.aurora span:nth-child(3) { left: 35%; bottom: -10%; background: var(--prune-vive); animation: drift 22s ease-in-out infinite alternate; }
-@keyframes drift { from { transform: translate(0, 0) scale(1); } to { transform: translate(12vw, -8vh) scale(1.25); } }
-@media (max-width: 640px) { .aurora { filter: blur(40px); } }
+/* ===== Contact : même écran caméra que le hero (vidéo fixe, cadre, grain), texte encre ===== */
+.contact { color: var(--encre); }
+.hud-corners--nobtn .hud-corner--br { right: 2rem; }
+@media (max-width: 640px) { .hud-corners--nobtn .hud-corner--br { right: 1.25rem; } }
+.about-card--plain::before { content: none; }
 .field-wrap { position: relative; }
 .field-wrap::after {
-  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--rose-vif);
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--rouge);
   transform: scaleX(0); transform-origin: left; transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 .field-wrap:focus-within::after { transform: scaleX(1); }
 .field {
   width: 100%; padding: 1rem 0; background: transparent; border: 0; outline: none; resize: none;
-  border-bottom: 1px solid color-mix(in oklab, var(--cream) 30%, transparent);
-  font-family: var(--font-body); font-size: 1.05rem; color: var(--cream); transition: border-color 0.3s ease;
+  border-bottom: 1px solid color-mix(in oklab, var(--encre) 30%, transparent);
+  font-family: var(--font-body); font-size: 1.05rem; color: var(--encre); transition: border-color 0.3s ease;
 }
-.field::placeholder { color: color-mix(in oklab, var(--cream) 50%, transparent); }
-.field:focus { border-color: var(--rose-vif); }
+.field::placeholder { color: color-mix(in oklab, var(--encre) 50%, transparent); }
+.field:focus { border-color: var(--rouge); }
 .contact-mail {
   position: relative; display: inline-block; font-family: var(--font-cine); font-style: italic; line-height: 1.1;
-  font-size: clamp(1.7rem, 4.6vw, 3.1rem); color: var(--cream); word-break: break-all;
+  font-size: clamp(1.7rem, 4.6vw, 3.1rem); color: var(--encre); word-break: break-all;
 }
 .contact-mail::after {
-  content: ""; position: absolute; left: 0; right: 0; bottom: -0.1em; height: 2px; background: var(--rose-vif);
+  content: ""; position: absolute; left: 0; right: 0; bottom: -0.1em; height: 2px; background: var(--rouge);
   transform: scaleX(0.2); transform-origin: left; transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 .contact-mail:hover::after, .contact-mail:focus-visible::after { transform: scaleX(1); }
@@ -856,7 +852,7 @@ html.cur-down .cur-ring { scale: 0.8; }
   .hero-swash path { stroke-dashoffset: 0; animation: none; }
   .scroll-cue span { animation: none; transform: none; }
   .tl-line, .tl-dot { transform: none; transition: none; }
-  .tl-dot--now::after, .film-grain, .rec-dot, .nav-pill__dot, .grid-switch, .vf-focus, .vf-ring, .monitor-play__btn, .aurora span, .marquee-track { animation: none; }
+  .tl-dot--now::after, .film-grain, .rec-dot, .nav-pill__dot, .grid-switch, .vf-focus, .vf-ring, .monitor-play__btn, .marquee-track { animation: none; }
   .reveal.in .tool, .tool { animation: none; opacity: 1; }
   .tl-card, .cv-card, .quest-btn, .quest-card, .tilt, .tool, .chip, .qc-media img, .vf-media img { transition: none; }
   .tl-card:hover, .cv-card:hover, .cv-card:focus-visible, .quest-btn:hover, .tool:hover { transform: none; }

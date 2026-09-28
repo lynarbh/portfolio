@@ -99,6 +99,55 @@ function Nav() {
   );
 }
 
+// Décor « écran de caméra » partagé par le hero et le contact : scanlines, grain, cadre bombé,
+// métadonnées de coins. La vidéo de fond (fixe) est celle du hero.
+function ScreenChrome({
+  scene,
+  paused = false,
+  timecode,
+  noButton = false,
+}: {
+  scene: string;
+  paused?: boolean;
+  timecode?: string;
+  noButton?: boolean;
+}) {
+  return (
+    <>
+      <div className="scanlines" aria-hidden="true" />
+      <div className={`film-grain ${paused ? "is-paused" : ""}`} aria-hidden="true" />
+      <div className="screen-frame" aria-hidden="true" />
+      <div className={`hud-corners ${noButton ? "hud-corners--nobtn" : ""}`} aria-hidden="true">
+        <span className="hud-corner hud-corner--tl">
+          <b>Lyna Rebahi</b>
+          <br />
+          (Réalisation / Montage / Communication)
+        </span>
+        <span className="hud-corner hud-corner--tc">
+          BUT MMI · Communication digitale
+          <br />
+          Instagram : @lynae.quiet
+        </span>
+        <span className="hud-corner hud-corner--tr">
+          <b>Dites bonjour</b>
+          <br />
+          lyna.rebahi@gmail.com
+        </span>
+        <span className="hud-corner hud-corner--bl">
+          <b>Portfolio</b>
+          <br />
+          2026 · Alternance
+        </span>
+        <span className="hud-corner hud-corner--br">
+          <span className="rec-dot" /> REC{timecode ? ` ${timecode}` : ""}
+          <br />
+          {scene}
+        </span>
+      </div>
+    </>
+  );
+}
+
 function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [state, setState] = useState<"playing" | "paused">("paused");
@@ -170,36 +219,7 @@ function Hero() {
         <div className="hero-wash absolute inset-0" />
       </div>
 
-      <div className="scanlines" aria-hidden="true" />
-      <div className={`film-grain ${state === "playing" ? "" : "is-paused"}`} aria-hidden="true" />
-      <div className="screen-frame" aria-hidden="true" />
-      <div className="hud-corners" aria-hidden="true">
-        <span className="hud-corner hud-corner--tl">
-          <b>Lyna Rebahi</b>
-          <br />
-          (Réalisation / Montage / Communication)
-        </span>
-        <span className="hud-corner hud-corner--tc">
-          BUT MMI · Communication digitale
-          <br />
-          Instagram : @lynae.quiet
-        </span>
-        <span className="hud-corner hud-corner--tr">
-          <b>Dites bonjour</b>
-          <br />
-          lyna.rebahi@gmail.com
-        </span>
-        <span className="hud-corner hud-corner--bl">
-          <b>Portfolio</b>
-          <br />
-          2026 · Alternance
-        </span>
-        <span className="hud-corner hud-corner--br">
-          <span className="rec-dot" /> REC {timecode}
-          <br />
-          SC. 01 · Accueil
-        </span>
-      </div>
+      <ScreenChrome scene="SC. 01 · Accueil" paused={state !== "playing"} timecode={timecode} />
 
       <button
         type="button"
@@ -561,20 +581,19 @@ function Contact() {
   };
 
   return (
-    <section id="contact" className="contact px-6 py-28">
-      <div className="aurora" aria-hidden="true">
-        <span />
-        <span />
-        <span />
-      </div>
-      <div className="relative mx-auto max-w-6xl">
+    <section
+      id="contact"
+      className="contact relative flex min-h-screen items-center overflow-hidden px-6 py-28"
+    >
+      <ScreenChrome scene="SC. 05 · Contact" noButton />
+      <div className="relative z-10 mx-auto w-full max-w-6xl">
         <div className="grid gap-14 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-20">
           <Reveal className="reveal--focus">
-            <p className="sec-kicker sec-kicker--light">Scène 05 · Contact</p>
-            <h2 className="sec-title sec-title--light">
+            <p className="sec-kicker">Scène 05 · Contact</p>
+            <h2 className="sec-title">
               <SplitText by="words" text="Prenons" accent="contact" step={90} />
             </h2>
-            <p className="mt-6 max-w-md font-body text-lg leading-relaxed text-[var(--cream)]/80">
+            <p className="mt-6 max-w-md font-body text-lg leading-relaxed text-[var(--encre)]/85">
               Envie d'échanger autour d'une alternance ? Écrivez-moi.
             </p>
             <a
@@ -587,7 +606,7 @@ function Contact() {
             <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3">
               <a
                 href="https://www.linkedin.com/in/lyna-rebahi/"
-                className="link-line link-line--light"
+                className="link-line"
                 target="_blank"
                 rel="noopener"
               >
@@ -595,7 +614,7 @@ function Contact() {
               </a>
               <a
                 href="https://www.instagram.com/lynae.quiet/"
-                className="link-line link-line--light"
+                className="link-line"
                 target="_blank"
                 rel="noopener"
               >
@@ -604,7 +623,7 @@ function Contact() {
             </div>
           </Reveal>
 
-          <Reveal delay={150}>
+          <Reveal delay={150} className="about-card about-card--plain">
             <form ref={formRef} onSubmit={handleSubmit} className="grid gap-4">
               <div className="field-wrap">
                 <input required name="name" placeholder="Votre nom" className="field" />
@@ -627,12 +646,12 @@ function Contact() {
                   className="field"
                 />
               </div>
-              {error && <p className="text-[var(--rose-vif)]">{error}</p>}
+              {error && <p className="text-[var(--rouge)]">{error}</p>}
               <Magnetic className="mt-4 flex">
                 <button
                   type="submit"
                   disabled={loading}
-                  className="quest-btn quest-btn--light disabled:opacity-50"
+                  className="quest-btn disabled:opacity-50"
                   data-cursor="Envoyer"
                 >
                   {sent
@@ -646,9 +665,9 @@ function Contact() {
           </Reveal>
         </div>
 
-        <footer className="mt-24 flex flex-wrap items-center justify-between gap-4 border-t border-[color-mix(in_oklab,var(--cream)_18%,transparent)] pt-8 text-xs tracking-[0.2em] uppercase text-[var(--cream)]/55">
+        <footer className="mt-24 flex flex-wrap items-center justify-between gap-4 border-t border-[color-mix(in_oklab,var(--encre)_18%,transparent)] pt-8 text-xs tracking-[0.2em] uppercase text-[var(--encre)]/60">
           <span>Lyna Rebahi · Portfolio {new Date().getFullYear()}</span>
-          <a href="#top" className="hover:text-[var(--rose-vif)] transition">
+          <a href="#top" className="hover:text-[var(--rouge)] transition">
             Haut de page ↑
           </a>
         </footer>
